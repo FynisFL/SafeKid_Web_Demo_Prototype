@@ -17,7 +17,7 @@ To add the project to GitHub, extract the ZIP and upload the contents of the `Sa
 
 ## Deploy to GitHub Pages
 
-The included `.github/workflows/deploy.yml` builds and publishes the site whenever code is pushed to `main`. In the GitHub repository, open **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**, then push to `main` or run the workflow from the **Actions** tab. Vite automatically uses the repository subpath for project pages and `/` for `username.github.io` sites.
+The included `.github/workflows/deploy.yml` builds and publishes the site whenever code is pushed to `main`. In the GitHub repository, open **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**, then push to `main` or run the workflow from the **Actions** tab. Vite automatically uses the repository subpath for project pages and `/` for `username.github.io` sites. Keep only this SafeKid deployment workflow active in `.github/workflows`; other workflows that publish static or Jekyll content can overwrite the deployed site.
 
 ## Routes
 
