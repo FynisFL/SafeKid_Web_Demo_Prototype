@@ -15,6 +15,10 @@ Use Node.js 18 or newer. The `SafeKid_VSCode.zip` source bundle includes the app
 
 To add the project to GitHub, extract the ZIP and upload the contents of the `SafeKid_VSCode` folder as the repository files. Do not upload `node_modules/` or `dist/`.
 
+## Deploy to GitHub Pages
+
+The included `.github/workflows/deploy.yml` builds and publishes the site whenever code is pushed to `main`. In the GitHub repository, open **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**, then push to `main` or run the workflow from the **Actions** tab. Vite automatically uses the repository subpath for project pages and `/` for `username.github.io` sites.
+
 ## Routes
 
 The app uses hash-based navigation and does not require a server fallback:
