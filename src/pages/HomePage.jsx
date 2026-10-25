@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import heroWatch from "../assets/figma/zodiac-collection-hero-watch.png";
 import { LandingFooter, LandingHeader } from "../components/LandingChrome.jsx";
+import PixelTransition from "../components/PixelTransition.jsx";
+import TiltedCard from "../components/TiltedCard.jsx";
 import { zodiacProducts } from "../data/zodiac.js";
 import useScrollReveal from "../hooks/useScrollReveal.js";
 import "../styles/safekid-landing.css";
@@ -46,15 +48,35 @@ function Hero({ heroRef }) {
             <a className="landing-text-link" href="#collection">Meet the 12 Zodiac editions <ArrowIcon /></a>
           </div>
         </div>
-        <div className="landing-hero-art" aria-label="SafeKid Vietnamese Zodiac smartwatch concept">
+        <div className="landing-hero-art">
           <span className="landing-hero-orbit landing-hero-orbit-one" aria-hidden="true" />
           <span className="landing-hero-orbit landing-hero-orbit-two" aria-hidden="true" />
           <span className="landing-hero-orbit landing-hero-orbit-three" aria-hidden="true" />
-          <img
-            className="landing-hero-watch"
-            src={heroWatch}
-            alt="SafeKid smartwatch, Mouse edition, from the Vietnamese Zodiac collection"
-          />
+          <TiltedCard
+            className="landing-hero-tilt"
+            containerWidth="100%"
+            containerHeight="100%"
+            imageWidth="76%"
+            imageHeight="84%"
+            altText="SafeKid smartwatch, Mouse edition, from the Vietnamese Zodiac collection"
+            rotateAmplitude={6}
+            scaleOnHover={1.015}
+            showTooltip={false}
+            radius={0}
+            perspective={1100}
+            smoothness={0.75}
+            glare={0.24}
+            shadow={0}
+            parallax={0.35}
+            gyroscope={false}
+            intro={false}
+          >
+            <img
+              className="landing-hero-watch"
+              src={heroWatch}
+              alt="SafeKid smartwatch, Mouse edition, from the Vietnamese Zodiac collection"
+            />
+          </TiltedCard>
           <p className="landing-hero-art-caption"><span /> MADE FOR THEIR NEXT LITTLE ADVENTURE</p>
         </div>
         <a className="landing-scroll-cue" href="#story" aria-label="Scroll to the SafeKid story">
@@ -88,7 +110,25 @@ function Purpose() {
   );
 }
 
-function StoryScene({ sectionRef, stageRef }) {
+function StoryScene({ sectionRef, stageRef, activeBeat, onBeatChange }) {
+  const swipeStart = useRef(null);
+
+  function handleSwipeStart(event) {
+    if (event.pointerType === "mouse") return;
+    swipeStart.current = event.clientX;
+    if (event.nativeEvent.isTrusted) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+  }
+
+  function handleSwipeEnd(event) {
+    if (swipeStart.current === null) return;
+    const distance = swipeStart.current - event.clientX;
+    swipeStart.current = null;
+    if (Math.abs(distance) < 40) return;
+    onBeatChange((current) => Math.min(3, Math.max(0, current + (distance > 0 ? 1 : -1))));
+  }
+
   return (
     <section className="landing-story" id="story" ref={sectionRef}>
       <div className="landing-container landing-story-intro">
@@ -102,30 +142,72 @@ function StoryScene({ sectionRef, stageRef }) {
         <div className="landing-story-stage" ref={stageRef}>
           <div className="landing-story-backdrop" aria-hidden="true" />
           <div className="landing-container landing-story-layout">
-            <div className="landing-story-copy">
-              <article className="landing-story-beat landing-story-beat-1">
-                <span>01 / THE FIRST STEP</span>
-                <h3>Room to explore.</h3>
-                <p>Growing up starts with a few more steps taken on their own.</p>
-              </article>
-              <article className="landing-story-beat landing-story-beat-2">
-                <span>02 / A WAY TO REACH YOU</span>
-                <h3>Close, even from afar.</h3>
-                <p>A simple call can make a new adventure feel a little less far away.</p>
-              </article>
-              <article className="landing-story-beat landing-story-beat-3">
-                <span>03 / TWO PERSPECTIVES</span>
-                <h3>One shared moment.</h3>
-                <p>A watch for their world. A parent-app concept for yours.</p>
-              </article>
-              <article className="landing-story-beat landing-story-beat-4">
-                <span>04 / WHAT MATTERS</span>
-                <h3>Independence, with connection.</h3>
-                <p>More confidence for children. More peace of mind for the people who love them.</p>
-              </article>
+            <div
+              className="landing-story-copy"
+              role="group"
+              aria-label="The SafeKid story. Swipe to move between moments."
+              onPointerDown={handleSwipeStart}
+              onPointerUp={handleSwipeEnd}
+              onPointerCancel={() => { swipeStart.current = null; }}
+            >
+              <div
+                className="landing-story-slides"
+                style={{ "--story-active-beat": activeBeat, "--story-offset": `${activeBeat * -25}%` }}
+              >
+                <article className="landing-story-beat landing-story-beat-1">
+                  <span>01 / THE FIRST STEP</span>
+                  <h3>Room to explore.</h3>
+                  <p>Growing up starts with a few more steps taken on their own.</p>
+                </article>
+                <article className="landing-story-beat landing-story-beat-2">
+                  <span>02 / A WAY TO REACH YOU</span>
+                  <h3>Close, even from afar.</h3>
+                  <p>A simple call can make a new adventure feel a little less far away.</p>
+                </article>
+                <article className="landing-story-beat landing-story-beat-3">
+                  <span>03 / TWO PERSPECTIVES</span>
+                  <h3>One shared moment.</h3>
+                  <p>A watch for their world. A parent-app concept for yours.</p>
+                </article>
+                <article className="landing-story-beat landing-story-beat-4">
+                  <span>04 / WHAT MATTERS</span>
+                  <h3>Independence, with connection.</h3>
+                  <p>More confidence for children. More peace of mind for the people who love them.</p>
+                </article>
+              </div>
               <div className="landing-story-progress" aria-hidden="true">
                 <span /><span /><span /><span />
               </div>
+            </div>
+            <div className="landing-story-mobile-controls" aria-label="Story navigation">
+              <button
+                type="button"
+                aria-label="Previous story moment"
+                disabled={activeBeat === 0}
+                onClick={() => onBeatChange((current) => Math.max(0, current - 1))}
+              >
+                <span aria-hidden="true">←</span>
+              </button>
+              <div className="landing-story-mobile-dots">
+                {[0, 1, 2, 3].map((index) => (
+                  <button
+                    type="button"
+                    key={index}
+                    aria-label={`Show story moment ${index + 1}`}
+                    aria-current={activeBeat === index ? "step" : undefined}
+                    onClick={() => onBeatChange(index)}
+                  />
+                ))}
+              </div>
+              <span className="landing-story-mobile-status" aria-live="polite">{activeBeat + 1} / 4</span>
+              <button
+                type="button"
+                aria-label="Next story moment"
+                disabled={activeBeat === 3}
+                onClick={() => onBeatChange((current) => Math.min(3, current + 1))}
+              >
+                <span aria-hidden="true">→</span>
+              </button>
             </div>
 
             <div className="landing-story-product">
@@ -225,8 +307,58 @@ function EditionButton({ product, selected, onSelect }) {
   );
 }
 
+function EditionTransition({ from, to, transitionKey }) {
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setActive(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  const renderEdition = (product) => (
+    <img
+      className="landing-edition-transition-image"
+      src={product.image}
+      alt=""
+      draggable="false"
+    />
+  );
+
+  return (
+    <PixelTransition
+      key={transitionKey}
+      className="landing-edition-pixel-transition"
+      style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
+      firstContent={renderEdition(from)}
+      secondContent={renderEdition(to)}
+      active={active}
+      interactive={false}
+      gridSize={16}
+      pixelColor="#55d4d4"
+      mosaic={0.25}
+      animationStepDuration={0.3}
+      pattern="ripple"
+      randomness={0.15}
+      pixelAnimation="grow"
+      pixelShape="rounded"
+      gap={1}
+      aspectRatio="1.18"
+    />
+  );
+}
+
 function ZodiacCollection({ selectedId, onSelect }) {
   const selectedProduct = zodiacProducts.find((item) => item.id === selectedId) ?? zodiacProducts[0];
+  const previousProduct = useRef(selectedProduct);
+  const [editionTransition, setEditionTransition] = useState(null);
+
+  useLayoutEffect(() => {
+    if (previousProduct.current.id !== selectedProduct.id) {
+      setEditionTransition({ from: previousProduct.current, to: selectedProduct });
+      previousProduct.current = selectedProduct;
+    }
+  }, [selectedProduct]);
+
   return (
     <section className="landing-collection" id="collection">
       <div className="landing-container">
@@ -252,12 +384,17 @@ function ZodiacCollection({ selectedId, onSelect }) {
             </ul>
           </div>
           <div className="landing-edition-showcase">
-            <div className="landing-edition-image-wrap">
+            <div
+              className="landing-edition-image-wrap"
+              role="img"
+              aria-label={`${editionNames[selectedProduct.id]} edition SafeKid smartwatch concept`}
+            >
               <span className="landing-edition-image-glow" aria-hidden="true" />
-              <img
-                key={selectedProduct.id}
-                src={selectedProduct.image}
-                alt={`${editionNames[selectedProduct.id]} edition SafeKid smartwatch concept`}
+              <EditionTransition
+                key={editionTransition?.to.id ?? selectedProduct.id}
+                from={editionTransition?.from ?? selectedProduct}
+                to={editionTransition?.to ?? selectedProduct}
+                transitionKey={editionTransition?.to.id ?? selectedProduct.id}
               />
               <span className="landing-edition-watermark" aria-hidden="true">{selectedProduct.animal}</span>
             </div>
@@ -299,29 +436,32 @@ function Closing({ selectedProduct }) {
   );
 }
 
-function useStoryMotion(sectionRef, stageRef) {
+function useStoryMotion(stageRef) {
   useEffect(() => {
-    const section = sectionRef.current;
     const stage = stageRef.current;
+    const track = stage?.parentElement;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const compactLayout = window.matchMedia("(max-width: 900px)");
     let frame = 0;
 
     function update() {
       frame = 0;
-      if (!section || !stage || reducedMotion.matches || compactLayout.matches) {
+      if (!stage || !track || reducedMotion.matches || compactLayout.matches) {
         stage?.classList.remove("is-motion-ready");
         return;
       }
       stage.classList.add("is-motion-ready");
-      const distance = section.offsetHeight - window.innerHeight;
+      const distance = track.offsetHeight - stage.offsetHeight;
       const progress = distance > 0
-        ? Math.min(1, Math.max(0, -section.getBoundingClientRect().top / distance))
+        ? Math.min(1, Math.max(0, -track.getBoundingClientRect().top / distance))
         : 1;
       stage.style.setProperty("--story-progress", `${progress}`);
+      stage.style.setProperty("--story-route-position", `${progress * 100}%`);
+      stage.style.setProperty("--story-watch-x", `${progress * -18}px`);
+      stage.style.setProperty("--story-app-y", `${(1 - progress) * 9}px`);
+      const activeBeat = Math.min(3, Math.floor(progress * 4));
       for (let index = 0; index < 4; index += 1) {
-        const beatProgress = Math.min(1, Math.max(0, 1 - Math.abs(progress - (index / 3)) * 3));
-        stage.style.setProperty(`--story-beat-${index + 1}`, `${beatProgress}`);
+        stage.style.setProperty(`--story-beat-${index + 1}`, index === activeBeat ? "1" : "0");
       }
     }
 
@@ -352,7 +492,7 @@ function useStoryMotion(sectionRef, stageRef) {
       if (frame) window.cancelAnimationFrame(frame);
       stage?.removeAttribute("style");
     };
-  }, [sectionRef, stageRef]);
+  }, [stageRef]);
 }
 
 export default function HomePage() {
@@ -361,10 +501,11 @@ export default function HomePage() {
   const storyRef = useRef(null);
   const stageRef = useRef(null);
   const [selectedId, setSelectedId] = useState("rat");
+  const [activeStoryBeat, setActiveStoryBeat] = useState(0);
   const selectedProduct = zodiacProducts.find((item) => item.id === selectedId) ?? zodiacProducts[0];
 
   useScrollReveal(pageRef);
-  useStoryMotion(storyRef, stageRef);
+  useStoryMotion(stageRef);
 
   return (
     <div className="safekid-landing" ref={pageRef}>
@@ -372,7 +513,12 @@ export default function HomePage() {
       <main>
         <Hero heroRef={heroRef} />
         <Purpose />
-        <StoryScene sectionRef={storyRef} stageRef={stageRef} />
+        <StoryScene
+          sectionRef={storyRef}
+          stageRef={stageRef}
+          activeBeat={activeStoryBeat}
+          onBeatChange={setActiveStoryBeat}
+        />
         <ProductOverview />
         <ZodiacCollection selectedId={selectedId} onSelect={setSelectedId} />
         <Closing selectedProduct={selectedProduct} />

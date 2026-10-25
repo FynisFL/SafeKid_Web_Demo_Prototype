@@ -49,11 +49,11 @@ export default function ZodiacPage() {
           <div className="landing-container zodiac-hero-inner">
             <div className="zodiac-hero-copy" data-reveal="up">
               <p className="landing-eyebrow"><span /> INSPIRED BY THE VIETNAMESE ZODIAC</p>
-              <h1 className="landing-display">Twelve characters.<br /><em>One little explorer.</em></h1>
+              <h1 className="landing-display" data-reveal="up" data-reveal-delay="1">Twelve little<br /><em>explorers.</em></h1>
               <p>Meet the SafeKid collection: playful Zodiac-inspired designs imagined for the curious little people finding their way in the world.</p>
               <a className="zodiac-hero-link" href="#zodiac-editions">Explore all 12 editions <ArrowIcon /></a>
             </div>
-            <div className="zodiac-hero-art" data-reveal="fade">
+            <div className="zodiac-hero-art" data-reveal="fade" data-motion="drift">
               <span className="zodiac-hero-orbit zodiac-hero-orbit-one" aria-hidden="true" />
               <span className="zodiac-hero-orbit zodiac-hero-orbit-two" aria-hidden="true" />
               <img src={zodiacProducts[0].image} alt="Mouse edition SafeKid smartwatch concept" />

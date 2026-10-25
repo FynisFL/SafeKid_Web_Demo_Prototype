@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { LandingFooter, LandingHeader } from "../components/LandingChrome.jsx";
 import useScrollReveal from "../hooks/useScrollReveal.js";
 import "../styles/safekid-landing.css";
@@ -14,12 +14,18 @@ function ContactArrow() {
 
 export default function ContactPage() {
   const pageRef = useRef(null);
-  const [notice, setNotice] = useState("");
   useScrollReveal(pageRef);
 
-  function submitDemo(event) {
+  function openEmailDraft(event) {
     event.preventDefault();
-    setNotice("This is a concept form. Your message has not been sent.");
+    const formData = new FormData(event.currentTarget);
+    const name = String(formData.get("name") || "").trim();
+    const email = String(formData.get("email") || "").trim();
+    const subject = String(formData.get("subject") || "").trim();
+    const message = String(formData.get("message") || "").trim();
+    const body = [`Name: ${name}`, `Email: ${email}`, "", message].join("\n");
+
+    window.location.href = `mailto:support@safekid.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
   return (
@@ -30,8 +36,8 @@ export default function ContactPage() {
           <div className="landing-container contact-hero-inner">
             <div className="contact-hero-copy" data-reveal="up">
               <p className="landing-eyebrow"><span /> LET'S START A CONVERSATION</p>
-              <h1 className="landing-display">Every big adventure<br />starts <em>with a hello.</em></h1>
-              <p>
+              <h1 className="landing-display" data-reveal="up" data-reveal-delay="1">Let’s talk<br />SafeKid.</h1>
+              <p data-reveal="up" data-reveal-delay="2">
                 Curious about SafeKid or the idea behind the collection? We’d love to hear what you think.
               </p>
               <a className="contact-hero-link" href="mailto:support@safekid.com">
@@ -44,7 +50,7 @@ export default function ContactPage() {
               <span className="contact-orbit contact-orbit-three" />
               <span className="contact-orbit-dot contact-orbit-dot-one" />
               <span className="contact-orbit-dot contact-orbit-dot-two" />
-              <span className="contact-hero-monogram">S<span>.</span></span>
+              <span className="contact-hero-monogram" data-motion="drift">S<span>.</span></span>
               <p>ROOM TO GROW<br />SPACE TO CONNECT</p>
             </div>
           </div>
@@ -54,11 +60,11 @@ export default function ContactPage() {
           <div className="contact-intro" data-reveal="up">
             <p className="landing-eyebrow"><span /> GET IN TOUCH</p>
             <h2 className="landing-display">We’re listening.</h2>
-            <p>Send a note or reach out directly. The form is a visual demo and does not deliver messages.</p>
+            <p>Use the form to open an email draft, or reach out directly.</p>
           </div>
 
           <div className="contact-grid">
-            <form className="contact-form" data-reveal="up" onSubmit={submitDemo}>
+            <form className="contact-form" id="contact-message" data-reveal="up" onSubmit={openEmailDraft}>
               <div className="contact-form-heading">
                 <span>01 / YOUR MESSAGE</span>
                 <h3>What’s on your mind?</h3>
@@ -82,10 +88,9 @@ export default function ContactPage() {
                 </label>
               </div>
               <div className="contact-form-bottom">
-                <button className="contact-submit" type="submit">Send a message <ContactArrow /></button>
-                <p>This demo keeps your message in this page only.</p>
+                <button className="contact-submit" type="submit">Open email draft <ContactArrow /></button>
+                <p>Your email app opens with this message ready. Nothing is sent until you press Send.</p>
               </div>
-              {notice && <p className="contact-form-notice" role="status">{notice}</p>}
             </form>
 
             <aside className="contact-details" data-reveal="up" data-reveal-delay="1">

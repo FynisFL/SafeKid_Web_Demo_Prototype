@@ -48,7 +48,7 @@ export default function SupportPage() {
           <div className="landing-container support-hero-inner">
             <div data-reveal="up">
               <p className="landing-eyebrow"><span /> HERE TO HELP YOU FIND YOUR WAY</p>
-              <h1 className="landing-display">A little clarity<br />for <em>every question.</em></h1>
+              <h1 className="landing-display">Clear answers<br />for SafeKid.</h1>
               <p>Find your way around the SafeKid concept, browse the collection, or get in touch with the team.</p>
               <a className="support-hero-link" href="#support-faq">Browse common questions <span aria-hidden="true">↓</span></a>
             </div>
@@ -56,7 +56,7 @@ export default function SupportPage() {
               <span className="support-orbit support-orbit-one" />
               <span className="support-orbit support-orbit-two" />
               <span className="support-orbit support-orbit-three" />
-              <span className="support-hero-mark">?</span>
+              <span className="support-hero-mark" data-motion="drift">?</span>
               <span className="support-hero-dot" />
               <p>ONE FAMILY<br />ONE QUESTION AT A TIME</p>
             </div>
@@ -99,7 +99,11 @@ export default function SupportPage() {
                     <span>{question}</span>
                     <i aria-hidden="true" />
                   </summary>
-                  <p>{answer}</p>
+                  <div className="support-faq-answer">
+                    <div>
+                      <p>{answer}</p>
+                    </div>
+                  </div>
                 </details>
               ))}
             </div>

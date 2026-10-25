@@ -470,6 +470,7 @@
 }
 
 @media (max-width: 380px) {
+  .product-hero-copy h1 { font-size: clamp(38px, 12vw, 44px); }
   .product-related-grid { grid-template-columns: 1fr; }
   .product-related-card { grid-template-columns: 92px minmax(0, 1fr) 22px; gap: 10px; }
   .product-related-art { height: 82px; grid-column: 1; grid-row: 1; }

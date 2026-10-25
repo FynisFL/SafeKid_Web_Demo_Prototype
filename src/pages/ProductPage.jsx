@@ -15,7 +15,7 @@ function ArrowIcon() {
 
 function ProductArtwork({ product }) {
   return (
-    <div className="product-artwork" data-reveal="fade">
+    <div className="product-artwork" data-reveal="fade" data-motion="drift">
       <span className="product-artwork-orbit product-artwork-orbit-one" aria-hidden="true" />
       <span className="product-artwork-orbit product-artwork-orbit-two" aria-hidden="true" />
       <span className="product-artwork-index">{product.animal}</span>
@@ -116,8 +116,8 @@ export default function ProductPage({ product }) {
             <div className="product-hero-copy" data-reveal="up">
               <a className="product-back-link" href="#/zodiac"><ArrowIcon /> Zodiac collection</a>
               <p className="landing-eyebrow"><span /> SAFEKID / ZODIAC EDITION {product.animal.toUpperCase()}</p>
-              <h1 className="landing-display">{product.label}<br /><em>little explorer.</em></h1>
-              <p className="product-hero-description">
+              <h1 className="landing-display" data-reveal="up" data-reveal-delay="1">{product.label}<br /><em>little explorer.</em></h1>
+              <p className="product-hero-description" data-reveal="up" data-reveal-delay="2">
                 Meet the {product.label} edition — a Vietnamese Zodiac-inspired character in the SafeKid watch concept.
               </p>
               <div className="product-hero-actions">
