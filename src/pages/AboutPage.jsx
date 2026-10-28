@@ -1,11 +1,22 @@
+import { useRef } from "react";
 import SiteLayout from "../components/SiteLayout.jsx";
+import InteractiveCard from "../components/InteractiveCard.jsx";
+import RippleButton from "../components/RippleButton.jsx";
 import mascot from "../assets/figma/zodiac-collection-hero-watch.png";
-import brandLogo from "../assets/brand/Logo_SafeKid.png";
+import useScrollReveal from "../hooks/useScrollReveal.js";
+import useParallax from "../hooks/useParallax.js";
+import ShapeGrid from "../components/ShapeGrid.jsx";
+import "../styles/interactive.css";
 
 export default function AboutPage() {
+  const pageRef = useRef(null);
+  useScrollReveal(pageRef);
+  useParallax(pageRef, { speed: 0.05 });
+
   return (
     <SiteLayout>
-      <section className="secondary-hero brand-hero">
+      <div ref={pageRef}>
+        <section className="secondary-hero brand-hero">
         <div className="landing-container secondary-hero-inner">
           <div className="secondary-hero-copy" data-reveal="up">
             <p className="landing-eyebrow"><span /> A STORY BY DIGIBABI</p>
@@ -16,13 +27,33 @@ export default function AboutPage() {
             <a className="secondary-action" href="#/zodiac">Explore the Zodiac collection <span aria-hidden="true">→</span></a>
           </div>
           <div className="secondary-hero-art" data-reveal="scale">
-            <img src={mascot} alt="SafeKid Mouse edition smartwatch concept" />
-            <span>SAFEKID / VIETNAMESE ZODIAC</span>
+            <InteractiveCard intensity={4} scaleOnHover={1.02} glowColor="#00C7CA">
+              <img src={mascot} alt="SafeKid Mouse edition smartwatch concept" />
+              <span>SAFEKID / VIETNAMESE ZODIAC</span>
+            </InteractiveCard>
           </div>
         </div>
       </section>
-
       <section className="landing-container secondary-story">
+        <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }} aria-hidden="true">
+          <ShapeGrid
+            shape="cross"
+            direction="none"
+            lineColor="#c8eaea"
+            hoverColor="#00c7ca"
+            hoverFillColor="#66fcff"
+            fillOpacity={0}
+            cellSize={34}
+            speed={0.45}
+            tiltX={0}
+            tiltY={0}
+            rainbow={false}
+            lineWidth={0.75}
+            radius={1.3}
+            glow={1}
+            twinkle={0.4}
+          />
+        </div>
         <div data-reveal="up">
           <p className="landing-eyebrow"><span /> THE IDEA</p>
           <h2 className="landing-display">Growing up.<br />Staying connected.</h2>
@@ -40,14 +71,14 @@ export default function AboutPage() {
 
       <section className="secondary-brand-close">
         <div className="landing-container secondary-brand-close-inner" data-reveal="up">
-          <img src={brandLogo} alt="SafeKid by DigiBabi" />
           <div>
             <h2 className="landing-display">Made for curious minds and caring families.</h2>
             <p>Discover the 12 character editions, then tell us which one feels like your little explorer.</p>
-            <a className="landing-button landing-button-light" href="#/zodiac">Meet the collection <span aria-hidden="true">→</span></a>
+            <RippleButton className="landing-button landing-button-light" as="a" href="#/zodiac">Meet the collection <span aria-hidden="true">→</span></RippleButton>
           </div>
         </div>
       </section>
-    </SiteLayout>
+    </div>
+  </SiteLayout>
   );
 }

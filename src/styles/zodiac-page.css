@@ -195,15 +195,15 @@
 }
 
 .zodiac-gallery {
-  padding-top: 112px;
-  padding-bottom: 112px;
+  padding-top: 56px;
+  padding-bottom: 56px;
 }
 
 .zodiac-gallery-heading {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: 25px;
+  gap: 16px;
 }
 
 .zodiac-gallery-heading h2 {
@@ -231,18 +231,21 @@
 .zodiac-edition-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 22px;
-  margin-top: 48px;
+  gap: 10px;
+  margin-top: 20px;
 }
 
 .zodiac-edition-card {
   min-width: 0;
 }
 
+.zodiac-edition-card:hover {
+}
+
 .zodiac-edition-art {
   position: relative;
   display: grid;
-  aspect-ratio: 1 / .88;
+  aspect-ratio: 1 / 1.05;
   place-items: center;
   overflow: hidden;
   border: 1px solid rgba(16, 42, 56, .06);
@@ -305,7 +308,7 @@
 
 .zodiac-edition-art:hover .zodiac-edition-halo,
 .zodiac-edition-art:focus-visible .zodiac-edition-halo {
-  transform: scale(1.15);
+  transform: none;
 }
 
 .zodiac-edition-art:hover .zodiac-edition-art-link,
@@ -318,8 +321,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 15px;
-  padding: 15px 3px 0;
+  gap: 10px;
+  padding: 12px 2px 0;
 }
 
 .zodiac-edition-info > div > span {
@@ -330,7 +333,7 @@
 }
 
 .zodiac-edition-info h2 {
-  margin-top: 3px;
+  margin-top: 2px;
   font-family: "Plus Jakarta Sans", sans-serif;
   font-size: 17px;
   font-weight: 600;
@@ -435,8 +438,8 @@
   .zodiac-intro-inner { grid-template-columns: 1fr; gap: 17px; }
   .zodiac-intro .landing-eyebrow { grid-column: 1; }
   .zodiac-intro-inner > p:last-child { max-width: 540px; }
-  .zodiac-gallery { padding-top: 82px; padding-bottom: 84px; }
-  .zodiac-edition-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 16px; margin-top: 35px; }
+  .zodiac-gallery { padding-top: 44px; padding-bottom: 48px; }
+  .zodiac-edition-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 10px; margin-top: 18px; }
 }
 
 @media (max-width: 560px) {
@@ -447,12 +450,12 @@
   .zodiac-hero-caption { right: 4%; bottom: 5%; font-size: 7px; }
   .zodiac-intro { padding: 65px 0; }
   .zodiac-intro h2 { font-size: clamp(37px, 8.5vw, 49px); }
-  .zodiac-gallery { padding-top: 66px; padding-bottom: 67px; }
+  .zodiac-gallery { padding-top: 40px; padding-bottom: 42px; }
   .zodiac-gallery-heading { align-items: flex-start; flex-direction: column; gap: 12px; }
   .zodiac-gallery-heading h2 { font-size: clamp(36px, 8vw, 48px); }
-  .zodiac-edition-grid { gap: 22px 12px; }
+  .zodiac-edition-grid { gap: 12px 8px; }
   .zodiac-edition-art { border-radius: 13px; }
-  .zodiac-edition-info { gap: 6px; padding-top: 11px; }
+  .zodiac-edition-info { gap: 4px; padding-top: 8px; }
   .zodiac-edition-info h2 { font-size: 14px; }
   .zodiac-edition-info > div > span { font-size: 7px; letter-spacing: .08em; }
   .zodiac-edition-info > a { width: 29px; height: 29px; }

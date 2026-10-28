@@ -2,8 +2,13 @@ import { useEffect, useRef } from "react";
 import { LandingFooter, LandingHeader } from "../components/LandingChrome.jsx";
 import { zodiacProducts } from "../data/zodiac.js";
 import useScrollReveal from "../hooks/useScrollReveal.js";
+import useParallax from "../hooks/useParallax.js";
+import InteractiveCard from "../components/InteractiveCard.jsx";
+import RippleButton from "../components/RippleButton.jsx";
+import ShapeGrid from "../components/ShapeGrid.jsx";
 import "../styles/safekid-landing.css";
 import "../styles/product-page.css";
+import "../styles/interactive.css";
 
 function ArrowIcon() {
   return (
@@ -16,11 +21,13 @@ function ArrowIcon() {
 function ProductArtwork({ product }) {
   return (
     <div className="product-artwork" data-reveal="fade" data-motion="drift">
-      <span className="product-artwork-orbit product-artwork-orbit-one" aria-hidden="true" />
-      <span className="product-artwork-orbit product-artwork-orbit-two" aria-hidden="true" />
-      <span className="product-artwork-index">{product.animal}</span>
-      <img src={product.image} alt={`${product.label} edition SafeKid smartwatch concept`} />
-      <span className="product-artwork-caption"><i /> VIETNAMESE ZODIAC / {product.animal.toUpperCase()}</span>
+      <InteractiveCard intensity={5} scaleOnHover={1.03} glowColor="#00C7CA">
+        <span className="product-artwork-orbit product-artwork-orbit-one" aria-hidden="true" />
+        <span className="product-artwork-orbit product-artwork-orbit-two" aria-hidden="true" />
+        <span className="product-artwork-index">{product.animal}</span>
+        <img src={product.image} alt={`${product.label} edition SafeKid smartwatch concept`} />
+        <span className="product-artwork-caption"><i /> VIETNAMESE ZODIAC / {product.animal.toUpperCase()}</span>
+      </InteractiveCard>
     </div>
   );
 }
@@ -28,6 +35,25 @@ function ProductArtwork({ product }) {
 function ConceptPillars() {
   return (
     <section className="product-pillars">
+      <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }} aria-hidden="true">
+        <ShapeGrid
+          shape="cross"
+          direction="none"
+          lineColor="#c8eaea"
+          hoverColor="#00c7ca"
+          hoverFillColor="#66fcff"
+          fillOpacity={0}
+          cellSize={34}
+          speed={0.45}
+          tiltX={0}
+          tiltY={0}
+          rainbow={false}
+          lineWidth={0.75}
+          radius={1.3}
+          glow={1}
+          twinkle={0.4}
+        />
+      </div>
       <div className="landing-container">
         <div className="product-section-heading" data-reveal="up">
           <p className="landing-eyebrow"><span /> THE IDEA BEHIND SAFEKID</p>
@@ -75,22 +101,18 @@ function RelatedEditions({ product }) {
         </div>
         <div className="product-related-grid">
           {relatedProducts.map((item, index) => (
-            <a
-              className="product-related-card"
-              data-reveal="up"
-              data-reveal-delay={String(index + 1)}
-              href={`#/product/${item.id}`}
-              key={item.id}
-            >
-              <span className="product-related-art">
-                <img src={item.image} alt="" loading="lazy" />
-              </span>
-              <span className="product-related-copy">
-                <span>VIETNAMESE ZODIAC / {item.animal.toUpperCase()}</span>
-                <strong>{item.label}</strong>
-              </span>
-              <ArrowIcon />
-            </a>
+            <article key={item.id} className="product-related-card" data-reveal="up" data-reveal-delay={String(index + 1)}>
+              <InteractiveCard intensity={3} scaleOnHover={1.01} glowColor="#00C7CA" as="a" href={`#/product/${item.id}`}>
+                <span className="product-related-art">
+                  <img src={item.image} alt="" loading="lazy" />
+                </span>
+                <span className="product-related-copy">
+                  <span>VIETNAMESE ZODIAC / {item.animal.toUpperCase()}</span>
+                  <strong>{item.label}</strong>
+                </span>
+                <ArrowIcon />
+              </InteractiveCard>
+            </article>
           ))}
         </div>
       </div>
@@ -101,6 +123,7 @@ function RelatedEditions({ product }) {
 export default function ProductPage({ product }) {
   const pageRef = useRef(null);
   useScrollReveal(pageRef);
+  useParallax(pageRef, { speed: 0.05 });
 
   useEffect(() => {
     document.title = `${product.detailTitle} | SafeKid`;
@@ -121,7 +144,7 @@ export default function ProductPage({ product }) {
                 Meet the {product.label} edition — a Vietnamese Zodiac-inspired character in the SafeKid watch concept.
               </p>
               <div className="product-hero-actions">
-                <a className="product-primary-link" href="#/contact">Ask about this edition <ArrowIcon /></a>
+                <InteractiveCard as="a" className="product-primary-link" href="#/contact" intensity={4} scaleOnHover={1.03} glowColor="#00C7CA">Ask about this edition <ArrowIcon /></InteractiveCard>
                 <a className="product-secondary-link" href="#product-story">Discover the idea</a>
               </div>
               <p className="product-hero-note"><span /> Design concept · No price or availability confirmed</p>

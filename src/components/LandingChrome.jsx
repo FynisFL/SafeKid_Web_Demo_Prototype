@@ -1,5 +1,8 @@
+import { useState, useEffect, useRef } from "react";
 import SafeKidLogo from "../assets/brand/Logo_SafeKid.png";
 import { createPortal } from "react-dom";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { Search01Icon } from "@hugeicons/core-free-icons";
 import MicroSlats from "./MicroSlats.jsx";
 
 const links = [
@@ -7,6 +10,7 @@ const links = [
   { label: "Zodiac collection", href: "#/zodiac", route: "/zodiac" },
   { label: "About", href: "#/about", route: "/about" },
   { label: "Support", href: "#/support", route: "/support" },
+  { label: "S.F AI", href: "#/chat", route: "/chat" },
 ];
 
 function activeRoute() {
@@ -49,32 +53,145 @@ function InteractiveBackdrop() {
 export function LandingHeader() {
   const route = activeRoute();
   const isContact = route === "/contact";
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const searchInputRef = useRef(null);
+  const searchToggleRef = useRef(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
+    };
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleKey = (event) => {
+      if (event.key === "Escape") setMenuOpen(false);
+    };
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [menuOpen]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const timer = window.setTimeout(() => searchInputRef.current?.focus(), 50);
+    return () => window.clearTimeout(timer);
+  }, [searchOpen]);
+
+  useEffect(() => {
+    if (!searchOpen) return;
+    const handleKey = (event) => {
+      if (event.key === "Escape") {
+        setSearchOpen(false);
+        searchToggleRef.current?.focus();
+      }
+    };
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".landing-header-search-bar, .landing-header-search-toggle")) {
+        setSearchOpen(false);
+      }
+    };
+    document.addEventListener("keydown", handleKey);
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("keydown", handleKey);
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [searchOpen]);
+
+  const handleSearchToggle = () => {
+    if (menuOpen) setMenuOpen(false);
+    setSearchOpen((v) => !v);
+  };
+
+  const handleSearchClose = () => {
+    setSearchOpen(false);
+    searchToggleRef.current?.focus();
+  };
+
+  const headerClass = [
+    "landing-header",
+    scrolled ? "landing-header--scrolled" : "",
+    searchOpen ? "is-search-open" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <>
       <InteractiveBackdrop />
-      <header className="landing-header">
+      <header className={headerClass}>
         <div className="landing-container landing-header-inner">
           <a className="landing-brand" href="#/" aria-label="SafeKid home">
             <img src={SafeKidLogo} alt="" />
             <span>SafeKid</span>
           </a>
-          <nav className="landing-nav" aria-label="Main navigation">
+          <button
+            type="button"
+            className="landing-header-menu"
+            aria-expanded={menuOpen}
+            aria-controls="landing-mobile-menu"
+            onClick={() => setMenuOpen((value) => !value)}
+          >
+            <span className="landing-header-menu-line" />
+            <span className="landing-header-menu-line" />
+          </button>
+          <nav className="landing-nav" id="landing-mobile-menu" aria-label="Main navigation">
             {links.map(({ label, href, route: linkRoute }) => {
+              const isSupportRoute = route === "/support";
+              const isChatRoute = route === "/chat";
               const isActive = linkRoute === route
                 || (linkRoute === "/zodiac" && route.startsWith("/product/"))
-                || (linkRoute === "/support" && ["/chat", "/sos"].includes(route));
+                || (linkRoute === "/support" && isSupportRoute)
+                || (linkRoute === "/chat" && isChatRoute);
               return (
-                <a href={href} key={label} aria-current={isActive ? "page" : undefined}>
+                <a
+                  href={href}
+                  key={label}
+                  aria-current={isActive ? "page" : undefined}
+                  onClick={() => setMenuOpen(false)}
+                >
                   {label}
                 </a>
               );
             })}
           </nav>
+          <button
+            ref={searchToggleRef}
+            type="button"
+            className="landing-header-search-toggle"
+            aria-label={searchOpen ? "Close search" : "Open search"}
+            aria-expanded={searchOpen}
+            onClick={handleSearchToggle}
+          >
+            <HugeiconsIcon icon={Search01Icon} size="16" strokeWidth={2} />
+          </button>
+          <div className="landing-header-search-bar" aria-hidden={!searchOpen}>
+            <input
+              ref={searchInputRef}
+              type="search"
+              placeholder="Search SafeKid…"
+              aria-label="Search"
+            />
+            <button
+              type="button"
+              className="landing-header-search-close"
+              aria-label="Close search"
+              onClick={handleSearchClose}
+            >
+              ×
+            </button>
+          </div>
           <a
             className="landing-header-cta"
-            href={isContact ? "#contact-message" : "#/contact"}
+            href="#/contact"
             aria-current={isContact ? "page" : undefined}
+            onClick={() => setMenuOpen(false)}
           >
             {isContact ? "Write to the team" : "Talk to the team"}
             <svg className="landing-arrow-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">

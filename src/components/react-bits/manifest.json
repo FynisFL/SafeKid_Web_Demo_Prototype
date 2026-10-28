@@ -1,0 +1,15 @@
+{
+  "source": "React Bits",
+  "components": [
+    {
+      "name": "PromptBar",
+      "variant": "JS-CSS",
+      "registry": "@react-bits/PromptBar-JS-CSS"
+    },
+    {
+      "name": "ThoughtLine",
+      "variant": "JS-CSS",
+      "registry": "@react-bits/ThoughtLine-JS-CSS"
+    }
+  ]
+}

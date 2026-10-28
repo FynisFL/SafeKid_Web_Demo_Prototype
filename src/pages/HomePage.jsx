@@ -3,8 +3,10 @@ import heroWatch from "../assets/figma/zodiac-collection-hero-watch.png";
 import { LandingFooter, LandingHeader } from "../components/LandingChrome.jsx";
 import PixelTransition from "../components/PixelTransition.jsx";
 import TiltedCard from "../components/TiltedCard.jsx";
+import DotGrid from "../components/react-bits/DotGrid.jsx";
 import { zodiacProducts } from "../data/zodiac.js";
 import useScrollReveal from "../hooks/useScrollReveal.js";
+import useParallax from "../hooks/useParallax.js";
 import "../styles/safekid-landing.css";
 
 const editionNames = {
@@ -33,7 +35,28 @@ function ArrowIcon() {
 function Hero({ heroRef }) {
   return (
     <section className="landing-hero" id="top" ref={heroRef}>
-      <div className="landing-hero-glow" aria-hidden="true" />
+      <div className="landing-hero-glow" aria-hidden="true" data-parallax="slow" />
+      <div className="landing-hero-dotgrid" aria-hidden="true">
+        <DotGrid
+          baseColor="#3a3446"
+          activeColor="#ffffff"
+          shape="circle"
+          dotSize={5}
+          gap={18}
+          proximity={140}
+          strength={1}
+          bounce={0.6}
+          tension={0.4}
+          returnDuration={0.8}
+          shockRadius={320}
+          shockStrength={5}
+          swell={0.8}
+          stretch={0.5}
+          glow={0.5}
+          fade={0}
+          intro={true}
+        />
+      </div>
       <div className="landing-container landing-hero-inner">
         <div className="landing-hero-copy">
           <p className="landing-eyebrow"><span /> A LITTLE MORE ROOM TO GROW</p>
@@ -140,7 +163,7 @@ function StoryScene({ sectionRef, stageRef, activeBeat, onBeatChange }) {
       </div>
       <div className="landing-story-track">
         <div className="landing-story-stage" ref={stageRef}>
-          <div className="landing-story-backdrop" aria-hidden="true" />
+          <div className="landing-story-backdrop" aria-hidden="true" data-parallax="slow" />
           <div className="landing-container landing-story-layout">
             <div
               className="landing-story-copy"
@@ -417,8 +440,8 @@ function Closing({ selectedProduct }) {
   const label = editionNames[selectedProduct.id];
   return (
     <section className="landing-closing">
-      <div className="landing-closing-orb landing-closing-orb-one" aria-hidden="true" />
-      <div className="landing-closing-orb landing-closing-orb-two" aria-hidden="true" />
+      <div className="landing-closing-orb landing-closing-orb-one" aria-hidden="true" data-parallax="fast" />
+      <div className="landing-closing-orb landing-closing-orb-two" aria-hidden="true" data-parallax="slow" />
       <div className="landing-container landing-closing-inner" data-reveal="up">
         <p className="landing-eyebrow landing-eyebrow-light"><span /> FOR ALL THE LITTLE ADVENTURES AHEAD</p>
         <h2 className="landing-display">Independence,<br /><em>with connection.</em></h2>
@@ -505,6 +528,7 @@ export default function HomePage() {
   const selectedProduct = zodiacProducts.find((item) => item.id === selectedId) ?? zodiacProducts[0];
 
   useScrollReveal(pageRef);
+  useParallax(pageRef, { speed: 0.06 });
   useStoryMotion(stageRef);
 
   return (

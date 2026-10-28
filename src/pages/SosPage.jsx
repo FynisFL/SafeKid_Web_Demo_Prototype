@@ -1,8 +1,18 @@
 import { useState } from "react";
 import SiteLayout from "../components/SiteLayout.jsx";
+import usePressHold from "../hooks/usePressHold.js";
+import "../styles/interactive.css";
 
 export default function SosPage() {
   const [acknowledged, setAcknowledged] = useState(false);
+
+  const { progress, isHolding, handlers } = usePressHold({
+    duration: 1200,
+    onHoldComplete: () => setAcknowledged(true),
+  });
+
+  const circumference = 2 * Math.PI * 90;
+  const dashOffset = circumference - progress * circumference;
 
   return (
     <SiteLayout>
@@ -16,10 +26,26 @@ export default function SosPage() {
           </div>
           <div className="sos-demo" data-reveal="scale">
             <p>LOCAL DEMO ONLY</p>
-            <button type="button" onClick={() => setAcknowledged(true)}>
-              {acknowledged ? "Demo acknowledged" : "Try the demo"}
-            </button>
-            <span role="status">{acknowledged ? "No alert was sent." : "Tap to see a local confirmation."}</span>
+            <div className="sos-button-wrap" {...handlers}>
+              <button type="button" onClick={() => setAcknowledged(true)}>
+                <svg className="sos-progress-ring" viewBox="0 0 200 200" aria-hidden="true">
+                  <circle className="sos-progress-bg" cx="100" cy="100" r="90" />
+                  <circle
+                    className="sos-progress-fill"
+                    cx="100"
+                    cy="100"
+                    r="90"
+                    style={{
+                      strokeDasharray: circumference,
+                      strokeDashoffset: dashOffset,
+                      opacity: isHolding ? 1 : 0,
+                    }}
+                  />
+                </svg>
+                {acknowledged ? "Demo acknowledged" : "Try the demo"}
+              </button>
+            </div>
+            <span role="status">{acknowledged ? "No alert was sent." : "Hold to confirm the demo."}</span>
           </div>
         </div>
       </section>

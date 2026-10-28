@@ -237,13 +237,28 @@
 
 .support-faq-list details {
   border-top: 1px solid rgba(16, 42, 56, .16);
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity .45s cubic-bezier(.22, .8, .25, 1),
+    transform .45s cubic-bezier(.22, .8, .25, 1),
+    border-color .2s ease;
+}
+
+.support-faq-list details[data-revealed] {
+  opacity: 1;
+  transform: none;
+}
+
+.support-faq-list details[open] {
+  border-color: rgba(0, 199, 202, 0.25);
 }
 
 .support-faq-list details:last-child {
   border-bottom: 1px solid rgba(16, 42, 56, .16);
 }
 
-.support-faq-list summary {
+.support-faq-list .support-faq-summary {
   display: grid;
   min-height: 68px;
   grid-template-columns: 30px minmax(0, 1fr) 24px;
@@ -251,9 +266,16 @@
   gap: 10px;
   cursor: pointer;
   list-style: none;
+  background: none;
+  border: 0;
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  padding: 0;
 }
 
-.support-faq-list summary::-webkit-details-marker { display: none; }
+.support-faq-list .support-faq-summary::-webkit-details-marker { display: none; }
 
 .support-faq-number {
   color: var(--support-muted);
@@ -261,7 +283,7 @@
   font-variant-numeric: tabular-nums;
 }
 
-.support-faq-list summary > span:nth-child(2) {
+.support-faq-list .support-faq-summary > span:nth-child(2) {
   font-family: "Plus Jakarta Sans", sans-serif;
   font-size: 13px;
   font-weight: 500;
@@ -269,7 +291,7 @@
   line-height: 1.45;
 }
 
-.support-faq-list summary > i {
+.support-faq-list .support-faq-summary > i {
   position: relative;
   width: 20px;
   height: 20px;
@@ -278,8 +300,8 @@
   border-radius: 50%;
 }
 
-.support-faq-list summary > i::before,
-.support-faq-list summary > i::after {
+.support-faq-list .support-faq-summary > i::before,
+.support-faq-list .support-faq-summary > i::after {
   position: absolute;
   top: 9px;
   left: 5px;
@@ -289,26 +311,36 @@
   content: "";
 }
 
-.support-faq-list summary > i::after {
+.support-faq-list .support-faq-summary > i::after {
   transform: rotate(90deg);
   transition: transform .2s ease;
 }
 
-.support-faq-list details[open] summary > i::after { transform: rotate(0); }
+.support-faq-list .is-open .support-faq-summary > i::after { transform: rotate(0); }
 
 .support-faq-answer {
-  display: grid;
-  grid-template-rows: 0fr;
+  max-height: 0;
   opacity: 0;
-  transition: grid-template-rows .3s cubic-bezier(.22, .8, .25, 1), opacity .2s ease;
+  overflow: hidden;
+  will-change: max-height, opacity;
+  transition: max-height 400ms cubic-bezier(.22, .8, .25, 1), opacity 300ms cubic-bezier(.22, .8, .25, 1);
 }
 
-.support-faq-list details[open] .support-faq-answer {
-  grid-template-rows: 1fr;
+.support-faq-list .is-open .support-faq-answer {
+  max-height: 400px;
   opacity: 1;
 }
 
-.support-faq-answer > div { overflow: hidden; }
+.support-faq-answer > div {
+  overflow: hidden;
+  min-height: 0;
+  transform: translateY(-6px);
+  transition: transform .35s cubic-bezier(.22, .8, .25, 1);
+}
+
+.support-faq-list .is-open .support-faq-answer > div {
+  transform: translateY(0);
+}
 
 .support-faq-answer p {
   max-width: 610px;
@@ -316,6 +348,7 @@
   color: var(--support-muted);
   font-size: 12px;
   line-height: 1.75;
+  min-height: 0;
 }
 
 .support-concept-note {
@@ -400,7 +433,7 @@
   .support-faq-layout { grid-template-columns: 1fr; gap: 30px; }
   .support-faq-intro h2 { font-size: clamp(38px, 8vw, 51px); }
   .support-faq-list summary { min-height: 66px; grid-template-columns: 24px minmax(0, 1fr) 22px; gap: 8px; }
-  .support-faq-list summary > span:nth-child(2) { font-size: 12px; }
+  .support-faq-list .support-faq-summary > span:nth-child(2) { font-size: 12px; }
   .support-faq-answer p { margin-left: 32px; margin-right: 23px; }
 }
 
@@ -409,3 +442,6 @@
   .support-concept-inner { grid-template-columns: 1fr; gap: 10px; }
   .support-concept-inner > a { grid-column: 1; }
 }
+       
+ 
+ 

@@ -1,8 +1,13 @@
 import { useRef } from "react";
 import { LandingFooter, LandingHeader } from "../components/LandingChrome.jsx";
 import useScrollReveal from "../hooks/useScrollReveal.js";
+import useParallax from "../hooks/useParallax.js";
+import InteractiveCard from "../components/InteractiveCard.jsx";
+import RippleButton from "../components/RippleButton.jsx";
+import ShapeGrid from "../components/ShapeGrid.jsx";
 import "../styles/safekid-landing.css";
 import "../styles/contact-page.css";
+import "../styles/interactive.css";
 
 function ContactArrow() {
   return (
@@ -15,6 +20,7 @@ function ContactArrow() {
 export default function ContactPage() {
   const pageRef = useRef(null);
   useScrollReveal(pageRef);
+  useParallax(pageRef, { speed: 0.05 });
 
   function openEmailDraft(event) {
     event.preventDefault();
@@ -33,6 +39,25 @@ export default function ContactPage() {
       <LandingHeader variant="contact" />
       <main>
         <section className="contact-hero">
+          <div style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }} aria-hidden="true">
+            <ShapeGrid
+              shape="cross"
+              direction="none"
+              lineColor="#c8eaea"
+              hoverColor="#00c7ca"
+              hoverFillColor="#66fcff"
+              fillOpacity={0}
+              cellSize={34}
+              speed={0.45}
+              tiltX={0}
+              tiltY={0}
+              rainbow={false}
+              lineWidth={0.75}
+              radius={1.3}
+              glow={1}
+              twinkle={0.4}
+            />
+          </div>
           <div className="landing-container contact-hero-inner">
             <div className="contact-hero-copy" data-reveal="up">
               <p className="landing-eyebrow"><span /> LET'S START A CONVERSATION</p>
@@ -45,11 +70,11 @@ export default function ContactPage() {
               </a>
             </div>
             <div className="contact-hero-art" data-reveal="fade" aria-hidden="true">
-              <span className="contact-orbit contact-orbit-one" />
-              <span className="contact-orbit contact-orbit-two" />
-              <span className="contact-orbit contact-orbit-three" />
-              <span className="contact-orbit-dot contact-orbit-dot-one" />
-              <span className="contact-orbit-dot contact-orbit-dot-two" />
+              <span className="contact-orbit contact-orbit-one" data-motion="spin-slow" />
+              <span className="contact-orbit contact-orbit-two" data-motion="spin-slow" />
+              <span className="contact-orbit contact-orbit-three" data-motion="spin-slow" />
+              <span className="contact-orbit-dot contact-orbit-dot-one" data-motion="pulse" />
+              <span className="contact-orbit-dot contact-orbit-dot-two" data-motion="pulse" />
               <span className="contact-hero-monogram" data-motion="drift">S<span>.</span></span>
               <p>ROOM TO GROW<br />SPACE TO CONNECT</p>
             </div>
@@ -88,7 +113,7 @@ export default function ContactPage() {
                 </label>
               </div>
               <div className="contact-form-bottom">
-                <button className="contact-submit" type="submit">Open email draft <ContactArrow /></button>
+                <RippleButton className="contact-submit" type="submit" glowColor="#00C7CA">Open email draft <ContactArrow /></RippleButton>
                 <p>Your email app opens with this message ready. Nothing is sent until you press Send.</p>
               </div>
             </form>
@@ -98,20 +123,20 @@ export default function ContactPage() {
               <h3>Here’s where<br />to find us.</h3>
               <p className="contact-details-copy">Prefer email or a quick call? Get in touch using the details below.</p>
               <div className="contact-detail-list">
-                <a className="contact-detail" href="mailto:support@safekid.com">
+                <InteractiveCard as="a" className="contact-detail" href="mailto:support@safekid.com" intensity={4} scaleOnHover={1.01} glowColor="#00C7CA" variant="border-glow">
                   <span className="contact-detail-icon" aria-hidden="true">@</span>
                   <span><small>EMAIL</small><strong>support@safekid.com</strong></span>
                   <ContactArrow />
-                </a>
-                <a className="contact-detail" href="tel:+84123456789">
+                </InteractiveCard>
+                <InteractiveCard as="a" className="contact-detail" href="tel:+841****6789" intensity={4} scaleOnHover={1.01} glowColor="#00C7CA" variant="border-glow">
                   <span className="contact-detail-icon" aria-hidden="true">↗</span>
                   <span><small>PHONE</small><strong>+(84) 123 456 789</strong></span>
                   <ContactArrow />
-                </a>
-                <div className="contact-detail">
+                </InteractiveCard>
+                <InteractiveCard as="div" className="contact-detail" intensity={3} scaleOnHover={1.01} glowColor="#00C7CA" variant="border-glow">
                   <span className="contact-detail-icon" aria-hidden="true">⌖</span>
                   <span><small>LOCATION</small><strong>Ho Chi Minh City, Vietnam</strong></span>
-                </div>
+                </InteractiveCard>
               </div>
               <div className="contact-details-footer">
                 <span className="contact-status-dot" />

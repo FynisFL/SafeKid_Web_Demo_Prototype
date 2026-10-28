@@ -2,8 +2,11 @@ import { useRef } from "react";
 import { LandingFooter, LandingHeader } from "../components/LandingChrome.jsx";
 import { zodiacProducts } from "../data/zodiac.js";
 import useScrollReveal from "../hooks/useScrollReveal.js";
+import useParallax from "../hooks/useParallax.js";
+import InteractiveCard from "../components/InteractiveCard.jsx";
 import "../styles/safekid-landing.css";
 import "../styles/zodiac-page.css";
+import "../styles/interactive.css";
 
 function ArrowIcon() {
   return (
@@ -20,12 +23,14 @@ function EditionCard({ product, index }) {
       data-reveal="up"
       data-reveal-delay={String(index % 3 + 1)}
     >
-      <a className="zodiac-edition-art" href={`#/product/${product.id}`} aria-label={`Explore the ${product.label} SafeKid concept`}>
-        <span className="zodiac-edition-index">{String(index + 1).padStart(2, "0")}</span>
-        <span className="zodiac-edition-halo" aria-hidden="true" />
-        <img src={product.image} alt={`${product.label} edition SafeKid smartwatch concept`} loading="lazy" />
-        <span className="zodiac-edition-art-link">Explore <ArrowIcon /></span>
-      </a>
+      <InteractiveCard intensity={6} scaleOnHover={1.02} glowColor="#00C7CA">
+        <a className="zodiac-edition-art" href={`#/product/${product.id}`} aria-label={`Explore the ${product.label} SafeKid concept`}>
+          <span className="zodiac-edition-index">{String(index + 1).padStart(2, "0")}</span>
+          <span className="zodiac-edition-halo" aria-hidden="true" />
+          <img src={product.image} alt={`${product.label} edition SafeKid smartwatch concept`} loading="lazy" />
+          <span className="zodiac-edition-art-link">Explore <ArrowIcon /></span>
+        </a>
+      </InteractiveCard>
       <div className="zodiac-edition-info">
         <div>
           <span>VIETNAMESE ZODIAC / {product.animal.toUpperCase()}</span>
@@ -40,6 +45,7 @@ function EditionCard({ product, index }) {
 export default function ZodiacPage() {
   const pageRef = useRef(null);
   useScrollReveal(pageRef);
+  useParallax(pageRef, { speed: 0.05 });
 
   return (
     <div className="safekid-landing zodiac-page" ref={pageRef}>
@@ -54,8 +60,8 @@ export default function ZodiacPage() {
               <a className="zodiac-hero-link" href="#zodiac-editions">Explore all 12 editions <ArrowIcon /></a>
             </div>
             <div className="zodiac-hero-art" data-reveal="fade" data-motion="drift">
-              <span className="zodiac-hero-orbit zodiac-hero-orbit-one" aria-hidden="true" />
-              <span className="zodiac-hero-orbit zodiac-hero-orbit-two" aria-hidden="true" />
+              <span className="zodiac-hero-orbit zodiac-hero-orbit-one" data-motion="spin-slow" aria-hidden="true" />
+              <span className="zodiac-hero-orbit zodiac-hero-orbit-two" data-motion="spin-slow" aria-hidden="true" />
               <img src={zodiacProducts[0].image} alt="Mouse edition SafeKid smartwatch concept" />
               <span className="zodiac-hero-caption"><i /> A COLLECTION WITH CHARACTER</span>
             </div>
