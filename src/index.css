@@ -1,0 +1,344 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 201 56% 14%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 201 56% 14%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 201 56% 14%;
+
+    /* SafeKid turquoise */
+    --primary: 181 100% 40%;
+    --primary-foreground: 197 60% 10%;
+
+    --secondary: 178 62% 92%;
+    --secondary-foreground: 201 56% 14%;
+
+    --muted: 180 30% 96%;
+    --muted-foreground: 199 18% 42%;
+
+    --accent: 178 62% 92%;
+    --accent-foreground: 201 56% 14%;
+
+    --destructive: 358 66% 52%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 185 26% 88%;
+    --input: 185 26% 88%;
+    --ring: 181 100% 40%;
+
+    /* Brand scale */
+    --deep: 199 40% 29%;
+    --night: 201 58% 10%;
+    --mist: 180 41% 97%;
+    --aqua-soft: 178 62% 92%;
+    --ink: 201 56% 14%;
+
+    --radius: 1rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 6.5rem;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    overflow-x: clip;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.28);
+    color: hsl(var(--night));
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--primary));
+    outline-offset: 3px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer components {
+  .shell {
+    @apply mx-auto w-full px-5 sm:px-8 lg:px-12;
+    max-width: 1320px;
+  }
+
+  .shell-tight {
+    @apply mx-auto w-full px-5 sm:px-8 lg:px-12;
+    max-width: 1120px;
+  }
+
+  .eyebrow {
+    @apply flex items-center gap-3 font-sans text-[11px] font-semibold uppercase tracking-[0.24em] text-deep/70;
+  }
+
+  .eyebrow-line {
+    @apply block h-px w-8 bg-primary;
+  }
+
+  .eyebrow-inverse {
+    @apply text-aqua-soft/80;
+  }
+
+  .display {
+    @apply font-display font-medium leading-[0.94] tracking-[-0.045em] text-ink;
+  }
+
+  .display-xl {
+    @apply display text-[clamp(2.9rem,7.3vw,6.4rem)];
+  }
+
+  .display-lg {
+    @apply display text-[clamp(2.3rem,4.7vw,4.3rem)];
+  }
+
+  .display-md {
+    @apply display text-[clamp(1.9rem,3.2vw,3rem)];
+  }
+
+  .lede {
+    @apply text-[15px] leading-[1.75] text-muted-foreground sm:text-base;
+  }
+
+  .rule {
+    @apply h-px w-full bg-border;
+  }
+
+  .glass-panel {
+    @apply rounded-[28px] border border-white/60 bg-white/75 backdrop-blur-xl;
+    box-shadow: 0 30px 80px -50px hsl(var(--deep) / 0.55);
+  }
+
+  .hairline-card {
+    @apply rounded-[28px] border border-border/80 bg-white;
+    box-shadow: 0 24px 70px -60px hsl(var(--deep) / 0.7);
+  }
+
+  .stage-glow {
+    background: radial-gradient(
+      circle at 50% 46%,
+      hsl(var(--secondary) / 0.95) 0%,
+      hsl(var(--mist) / 0.7) 42%,
+      transparent 70%
+    );
+  }
+
+  .link-underline {
+    @apply relative inline-flex items-center gap-2 text-sm font-medium text-ink;
+  }
+
+  .link-underline::after {
+    content: "";
+    @apply absolute -bottom-1 left-0 h-px w-full origin-left scale-x-100 bg-ink/25 transition-transform duration-500;
+  }
+
+  .link-underline:hover::after {
+    @apply scale-x-100 bg-primary;
+  }
+
+  .skip-link {
+    @apply fixed left-4 top-4 z-[100] -translate-y-24 rounded-full bg-ink px-5 py-3 text-sm text-white transition-transform focus:translate-y-0;
+  }
+
+  .noise-layer {
+    background-image: radial-gradient(hsl(var(--deep) / 0.05) 0.5px, transparent 0.5px);
+    background-size: 4px 4px;
+  }
+}
+
+@layer utilities {
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  .mask-fade-b {
+    mask-image: linear-gradient(to bottom, black 65%, transparent 100%);
+  }
+
+  .perspective-1200 {
+    perspective: 1200px;
+  }
+
+  .animation-paused {
+    animation-play-state: paused;
+  }
+
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@keyframes sk-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes sk-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -10px, 0);
+  }
+}
+
+@keyframes sk-pulse {
+  0% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.35);
+  }
+}
+
+.animate-sk-spin {
+  animation: sk-spin 48s linear infinite;
+}
+
+.animate-sk-float {
+  animation: sk-float 7s ease-in-out infinite;
+}
+
+.animate-sk-pulse {
+  animation: sk-pulse 3.4s ease-out infinite;
+}
+
+/* ------------------------------------------------------------------ */
+/* Interaction motion                                                   */
+/* ------------------------------------------------------------------ */
+
+/* Light sweep + press-down for solid buttons. Uses the `scale` property so it
+   composes with Tailwind's hover translate instead of fighting it. */
+.btn-motion {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition-property: background-color, border-color, color, box-shadow, translate, scale, transform;
+}
+
+.btn-motion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(110deg, transparent 32%, var(--shine, rgb(255 255 255 / 0.28)) 50%, transparent 68%);
+  transform: translateX(-120%);
+  transition: transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.btn-motion:hover::before {
+  transform: translateX(120%);
+}
+
+.btn-motion:active {
+  scale: 0.97;
+}
+
+.btn-motion-light {
+  --shine: hsl(var(--primary) / 0.22);
+}
+
+/* Small press feedback for chips, icon buttons and pills. */
+.press {
+  transition: scale 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.press:active {
+  scale: 0.95;
+}
+
+/* Arrow icons nudge when their parent .group is hovered. */
+.arrow-nudge {
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.group:hover .arrow-nudge {
+  transform: translate(2px, -2px);
+}
+
+/* Inputs: gentle lift when focused. */
+.field-motion {
+  transition: box-shadow 0.3s ease, border-color 0.3s ease, translate 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.field-motion:focus {
+  translate: 0 -1px;
+  box-shadow: 0 12px 30px -18px hsl(var(--primary) / 0.55);
+}
+
+@keyframes sk-ring {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.38);
+  }
+}
+
+.animate-sk-ring {
+  animation: sk-ring 2.6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-motion::before {
+    display: none;
+  }
+  .btn-motion:active,
+  .press:active {
+    scale: 1;
+  }
+}
