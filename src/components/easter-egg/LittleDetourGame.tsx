@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { ArrowUp, RefreshCw, X } from "lucide-react";
+import { ArrowUp, RefreshCw, Volume2, VolumeX, X } from "lucide-react";
 import "./LittleDetourGame.css";
 
 type Phase = "intro" | "playing" | "gameover";
@@ -46,6 +46,7 @@ const PLAYER_X = 150;
 const PLAYER_W = 48;
 const PLAYER_H = 76;
 const BEST_KEY = "safekid-little-detour-best-v1";
+const GAME_ART = `${import.meta.env.BASE_URL}game-art/alley.png`;
 
 function zoneFor(distance: number): Zone {
   if (distance < 1500) return "alley";
@@ -129,8 +130,19 @@ function drawTree(ctx: CanvasRenderingContext2D, x: number, y: number, scale = 1
   ctx.restore();
 }
 
-function drawBackground(ctx: CanvasRenderingContext2D, distance: number, time: number) {
+function drawBackground(ctx: CanvasRenderingContext2D, distance: number, time: number, background: HTMLImageElement | null) {
   const zone = zoneFor(distance);
+  if (background?.complete && background.naturalWidth) {
+    const scale = Math.max(WIDTH / background.naturalWidth, HEIGHT / background.naturalHeight);
+    const bw = background.naturalWidth * scale; const bh = background.naturalHeight * scale;
+    const offset = (distance * 0.12) % Math.max(1, bw - WIDTH);
+    ctx.drawImage(background, -offset, (HEIGHT - bh) / 2, bw, bh);
+    ctx.fillStyle = zone === "school" ? "rgba(255, 226, 170, .16)" : zone === "field" ? "rgba(186, 211, 151, .17)" : "rgba(255, 244, 215, .1)";
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+    ctx.fillStyle = "rgba(192, 156, 107, .9)"; ctx.fillRect(0, GROUND, WIDTH, HEIGHT-GROUND);
+    ctx.fillStyle = "#8da879"; ctx.fillRect(0, GROUND-5, WIDTH, 8);
+    return zone;
+  }
   const sky = ctx.createLinearGradient(0, 0, 0, HEIGHT);
   sky.addColorStop(0, zone === "field" ? "#94c6d0" : "#a9d6df");
   sky.addColorStop(0.7, "#f3ddb8");
@@ -431,6 +443,9 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
   const [collected, setCollected] = useState(0);
   const [best, setBest] = useState(safeReadBest);
   const [zone, setZone] = useState<Zone>("alley");
+  const [muted, setMuted] = useState(true);
+  const mutedRef = useRef(true);
+  mutedRef.current = muted;
 
   const startRun = useCallback(() => {
     setScore(0);
@@ -476,6 +491,16 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
+    const background = new Image();
+    background.src = GAME_ART;
+    let audio: AudioContext | null = null;
+    const beep = (frequency: number, duration: number, shape: OscillatorType = "sine") => {
+      if (mutedRef.current || !audio || audio.state !== "running") return;
+      const osc = audio.createOscillator(); const gain = audio.createGain();
+      osc.type=shape; osc.frequency.setValueAtTime(frequency,audio.currentTime);
+      gain.gain.setValueAtTime(.0001,audio.currentTime); gain.gain.exponentialRampToValueAtTime(.08,audio.currentTime+.015); gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+duration);
+      osc.connect(gain); gain.connect(audio.destination); osc.start(); osc.stop(audio.currentTime+duration);
+    };
     let frame = 0;
     let lastTime = 0;
     let frameCount = 0;
@@ -506,13 +531,13 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       canvas.height = Math.max(1, Math.round(rect.height * dpr));
       ctx.setTransform(canvas.width / WIDTH, 0, 0, canvas.height / HEIGHT, 0, 0);
       if (phase !== "playing") {
-        drawBackground(ctx, 320, 0);
+        drawBackground(ctx, 320, 0, background);
         drawPlayer(ctx, player, 0);
       }
     };
 
     const drawFrame = (time: number) => {
-      const currentZone = drawBackground(ctx, world.distance, time);
+      const currentZone = drawBackground(ctx, world.distance, time, background);
       if (phase === "playing") {
         for (const plane of world.planes) drawPlane(ctx, plane, time);
         for (const obstacle of world.obstacles) {
@@ -542,6 +567,9 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
 
     jumpRef.current = () => {
       if (player.onGround) {
+        if (!audio) audio = new AudioContext();
+        if (audio.state === "suspended") void audio.resume();
+        beep(520, .12, "triangle");
         player.vy = -720;
         player.onGround = false;
       }
@@ -622,6 +650,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           playerBox.bottom > obstacleTop &&
           playerBox.top < obstacleBottom
         ) {
+          beep(150, .35, "triangle");
           finishRun();
           return;
         }
@@ -635,7 +664,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           playerBox.left < planeBox.right &&
           playerBox.bottom > planeBox.top &&
           playerBox.top < planeBox.bottom;
-        if (hit) world.collected += 1;
+        if (hit) { world.collected += 1; beep(880, .2, "sine"); }
         return !hit;
       });
       if (before !== world.planes.length) setCollected(world.collected);
@@ -677,6 +706,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           </div>
           <div className="little-detour__top-actions">
             <span className="little-detour__best">BEST <b>{best.toLocaleString()}</b></span>
+            <button className="little-detour__icon-button" onClick={() => setMuted((value) => !value)} aria-label={muted ? "Enable sound" : "Mute sound"} title={muted ? "Enable sound" : "Mute sound"}>{muted ? <VolumeX size={17} /> : <Volume2 size={17} />}</button>
             <button className="little-detour__icon-button" onClick={onClose} aria-label="Close secret game">
               <X size={19} />
             </button>
