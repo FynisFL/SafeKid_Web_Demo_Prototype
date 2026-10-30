@@ -7,13 +7,15 @@ import { routers } from "./router";
 // leaves a second router listening to history. The pathless root route is the
 // shared errorElement every page bubbles up to; a page can still declare its
 // own errorElement, statically or through lazy().
+const appBasePath = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
+
 const router = createBrowserRouter([
   {
     errorElement: <RouteErrorBoundary />,
     element: <RootShell />,
     children: routers,
   },
-], { basename: "/SafeKid_Web_Demo_Prototype" });
+], { basename: appBasePath });
 
 function PageLoader() {
   return (

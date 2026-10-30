@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a6d1df"/>
+      <stop offset="1" stop-color="#f2edcf"/>
+    </linearGradient>
+    <linearGradient id="lawn" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a9c18c"/>
+      <stop offset="1" stop-color="#789b72"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1280" cy="150" r="48" fill="#f5e2b8" opacity=".9"/>
+  <g fill="#fff8e8" opacity=".82">
+    <path d="M180 150c24-43 77-42 99-5 26-43 89-33 97 15 46 4 53 53 4 61H196c-48-5-51-48-16-71z"/>
+    <path d="M880 110c22-38 68-35 88-2 22-37 78-30 84 12 43 4 46 44 3 52H894c-42-5-45-40-14-62z"/>
+  </g>
+  <path d="M0 545Q210 415 420 520T840 505T1260 485T1600 500V760H0Z" fill="#b7c9a2"/>
+  <path d="M0 620Q240 500 480 605T960 580T1390 585T1600 570V800H0Z" fill="#91ae87"/>
+  <!-- Distant trees -->
+  <g fill="#789b75">
+    <circle cx="130" cy="450" r="85"/><circle cx="205" cy="405" r="104"/><circle cx="280" cy="470" r="78"/>
+    <circle cx="1330" cy="440" r="91"/><circle cx="1410" cy="390" r="108"/><circle cx="1500" cy="465" r="75"/>
+  </g>
+  <g stroke="#87664e" stroke-width="25" stroke-linecap="round">
+    <path d="M205 650V460M1415 665V460"/>
+  </g>
+  <!-- Small playground slide on right -->
+  <g stroke-linejoin="round" stroke-linecap="round">
+    <path d="M1120 560L1190 370L1258 560" stroke="#c27f60" stroke-width="17" fill="none"/>
+    <path d="M1177 408H1318L1375 590" stroke="#759c98" stroke-width="20" fill="none"/>
+    <path d="M1315 590Q1350 620 1393 590" stroke="#d7a16e" stroke-width="15" fill="none"/>
+    <path d="M1170 400H1280" stroke="#87664e" stroke-width="13"/>
+    <path d="M1150 420V555M1280 420V555" stroke="#87664e" stroke-width="11"/>
+  </g>
+  <!-- Simple swing frame -->
+  <g fill="none" stroke="#87664e" stroke-width="13" stroke-linecap="round">
+    <path d="M390 655L455 365L520 655M455 365H675M600 365L650 655"/>
+    <path d="M555 370V535M625 370V535"/>
+  </g>
+  <path d="M532 535H650V550H532Z" fill="#c98a67" stroke="#795744" stroke-width="4"/>
+  <!-- Park path -->
+  <path d="M760 900Q900 795 860 680T1000 590" fill="none" stroke="#d9bd91" stroke-width="116" opacity=".85"/>
+  <path d="M760 900Q900 795 860 680T1000 590" fill="none" stroke="#f1dfbd" stroke-width="7" stroke-dasharray="24 26" opacity=".6"/>
+  <path d="M0 690Q390 660 770 692T1600 685V900H0Z" fill="url(#lawn)"/>
+  <path d="M0 706Q400 680 800 710T1600 700" fill="none" stroke="#d4c39a" stroke-width="14" opacity=".75"/>
+  <g fill="#f4dfb7">
+    <circle cx="130" cy="785" r="6"/><circle cx="265" cy="756" r="5"/><circle cx="700" cy="770" r="6"/>
+    <circle cx="1080" cy="780" r="5"/><circle cx="1480" cy="754" r="6"/>
+  </g>
+</svg>
