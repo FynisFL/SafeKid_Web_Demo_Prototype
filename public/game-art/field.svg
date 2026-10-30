@@ -35,9 +35,9 @@
   <g fill="#f7e4ba"><circle cx="280" cy="664" r="7"/><circle cx="319" cy="692" r="5"/><circle cx="750" cy="675" r="8"/><circle cx="786" cy="649" r="6"/><circle cx="900" cy="680" r="7"/><circle cx="1000" cy="652" r="6"/><circle cx="1420" cy="680" r="7"/><circle cx="1460" cy="650" r="6"/></g>
   <g fill="#d89483"><circle cx="300" cy="656" r="5"/><circle cx="720" cy="689" r="6"/><circle cx="960" cy="680" r="5"/><circle cx="1380" cy="670" r="5"/></g>
   <!-- Foreground fence -->
-  <g stroke="#8c7658" stroke-width="10" fill="none" opacity=".75"><path d="M0 683H1600M0 728H1600"/><path d="M40 650v96m112-96v96m112-96v96m112-96v96m112-96v96m112-96v96m112-96v96m112-96v96m112-96v96m112-96v96m112-96v96m112-96v96m112-96v96m112-96v96"/></g>
-  <path d="M0 742Q340 720 680 741T1280 742T1600 735V900H0Z" fill="url(#path)"/>
-  <path d="M0 750Q360 727 700 750T1300 750T1600 744" fill="none" stroke="#8fa879" stroke-width="16" opacity=".75"/>
+  <g stroke="#8c7658" stroke-width="10" fill="none" opacity=".75"><path d="M0 650H1600M0 685H1600"/><path d="M40 620v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-96v96"/></g>
+  <path d="M0 700Q340 678 680 700T1280 702T1600 696V900H0Z" fill="url(#path)"/>
+  <path d="M0 708Q360 690 700 710T1300 710T1600 705" fill="none" stroke="#8fa879" stroke-width="16" opacity=".75"/>
   <g fill="#f4e4bd" opacity=".35"><path d="M90 835q90-20 170 0t140-2v10H90z"/><path d="M790 815q90-18 170 0t135-1v10H790z"/><path d="M1290 860q60-20 130-2t90-2v10h-220z"/></g>
   <rect width="1600" height="900" fill="url(#paper)" opacity=".48"/>
 </svg>
