@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Mail, MapPin, Phone, Send } from "lucide-react";
+import { ArrowUpRight, Facebook, Mail, MapPin, Phone, Send } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
@@ -12,17 +12,27 @@ const DETAILS = [
     label: "Email",
     value: "safekid.digibabi@gmail.com",
     href: "mailto:safekid.digibabi@gmail.com",
+    external: false,
   },
   {
     icon: Phone,
     label: "Phone",
-    value: "+(84) 123 456 789",
-    href: "tel:+84123456789",
+    value: "0377 430 400",
+    href: "tel:+84377430400",
+    external: false,
+  },
+  {
+    icon: Facebook,
+    label: "Facebook",
+    value: "SafeKid on Facebook",
+    href: "https://www.facebook.com/share/1CennHRUEi/",
+    external: true,
   },
   {
     icon: MapPin,
     label: "Location",
     value: "Ho Chi Minh City, Vietnam",
+    external: false,
   },
 ];
 
@@ -238,6 +248,8 @@ export default function Contact() {
                       {detail.href ? (
                         <a
                           href={detail.href}
+                          target={detail.external ? "_blank" : undefined}
+                          rel={detail.external ? "noopener noreferrer" : undefined}
                           className="group press flex items-center gap-3 rounded-2xl border border-ink/[0.08] px-3.5 py-3 transition-all duration-300 hover:translate-x-1 hover:border-primary/30 hover:bg-mist/50"
                         >
                           {inner}

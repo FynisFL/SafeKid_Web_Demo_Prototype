@@ -57,7 +57,7 @@ const FAQS = [
   {
     question: "How can I contact the team?",
     answer:
-      "Use the Contact page or email safekid.digibabi@gmail.com to reach the SafeKid / DigiBabi team.",
+      "Use the Contact page to email safekid.digibabi@gmail.com, call 0377 430 400, or open the SafeKid Facebook page.",
   },
 ];
 

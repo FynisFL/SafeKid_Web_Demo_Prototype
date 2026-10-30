@@ -121,7 +121,7 @@ function resolveQuestion(text: string): Resolution {
   if (/\b(contact|email|reach|team)\b/.test(query)) {
     return {
       answer:
-        "The SafeKid site lists safekid.digibabi@gmail.com as its contact email. The Contact page opens an email draft; it does not send a message automatically.",
+        "You can contact the SafeKid team by email at safekid.digibabi@gmail.com, by phone at 0377 430 400, or through the Facebook page: https://www.facebook.com/share/1CennHRUEi/. The Contact page opens an email draft; it does not send a message automatically.",
     };
   }
   if (/\b(prototype|help|support)\b/.test(query) || query.includes("what can i ask here")) {
@@ -145,7 +145,7 @@ function resolveQuestion(text: string): Resolution {
   return {
     offerHandoff: true,
     answer:
-      "I can only answer from information shown on the SafeKid concept website, and I can't verify this question from that content. I won't make up an answer. You can preview a human handoff or email safekid.digibabi@gmail.com.",
+      "I can only answer from information shown on the SafeKid concept website, and I can't verify this question from that content. I won't make up an answer. You can preview a human handoff, email safekid.digibabi@gmail.com, call 0377 430 400, or visit https://www.facebook.com/share/1CennHRUEi/.",
   };
 }
 

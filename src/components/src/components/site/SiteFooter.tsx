@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Instagram, Linkedin, Mail, MapPin, Phone, Youtube } from "lucide-react";
+import { ArrowUpRight, Facebook, Mail, MapPin, Phone } from "lucide-react";
 import { BrandMark } from "./BrandMark";
 
 const explore = [
@@ -62,19 +62,19 @@ export function SiteFooter() {
               growing independence.
             </p>
             <div className="mt-6 flex items-center gap-2" aria-label="Social channels">
-              {[Instagram, Youtube, Linkedin].map((Icon, index) => (
-                <span
-                  key={index}
-                  aria-hidden="true"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60"
-                >
-                  <Icon className="h-[15px] w-[15px]" />
-                </span>
-              ))}
+              <a
+                href="https://www.facebook.com/share/1CennHRUEi/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="SafeKid on Facebook"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <Facebook className="h-[15px] w-[15px]" aria-hidden="true" />
+              </a>
               <span className="ml-1 text-[10px] leading-tight text-white/45">
-                Social channels
+                Follow SafeKid
                 <br />
-                not yet published
+                on Facebook
               </span>
             </div>
           </div>
@@ -131,11 +131,11 @@ export function SiteFooter() {
               </li>
               <li>
                 <a
-                  href="tel:+84123456789"
+                  href="tel:+84377430400"
                   className="inline-flex items-center gap-2.5 transition-colors hover:text-primary"
                 >
                   <Phone className="h-4 w-4 text-primary/80" aria-hidden="true" />
-                  +(84) 123 456 789
+                  0377 430 400
                 </a>
               </li>
               <li className="inline-flex items-start gap-2.5">
