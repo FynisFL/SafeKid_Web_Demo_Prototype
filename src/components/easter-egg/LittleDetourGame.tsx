@@ -724,8 +724,8 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
         return;
       }
 
-      const target = event.target as HTMLElement | null;
-      if (target?.closest("button, a, input, textarea, select")) return;
+      const target = event.target;
+      if (target instanceof Element && target.closest("button, a, input, textarea, select")) return;
 
       if (event.code === "Space" || event.code === "ArrowUp" || event.code === "KeyW") {
         event.preventDefault();
