@@ -21,7 +21,8 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
-    base: '/SafeKid_Web_Demo_Prototype/',
+    // GitHub Pages hosts this repository under a project subpath; Vercel and local preview use the domain root.
+    base: process.env.GITHUB_ACTIONS === "true" ? "/SafeKid_Web_Demo_Prototype/" : "/",
     build: {
       outDir: 'dist',
       rollupOptions: {
