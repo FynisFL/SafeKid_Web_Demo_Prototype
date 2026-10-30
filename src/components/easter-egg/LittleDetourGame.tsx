@@ -404,8 +404,8 @@ function drawBackground(
   return zone;
 }
 
-function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, time: number, spriteSheet: HTMLImageElement | null) {
-  const run = Math.sin(time * 12.5);
+function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, time: number, spriteSheet: HTMLImageElement | null, reduceMotion: boolean) {
+  const run = reduceMotion ? 0 : Math.sin(time * 12.5);
   const airborne = !player.onGround;
   const x = player.x;
   const y = player.y;
@@ -421,7 +421,7 @@ function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, time: number,
 
   if (spriteSheet?.complete && spriteSheet.naturalWidth > 0) {
     const frameWidth = spriteSheet.naturalWidth / 4;
-    const frameIndex = airborne ? 3 : Math.floor(time * 10) % 3;
+    const frameIndex = airborne ? 3 : reduceMotion ? 0 : Math.floor(time * 10) % 3;
     ctx.imageSmoothingEnabled = true;
     ctx.drawImage(
       spriteSheet,
@@ -834,7 +834,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       ctx.setTransform(canvas.width / WIDTH, 0, 0, canvas.height / HEIGHT, 0, 0);
       if (phase !== "playing") {
         drawBackground(ctx, 320, 0, sceneImages, reduceMotion);
-        drawPlayer(ctx, player, 0, spriteSheet);
+        drawPlayer(ctx, player, 0, spriteSheet, reduceMotion);
       }
     };
 
@@ -847,9 +847,9 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           else if (obstacle.kind === "bag") drawBag(ctx, obstacle);
           else drawFence(ctx, obstacle);
         }
-        drawPlayer(ctx, player, time, spriteSheet);
+        drawPlayer(ctx, player, time, spriteSheet, reduceMotion);
       } else {
-        drawPlayer(ctx, player, time, spriteSheet);
+        drawPlayer(ctx, player, time, spriteSheet, reduceMotion);
       }
       if (currentZone !== lastZone) {
         lastZone = currentZone;
