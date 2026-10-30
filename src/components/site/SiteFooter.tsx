@@ -172,7 +172,7 @@ export function SiteFooter() {
         SafeKid
       </div>
       {isLittleDetourOpen && (
-        <Suspense fallback={<div className="little-detour__loading">Opening a little detour…</div>}>
+        <Suspense fallback={<div style={{ position: "fixed", inset: 0, zIndex: 10000, display: "grid", placeItems: "center", background: "#17363d", color: "#f8f2df", fontFamily: "Plus Jakarta Sans, Inter, sans-serif", fontSize: 12, letterSpacing: "0.12em" }}>Opening a little detour…</div>}>
           <LittleDetourGame onClose={closeLittleDetour} />
         </Suspense>
       )}
