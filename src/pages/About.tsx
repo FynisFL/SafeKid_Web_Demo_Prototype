@@ -14,10 +14,9 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { Stagger } from "@/components/motion/Stagger";
+import { TeamStory } from "@/components/about/TeamStory";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import { OurPeople } from "@/components/team/OurPeople";
-import type { Member } from "@/components/team/types";
 import heroWatch from "@/assets/safekid/hero-watch.webp";
 import duy from "@/assets/digibabi/duy.webp";
 import linh from "@/assets/digibabi/linh.webp";
@@ -26,6 +25,15 @@ import uyen from "@/assets/digibabi/uyen.webp";
 import { conceptCapabilities, conceptNote } from "@/data/zodiac";
 
 const ease = [0.22, 1, 0.36, 1] as const;
+
+type Member = {
+  name: string;
+  role: string;
+  /** One line on how they work with the team. */
+  summary: string;
+  responsibilities: string[];
+  image: string;
+};
 
 /**
  * Team data as confirmed by DigiBabi. Keep roles and responsibilities exactly as
@@ -170,7 +178,7 @@ function Journey() {
   const line = useSpring(scrollYProgress, { stiffness: 120, damping: 28, restDelta: 0.001 });
 
   return (
-    <section id="our-journey" className="scroll-mt-20 bg-white py-20 sm:py-24 lg:py-28">
+    <section className="bg-white py-20 sm:py-24 lg:py-28">
       <div className="shell grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
         <div className="lg:sticky lg:top-32 lg:self-start">
           <Reveal>
@@ -448,8 +456,7 @@ export default function About() {
         </div>
       </section>
 
-      {/* Our people: cinematic scroll story, see components/team */}
-      <OurPeople members={TEAM} />
+      <TeamStory members={TEAM} />
 
       <Journey />
 
