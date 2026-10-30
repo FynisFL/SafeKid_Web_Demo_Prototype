@@ -44,7 +44,7 @@
     </g>
     <g fill="#a9bd87" opacity=".8"><circle cx="250" cy="362" r="35"/><circle cx="321" cy="325" r="43"/></g>
     <path d="M1450 680Q1435 550 1395 430" stroke="#87664e" stroke-width="27" fill="none" stroke-linecap="round"/>
-    <g fill="#829f74"><circle cx="1350" cy="420" r="82"/><circle cx="1420" cy="365" r="100"/><circle cx="1500" cy="437" r="76/></g>
+    <g fill="#829f74"><circle cx="1350" cy="420" r="82"/><circle cx="1420" cy="365" r="100"/><circle cx="1500" cy="437" r="76"/></g>
   </g>
   <!-- Open schoolyard foreground -->
   <path d="M0 690Q390 662 770 692T1600 685V900H0Z" fill="url(#grass)"/>
