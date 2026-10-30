@@ -43,7 +43,7 @@ const WIDTH = 960;
 const HEIGHT = 540;
 const GROUND = 430;
 const PLAYER_X = 142;
-const PLAYER_W = 60;
+const PLAYER_W = 70;
 const PLAYER_H = 88;
 const BEST_KEY = "safekid-little-detour-best-v1";
 const SCENE_ART: Record<Zone, string> = {
@@ -675,6 +675,7 @@ function safeReadBest() {
 export function LittleDetourGame({ onClose }: { onClose: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const jumpRef = useRef<(() => void) | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
   const [phase, setPhase] = useState<Phase>("intro");
   const [runKey, setRunKey] = useState(0);
   const [score, setScore] = useState(0);
@@ -695,6 +696,14 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
 
   const jump = useCallback(() => {
     jumpRef.current?.();
+  }, []);
+
+  useEffect(() => () => {
+    const context = audioContextRef.current;
+    audioContextRef.current = null;
+    if (context && context.state !== "closed") {
+      void context.close().catch(() => undefined);
+    }
   }, []);
 
   useEffect(() => {
@@ -736,18 +745,18 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       field: new Image(),
     };
     const spriteSheet = new Image();
-    let audio: AudioContext | null = null;
     let disposed = false;
 
     const beep = (frequency: number, duration: number, shape: OscillatorType = "sine") => {
       if (mutedRef.current || disposed) return;
       try {
-        if (!audio) {
+        let context = audioContextRef.current;
+        if (!context || context.state === "closed") {
           const AudioContextConstructor = window.AudioContext;
           if (!AudioContextConstructor) return;
-          audio = new AudioContextConstructor();
+          context = new AudioContextConstructor();
+          audioContextRef.current = context;
         }
-        const context = audio;
         const play = () => {
           if (disposed || mutedRef.current || context.state !== "running") return;
           const oscillator = context.createOscillator();
@@ -777,13 +786,13 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       const image = sceneImages[zoneKey];
       image.decoding = "async";
       image.onload = () => {
-        if (phase !== "playing") drawFrame(0);
+        if (!disposed && phase !== "playing") drawFrame(0);
       };
       image.src = SCENE_ART[zoneKey];
     });
     spriteSheet.decoding = "async";
     spriteSheet.onload = () => {
-      if (phase !== "playing") drawFrame(0);
+      if (!disposed && phase !== "playing") drawFrame(0);
     };
     spriteSheet.src = PLAYER_SPRITE;
     let frame = 0;
@@ -831,7 +840,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
         }
         drawPlayer(ctx, player, time, spriteSheet);
       } else {
-        drawPlayer(ctx, player, time);
+        drawPlayer(ctx, player, time, spriteSheet);
       }
       if (currentZone !== lastZone) {
         lastZone = currentZone;
@@ -923,9 +932,9 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       world.planes = world.planes.filter((plane) => plane.x > -40);
 
       const playerBox = {
-        left: player.x + 9,
-        right: player.x + PLAYER_W - 7,
-        top: player.y + 9,
+        left: player.x + 7,
+        right: player.x + PLAYER_W - 5,
+        top: player.y + 12,
         bottom: player.y + PLAYER_H - 3,
       };
 
@@ -973,9 +982,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       window.cancelAnimationFrame(frame);
       window.removeEventListener("resize", resizeCanvas);
       jumpRef.current = null;
-      if (audio && audio.state !== "closed") {
-        void audio.close().catch(() => undefined);
-      }
+      // The shared AudioContext stays alive between retries and closes on overlay unmount.
     };
     // A new run is intentionally created only when runKey or phase changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
