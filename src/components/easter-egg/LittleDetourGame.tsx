@@ -46,7 +46,12 @@ const PLAYER_X = 142;
 const PLAYER_W = 60;
 const PLAYER_H = 88;
 const BEST_KEY = "safekid-little-detour-best-v1";
-const GAME_ART = `${import.meta.env.BASE_URL}game-art/alley.png`;
+const SCENE_ART: Record<Zone, string> = {
+  alley: `${import.meta.env.BASE_URL}game-art/alley.png`,
+  school: `${import.meta.env.BASE_URL}game-art/school.svg`,
+  field: `${import.meta.env.BASE_URL}game-art/field.svg`,
+};
+const PLAYER_SPRITE = `${import.meta.env.BASE_URL}game-art/boy-run.svg`;
 
 function zoneFor(distance: number): Zone {
   if (distance < 2500) return "alley";
@@ -130,8 +135,54 @@ function drawTree(ctx: CanvasRenderingContext2D, x: number, y: number, scale = 1
   ctx.restore();
 }
 
-function drawBackground(ctx: CanvasRenderingContext2D, distance: number, time: number, background: HTMLImageElement | null) {
+function drawBackground(
+  ctx: CanvasRenderingContext2D,
+  distance: number,
+  time: number,
+  sceneImages: Record<Zone, HTMLImageElement>,
+) {
   const zone = zoneFor(distance);
+  const image = sceneImages[zone];
+
+  if (image?.complete && image.naturalWidth > 0) {
+    // The three painted scenes share a 16:9 composition. A gentle camera drift
+    // gives them depth without repeating a non-seamless illustration.
+    const scale = Math.max(WIDTH / image.naturalWidth, HEIGHT / image.naturalHeight) * 1.045;
+    const imageWidth = image.naturalWidth * scale;
+    const imageHeight = image.naturalHeight * scale;
+    const horizontalTravel = Math.max(0, imageWidth - WIDTH);
+    const camera = 0.5 + Math.sin(distance / 1650) * 0.5;
+    const offsetX = horizontalTravel * camera;
+
+    ctx.drawImage(image, -offsetX, (HEIGHT - imageHeight) / 2, imageWidth, imageHeight);
+
+    // A restrained warm glaze keeps the illustrations cohesive with the cream UI.
+    ctx.fillStyle = zone === "field"
+      ? "rgba(243, 232, 190, 0.045)"
+      : "rgba(255, 244, 220, 0.055)";
+    ctx.fillRect(0, 0, WIDTH, HEIGHT);
+
+    // Foreground paper strokes move faster than the painted scenery.
+    ctx.save();
+    ctx.lineCap = "round";
+    for (let i = 0; i < 30; i += 1) {
+      const x = ((i * 41 - distance * 0.7) % (WIDTH + 70) + WIDTH + 70) % (WIDTH + 70) - 35;
+      const y = GROUND + 18 + (i % 5) * 19;
+      ctx.strokeStyle = i % 3 === 0
+        ? "rgba(255, 245, 216, 0.28)"
+        : "rgba(112, 91, 65, 0.12)";
+      ctx.lineWidth = i % 4 === 0 ? 2 : 1;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.quadraticCurveTo(x + 5, y - 2, x + 12, y + 1);
+      ctx.stroke();
+    }
+    ctx.restore();
+    return zone;
+  }
+
+  // Keep the procedural artwork as a resilient fallback if an image cannot load.
+  const background = sceneImages.alley;
   const sky = ctx.createLinearGradient(0, 0, 0, HEIGHT);
   sky.addColorStop(0, zone === "field" ? "#9bcbd5" : "#acd7e2");
   sky.addColorStop(0.68, "#f5e4c4");
@@ -351,7 +402,7 @@ function drawBackground(ctx: CanvasRenderingContext2D, distance: number, time: n
   return zone;
 }
 
-function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, time: number) {
+function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, time: number, spriteSheet: HTMLImageElement | null) {
   const run = Math.sin(time * 12.5);
   const airborne = !player.onGround;
   const x = player.x;
@@ -365,6 +416,25 @@ function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, time: number)
   ctx.beginPath();
   ctx.ellipse(x + 29, GROUND + 1, airborne ? 15 : 25 - Math.abs(run) * 2, 5, 0, 0, Math.PI * 2);
   ctx.fill();
+
+  if (spriteSheet?.complete && spriteSheet.naturalWidth > 0) {
+    const frameWidth = spriteSheet.naturalWidth / 4;
+    const frameIndex = airborne ? 3 : Math.floor(time * 10) % 3;
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(
+      spriteSheet,
+      frameIndex * frameWidth,
+      0,
+      frameWidth,
+      spriteSheet.naturalHeight,
+      x - 16,
+      y - 8,
+      96,
+      96,
+    );
+    ctx.restore();
+    return;
+  }
 
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -637,6 +707,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.repeat) return;
       if (event.code === "Escape") {
         event.preventDefault();
         onClose();
@@ -659,19 +730,64 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
     const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
 
-    const background = new Image();
-    background.src = GAME_ART;
-    let audio: AudioContext | null = null;
-    const beep = (frequency: number, duration: number, shape: OscillatorType = "sine") => {
-      if (mutedRef.current || !audio || audio.state !== "running") return;
-      const osc = audio.createOscillator(); const gain = audio.createGain();
-      osc.type=shape; osc.frequency.setValueAtTime(frequency,audio.currentTime);
-      gain.gain.setValueAtTime(.0001,audio.currentTime); gain.gain.exponentialRampToValueAtTime(.08,audio.currentTime+.015); gain.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+duration);
-      osc.connect(gain); gain.connect(audio.destination); osc.start(); osc.stop(audio.currentTime+duration);
+    const sceneImages: Record<Zone, HTMLImageElement> = {
+      alley: new Image(),
+      school: new Image(),
+      field: new Image(),
     };
+    const spriteSheet = new Image();
+    let audio: AudioContext | null = null;
+    let disposed = false;
+
+    const beep = (frequency: number, duration: number, shape: OscillatorType = "sine") => {
+      if (mutedRef.current || disposed) return;
+      try {
+        if (!audio) {
+          const AudioContextConstructor = window.AudioContext;
+          if (!AudioContextConstructor) return;
+          audio = new AudioContextConstructor();
+        }
+        const context = audio;
+        const play = () => {
+          if (disposed || mutedRef.current || context.state !== "running") return;
+          const oscillator = context.createOscillator();
+          const gain = context.createGain();
+          oscillator.type = shape;
+          oscillator.frequency.setValueAtTime(frequency, context.currentTime);
+          gain.gain.setValueAtTime(0.0001, context.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.065, context.currentTime + 0.018);
+          gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + duration);
+          oscillator.connect(gain);
+          gain.connect(context.destination);
+          oscillator.start();
+          oscillator.stop(context.currentTime + duration);
+        };
+
+        if (context.state === "suspended") {
+          void context.resume().then(play).catch(() => undefined);
+        } else {
+          play();
+        }
+      } catch {
+        // Sound is optional; never interrupt a run when browser audio is unavailable.
+      }
+    };
+
+    (Object.keys(SCENE_ART) as Zone[]).forEach((zoneKey) => {
+      const image = sceneImages[zoneKey];
+      image.decoding = "async";
+      image.onload = () => {
+        if (phase !== "playing") drawFrame(0);
+      };
+      image.src = SCENE_ART[zoneKey];
+    });
+    spriteSheet.decoding = "async";
+    spriteSheet.onload = () => {
+      if (phase !== "playing") drawFrame(0);
+    };
+    spriteSheet.src = PLAYER_SPRITE;
     let frame = 0;
     let lastTime = 0;
-    let frameCount = 0;
     let scoreClock = 0;
     let world: World = {
       distance: 0,
@@ -699,13 +815,13 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       canvas.height = Math.max(1, Math.round(rect.height * dpr));
       ctx.setTransform(canvas.width / WIDTH, 0, 0, canvas.height / HEIGHT, 0, 0);
       if (phase !== "playing") {
-        drawBackground(ctx, 320, 0, background);
-        drawPlayer(ctx, player, 0);
+        drawBackground(ctx, 320, 0, sceneImages);
+        drawPlayer(ctx, player, 0, spriteSheet);
       }
     };
 
     const drawFrame = (time: number) => {
-      const currentZone = drawBackground(ctx, world.distance, time, background);
+      const currentZone = drawBackground(ctx, world.distance, time, sceneImages);
       if (phase === "playing") {
         for (const plane of world.planes) drawPlane(ctx, plane, time);
         for (const obstacle of world.obstacles) {
@@ -713,7 +829,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           else if (obstacle.kind === "bag") drawBag(ctx, obstacle);
           else drawFence(ctx, obstacle);
         }
-        drawPlayer(ctx, player, time);
+        drawPlayer(ctx, player, time, spriteSheet);
       } else {
         drawPlayer(ctx, player, time);
       }
@@ -721,10 +837,6 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
         lastZone = currentZone;
         setZone(currentZone);
       }
-    };
-
-    background.onload = () => {
-      if (phase !== "playing") drawFrame(0);
     };
 
     resizeCanvas();
@@ -739,9 +851,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
 
     jumpRef.current = () => {
       if (player.onGround) {
-        if (!audio) audio = new AudioContext();
-        if (audio.state === "suspended") void audio.resume();
-        beep(520, .12, "triangle");
+        beep(520, 0.12, "triangle");
         player.vy = -720;
         player.onGround = false;
       }
@@ -765,7 +875,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
 
     const tick = (timestamp: number) => {
       if (!lastTime) lastTime = timestamp;
-      const dt = Math.min((timestamp - lastTime) / 1000, 0.034);
+      const dt = Math.min((timestamp - lastTime) / 1000, 0.05);
       lastTime = timestamp;
 
       world.elapsed += dt;
@@ -783,12 +893,18 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
 
       world.spawnTimer -= dt;
       if (world.spawnTimer <= 0) {
-        const kinds: ObstacleKind[] = ["puddle", "bag", "fence"];
+        const activeZone = zoneFor(world.distance);
+        const kinds: ObstacleKind[] = activeZone === "alley"
+          ? ["puddle", "bag"]
+          : activeZone === "school"
+            ? ["bag", "fence"]
+            : ["puddle", "fence"];
         const kind = kinds[Math.floor(Math.random() * kinds.length)];
         const width = kind === "puddle" ? 66 : kind === "bag" ? 43 : 48;
         const height = kind === "puddle" ? 20 : kind === "bag" ? 48 : 53;
         world.obstacles.push({ x: WIDTH + 40, kind, width, height });
-        world.spawnTimer = Math.max(0.95, 1.62 - world.elapsed * 0.006) + Math.random() * 0.42;
+        const minimumGap = world.speed > 500 ? 1.12 : 1.0;
+        world.spawnTimer = Math.max(minimumGap, 1.58 - world.elapsed * 0.004) + Math.random() * 0.32;
       }
 
       world.planeTimer -= dt;
@@ -848,15 +964,18 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       }
 
       drawFrame(world.elapsed);
-      frameCount += 1;
-      if (frameCount > 0) frame = window.requestAnimationFrame(tick);
+      frame = window.requestAnimationFrame(tick);
     };
 
     frame = window.requestAnimationFrame(tick);
     return () => {
+      disposed = true;
       window.cancelAnimationFrame(frame);
       window.removeEventListener("resize", resizeCanvas);
       jumpRef.current = null;
+      if (audio && audio.state !== "closed") {
+        void audio.close().catch(() => undefined);
+      }
     };
     // A new run is intentionally created only when runKey or phase changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
