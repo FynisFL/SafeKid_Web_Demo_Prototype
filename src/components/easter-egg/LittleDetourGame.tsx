@@ -482,6 +482,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       planes: [],
       collected: 0,
     };
+    let lastZone: Zone = "alley";
     const player: Player = {
       x: PLAYER_X,
       y: GROUND - PLAYER_H,
@@ -515,7 +516,10 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       } else {
         drawPlayer(ctx, player, time);
       }
-      if (currentZone !== zone) setZone(currentZone);
+      if (currentZone !== lastZone) {
+        lastZone = currentZone;
+        setZone(currentZone);
+      }
     };
 
     resizeCanvas();
