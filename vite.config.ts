@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
-    base: '/',
+    base: '/SafeKid_Web_Demo_Prototype/',
     build: {
       outDir: 'dist',
       rollupOptions: {
