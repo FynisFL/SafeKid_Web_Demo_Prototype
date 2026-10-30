@@ -22,6 +22,9 @@ const support = [
 ];
 
 export function SiteFooter() {
+  const [isLittleDetourOpen, setLittleDetourOpen] = useState(false);
+  const closeLittleDetour = useCallback(() => setLittleDetourOpen(false), []);
+
   return (
     <footer className="relative overflow-hidden bg-night text-white">
       <div
