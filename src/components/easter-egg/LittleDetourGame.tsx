@@ -1079,7 +1079,6 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           </div>
           <button
             className="little-detour__jump"
-            onPointerDown={(event) => event.preventDefault()}
             onClick={() => {
               if (phase === "playing") jump();
               else if (phase === "intro" || phase === "gameover") startRun();
