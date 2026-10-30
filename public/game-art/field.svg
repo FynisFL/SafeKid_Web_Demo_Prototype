@@ -1,43 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
   <defs>
-    <linearGradient id="sky" x2="0" y2="1"><stop stop-color="#86c6df"/><stop offset=".76" stop-color="#e3e9ca"/><stop offset="1" stop-color="#f5dfb8"/></linearGradient>
-    <linearGradient id="path" x2="0" y2="1"><stop stop-color="#d9b47e"/><stop offset="1" stop-color="#b98b5d"/></linearGradient>
-    <linearGradient id="meadow" x2="0" y2="1"><stop stop-color="#a7bd7d"/><stop offset="1" stop-color="#6f9a72"/></linearGradient>
-    <filter id="wash" x="-5%" y="-5%" width="110%" height="110%"><feTurbulence type="fractalNoise" baseFrequency=".013" numOctaves="2" seed="8" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/></filter>
-    <pattern id="paper" width="84" height="84" patternUnits="userSpaceOnUse"><path d="M8 18l10-2M50 52l12 3M24 74l8-2" stroke="#765f43" stroke-width="1" opacity=".13"/></pattern>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a8d2df"/>
+      <stop offset="1" stop-color="#f0efd3"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b5c98f"/>
+      <stop offset="1" stop-color="#7d9d73"/>
+    </linearGradient>
   </defs>
   <rect width="1600" height="900" fill="url(#sky)"/>
-  <g fill="#fff8e7" opacity=".77"><path d="M250 135c25-56 90-56 117-12 29-54 104-49 122 14 64 2 67 72 3 83H263c-60-6-63-58-13-85z"/><path d="M1110 117c36-62 104-46 124 5 37-52 108-37 118 19 57 0 71 65 11 76h-249c-61-5-57-65-4-100z"/></g>
-  <g>
-    <path d="M0 505Q160 315 345 470T710 460T1090 450T1600 418V720H0Z" fill="#a9c5a0"/>
-    <path d="M0 580Q225 400 450 545T900 512T1300 535T1600 485V760H0Z" fill="#7fa787"/>
-    <path d="M0 650Q220 510 470 622T930 600T1320 612T1600 585V780H0Z" fill="url(#meadow)"/>
+  <circle cx="1325" cy="145" r="46" fill="#f5e3b9" opacity=".88"/>
+  <g fill="#fff9e9" opacity=".84">
+    <path d="M240 160c24-42 76-40 98-5 25-42 85-33 94 14 44 4 51 51 4 59H255c-46-5-49-46-15-68z"/>
+    <path d="M900 135c19-35 63-32 82-2 20-34 72-28 79 11 40 4 43 41 3 48H912c-39-5-42-38-12-57z"/>
   </g>
-  <!-- Distant village -->
-  <g fill="#dcb78a" opacity=".9"><path d="M1030 488l45-56 57 56z"/><rect x="1040" y="486" width="82" height="60"/><path d="M1140 476l35-46 48 46z"/><rect x="1150" y="473" width="66" height="56"/><path d="M1270 495l38-49 50 49z"/><rect x="1280" y="492" width="70" height="62"/></g>
-  <g fill="#8d6555"><rect x="1061" y="505" width="17" height="28"/><rect x="1170" y="492" width="16" height="25"/><rect x="1305" y="511" width="15" height="28"/></g>
-  <!-- Left tree -->
-  <g filter="url(#wash)">
-    <path d="M108 688Q133 515 195 305M133 552L60 465M165 466L250 380" fill="none" stroke="#77563f" stroke-width="34" stroke-linecap="round"/>
-    <g fill="#73976e"><circle cx="82" cy="342" r="103"/><circle cx="180" cy="302" r="132"/><circle cx="278" cy="390" r="91"/><circle cx="67" cy="454" r="81"/></g>
-    <g fill="#b3c47e" opacity=".8"><circle cx="110" cy="304" r="44"/><circle cx="209" cy="280" r="51"/><circle cx="281" cy="385" r="33"/></g>
+  <path d="M0 550Q240 410 470 530T920 500T1360 495T1600 505V780H0Z" fill="#b8cba3"/>
+  <path d="M0 630Q250 500 530 615T1040 580T1450 590T1600 580V800H0Z" fill="#94b188"/>
+  <!-- Loose tree line -->
+  <g fill="#789b75">
+    <circle cx="130" cy="470" r="75"/><circle cx="195" cy="422" r="97"/><circle cx="270" cy="480" r="66"/>
+    <circle cx="1320" cy="460" r="81"/><circle cx="1410" cy="415" r="99"/><circle cx="1510" cy="475" r="69"/>
   </g>
-  <!-- Stream and small stone bridge -->
-  <path d="M300 630Q440 572 590 620T850 630" fill="none" stroke="#77b5bd" stroke-width="56" opacity=".8"/>
-  <path d="M300 619Q440 575 590 611T850 619" fill="none" stroke="#d7f0df" stroke-width="8" opacity=".6"/>
-  <g filter="url(#wash)">
-    <path d="M355 564Q505 432 690 562" fill="none" stroke="#8a7159" stroke-width="30" stroke-linecap="round"/>
-    <path d="M350 557Q505 439 695 557" fill="none" stroke="#e0c59a" stroke-width="18" stroke-linecap="round"/>
-    <path d="M370 558l15 32m53-73l8 40m54-56l4 42m54-35l-5 39m57-20l-12 34" stroke="#9b7957" stroke-width="9"/>
+  <g stroke="#87664e" stroke-width="23" stroke-linecap="round">
+    <path d="M200 670V470M1410 675V465"/>
   </g>
-  <!-- meadow flowers -->
-  <g fill="#f7e4ba"><circle cx="280" cy="664" r="7"/><circle cx="319" cy="692" r="5"/><circle cx="750" cy="675" r="8"/><circle cx="786" cy="649" r="6"/><circle cx="900" cy="680" r="7"/><circle cx="1000" cy="652" r="6"/><circle cx="1420" cy="680" r="7"/><circle cx="1460" cy="650" r="6"/></g>
-  <g fill="#d89483"><circle cx="300" cy="656" r="5"/><circle cx="720" cy="689" r="6"/><circle cx="960" cy="680" r="5"/><circle cx="1380" cy="670" r="5"/></g>
-  <!-- Foreground fence -->
-  <g stroke="#8c7658" stroke-width="10" fill="none" opacity=".75"><path d="M0 650H1600M0 685H1600"/><path d="M40 620v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-80v80m112-96v96"/></g>
-  <path d="M0 700Q340 678 680 700T1280 702T1600 696V900H0Z" fill="url(#path)"/>
-  <path d="M0 708Q360 690 700 710T1300 710T1600 705" fill="none" stroke="#8fa879" stroke-width="16" opacity=".75"/>
-  <g fill="#f4e4bd" opacity=".35"><path d="M90 835q90-20 170 0t140-2v10H90z"/><path d="M790 815q90-18 170 0t135-1v10H790z"/><path d="M1290 860q60-20 130-2t90-2v10h-220z"/></g>
-  <rect width="1600" height="900" fill="url(#paper)" opacity=".48"/>
+  <!-- Wide winding park path -->
+  <path d="M210 900Q380 800 520 690T780 600" fill="none" stroke="#d9bd91" stroke-width="108" opacity=".85"/>
+  <path d="M210 900Q380 800 520 690T780 600" fill="none" stroke="#f1dfbd" stroke-width="7" stroke-dasharray="22 26" opacity=".62"/>
+  <path d="M0 695Q380 670 770 700T1600 695V900H0Z" fill="url(#grass)"/>
+  <path d="M0 710Q400 686 800 714T1600 707" fill="none" stroke="#d4c39a" stroke-width="15" opacity=".75"/>
+  <g fill="#f6e4b8">
+    <circle cx="95" cy="790" r="6"/><circle cx="325" cy="750" r="5"/><circle cx="650" cy="774" r="6"/>
+    <circle cx="1000" cy="760" r="5"/><circle cx="1450" cy="780" r="6"/>
+  </g>
 </svg>
