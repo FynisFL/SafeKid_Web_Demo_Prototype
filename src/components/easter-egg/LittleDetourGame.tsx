@@ -185,6 +185,7 @@ function drawBackground(
 
   // Keep the procedural artwork as a resilient fallback if an image cannot load.
   const background = sceneImages.alley;
+  const motionDistance = reduceMotion ? 0 : distance;
   const sky = ctx.createLinearGradient(0, 0, 0, HEIGHT);
   sky.addColorStop(0, zone === "field" ? "#9bcbd5" : "#acd7e2");
   sky.addColorStop(0.68, "#f5e4c4");
@@ -192,7 +193,7 @@ function drawBackground(
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-  const cloudOffset = (distance * 0.055) % 1180;
+  const cloudOffset = (motionDistance * 0.055) % 1180;
   drawCloud(ctx, 110 - cloudOffset, 92, 0.88);
   drawCloud(ctx, 475 - cloudOffset * 0.72, 145, 0.72);
   drawCloud(ctx, 900 - cloudOffset, 84, 1.02);
@@ -205,7 +206,7 @@ function drawBackground(
     const bw = background.naturalWidth * scale;
     const bh = background.naturalHeight * scale;
     const travel = Math.max(0, bw - WIDTH);
-    const offset = travel * (0.5 + 0.5 * Math.sin(distance / 980));
+    const offset = travel * (0.5 + 0.5 * Math.sin(motionDistance / 980));
     ctx.drawImage(background, -offset, (GROUND - bh) / 2, bw, bh);
     ctx.fillStyle = "rgba(255, 240, 211, 0.09)";
     ctx.fillRect(0, 0, WIDTH, GROUND);
@@ -218,13 +219,13 @@ function drawBackground(
     ctx.lineTo(WIDTH, GROUND);
     ctx.lineTo(0, GROUND);
     ctx.fill();
-    const houseOffset = (distance * 0.22) % 920;
+    const houseOffset = (motionDistance * 0.22) % 920;
     for (let i = 0; i < 5; i += 1) {
       const x = i * 235 - houseOffset;
       drawHouse(ctx, x, 248 + (i % 2) * 17, 150, 182 - (i % 2) * 16, i % 2 ? "#d8bd91" : "#d69e79");
     }
-    drawTree(ctx, 160 - ((distance * 0.18) % 1000), 426, 0.9);
-    drawTree(ctx, 710 - ((distance * 0.18) % 1000), 426, 0.92);
+    drawTree(ctx, 160 - ((motionDistance * 0.18) % 1000), 426, 0.9);
+    drawTree(ctx, 710 - ((motionDistance * 0.18) % 1000), 426, 0.92);
   } else if (zone === "school") {
     // Soft distant hills and the schoolyard create a genuinely different second chapter.
     ctx.fillStyle = "#b6c9a9";
@@ -236,7 +237,7 @@ function drawBackground(
     ctx.lineTo(0, GROUND);
     ctx.fill();
 
-    const schoolShift = ((distance - 2500) * 0.16) % 1280;
+    const schoolShift = ((motionDistance - 2500) * 0.16) % 1280;
     for (const schoolX of [420, 1700]) {
       ctx.save();
       ctx.translate(schoolX - schoolShift, 0);
@@ -300,11 +301,11 @@ function drawBackground(
     }
 
     // Trees and a low fence move at different speeds for gentle parallax.
-    drawTree(ctx, 100 - ((distance * 0.25) % 1120), 425, 1.05);
-    drawTree(ctx, 830 - ((distance * 0.25) % 1120), 425, 0.88);
+    drawTree(ctx, 100 - ((motionDistance * 0.25) % 1120), 425, 1.05);
+    drawTree(ctx, 830 - ((motionDistance * 0.25) % 1120), 425, 0.88);
     ctx.strokeStyle = "rgba(139, 111, 78, 0.75)";
     ctx.lineWidth = 5;
-    const fenceShift = (distance * 0.31) % 94;
+    const fenceShift = (motionDistance * 0.31) % 94;
     for (let i = -1; i < 12; i += 1) {
       const x = i * 94 - fenceShift;
       ctx.beginPath();
@@ -340,7 +341,7 @@ function drawBackground(
     ctx.lineTo(0, GROUND);
     ctx.fill();
 
-    const treeShift = (distance * 0.13) % 1180;
+    const treeShift = (motionDistance * 0.13) % 1180;
     for (let i = 0; i < 6; i += 1) {
       const x = i * 235 - treeShift;
       drawTree(ctx, x + 80, 395, 0.55 + (i % 2) * 0.13);
@@ -357,7 +358,7 @@ function drawBackground(
 
     // Flower dots and meadow strokes drift more quickly than the far hills.
     for (let i = 0; i < 34; i += 1) {
-      const x = ((i * 47 - distance * 0.34) % (WIDTH + 80) + WIDTH + 80) % (WIDTH + 80) - 40;
+      const x = ((i * 47 - motionDistance * 0.34) % (WIDTH + 80) + WIDTH + 80) % (WIDTH + 80) - 40;
       const y = 354 + (i % 5) * 13;
       ctx.fillStyle = i % 3 === 0 ? "#f3d6b1" : i % 3 === 1 ? "#e9e4bb" : "#d69a82";
       ctx.beginPath();
@@ -391,7 +392,7 @@ function drawBackground(
   // Small, irregular paper-grain marks scroll underfoot.
   ctx.lineCap = "round";
   for (let i = 0; i < 42; i += 1) {
-    const x = ((i * 43 - distance * 0.8) % (WIDTH + 60) + WIDTH + 60) % (WIDTH + 60) - 30;
+    const x = ((i * 43 - motionDistance * 0.8) % (WIDTH + 60) + WIDTH + 60) % (WIDTH + 60) - 30;
     const y = GROUND + 18 + (i % 6) * 16;
     ctx.strokeStyle = i % 3 === 0 ? "rgba(255, 235, 193, 0.35)" : "rgba(114, 83, 55, 0.17)";
     ctx.lineWidth = i % 4 === 0 ? 2 : 1;
