@@ -20,12 +20,27 @@ type PaperPlane = {
   bob: number;
 };
 
+type PowerUpKind = "doubleJump" | "slowFall" | "slowTime" | "highJump";
+
+type PowerUp = {
+  x: number;
+  y: number;
+  bob: number;
+  kind: PowerUpKind;
+};
+
+type ActivePowerUp = {
+  kind: PowerUpKind;
+  secondsLeft: number;
+};
+
 type Player = {
   x: number;
   y: number;
   vy: number;
   onGround: boolean;
   frame: number;
+  jumpsUsed: number;
 };
 
 type World = {
@@ -34,9 +49,12 @@ type World = {
   speed: number;
   spawnTimer: number;
   planeTimer: number;
+  powerUpTimer: number;
   obstacles: Obstacle[];
   planes: PaperPlane[];
+  powerUps: PowerUp[];
   collected: number;
+  bonusScore: number;
 };
 
 const WIDTH = 960;
@@ -52,6 +70,12 @@ const SCENE_ART: Record<Zone, string> = {
   field: `${import.meta.env.BASE_URL}game-art/field.svg`,
 };
 const PLAYER_SPRITE = `${import.meta.env.BASE_URL}game-art/boy-run.svg`;
+const POWER_UP_META: Record<PowerUpKind, { symbol: string; label: string; item: string }> = {
+  doubleJump: { symbol: "✦", label: "Double jump", item: "Wings" },
+  slowFall: { symbol: "❧", label: "Slow fall", item: "Feather" },
+  slowTime: { symbol: "⌛", label: "Slow time", item: "Hourglass" },
+  highJump: { symbol: "↟", label: "High jump", item: "Spring" },
+};
 
 function zoneFor(distance: number): Zone {
   if (distance < 2500) return "alley";
@@ -667,6 +691,107 @@ function drawPlane(ctx: CanvasRenderingContext2D, plane: PaperPlane, time: numbe
   ctx.restore();
 }
 
+function drawPowerUp(ctx: CanvasRenderingContext2D, powerUp: PowerUp, time: number) {
+  const bobY = Math.sin(time * 3.1 + powerUp.bob) * 7;
+  const palette: Record<PowerUpKind, { fill: string; stroke: string; glow: string }> = {
+    doubleJump: { fill: "#dff1e7", stroke: "#438b7d", glow: "rgba(91, 173, 151, 0.28)" },
+    slowFall: { fill: "#e5f0db", stroke: "#71946c", glow: "rgba(137, 177, 123, 0.28)" },
+    slowTime: { fill: "#f7e8c5", stroke: "#b48b4d", glow: "rgba(222, 179, 104, 0.3)" },
+    highJump: { fill: "#f3dfcf", stroke: "#b8795f", glow: "rgba(204, 134, 102, 0.28)" },
+  };
+  const colors = palette[powerUp.kind];
+
+  ctx.save();
+  ctx.translate(powerUp.x, powerUp.y + bobY);
+  ctx.fillStyle = colors.glow;
+  ctx.beginPath();
+  ctx.arc(0, 0, 35, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = "#fff9e9";
+  ctx.strokeStyle = colors.stroke;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(0, 0, 23, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.fillStyle = colors.fill;
+  ctx.strokeStyle = colors.stroke;
+  ctx.lineWidth = 2.5;
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+
+  if (powerUp.kind === "doubleJump") {
+    // A pair of small wings around a central sparkle.
+    ctx.beginPath();
+    ctx.moveTo(-4, 1);
+    ctx.quadraticCurveTo(-22, -20, -19, -3);
+    ctx.quadraticCurveTo(-17, 8, -4, 8);
+    ctx.moveTo(4, 1);
+    ctx.quadraticCurveTo(22, -20, 19, -3);
+    ctx.quadraticCurveTo(17, 8, 4, 8);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "#438b7d";
+    ctx.beginPath();
+    ctx.arc(0, 2, 4, 0, Math.PI * 2);
+    ctx.fill();
+  } else if (powerUp.kind === "slowFall") {
+    // A tapered feather with a visible quill.
+    ctx.beginPath();
+    ctx.moveTo(-12, 12);
+    ctx.quadraticCurveTo(-22, -13, 13, -15);
+    ctx.quadraticCurveTo(18, 4, -12, 12);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-12, 12);
+    ctx.quadraticCurveTo(0, -2, 13, -15);
+    ctx.moveTo(-4, 3);
+    ctx.lineTo(-10, -3);
+    ctx.moveTo(3, -4);
+    ctx.lineTo(-2, -10);
+    ctx.stroke();
+  } else if (powerUp.kind === "slowTime") {
+    // Hourglass silhouette.
+    ctx.beginPath();
+    ctx.moveTo(-11, -14);
+    ctx.lineTo(11, -14);
+    ctx.quadraticCurveTo(8, -5, 0, 0);
+    ctx.quadraticCurveTo(-8, 5, -11, 14);
+    ctx.lineTo(11, 14);
+    ctx.quadraticCurveTo(8, 5, 0, 0);
+    ctx.quadraticCurveTo(-8, -5, -11, -14);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-6, -9);
+    ctx.lineTo(6, -9);
+    ctx.moveTo(-6, 9);
+    ctx.lineTo(6, 9);
+    ctx.stroke();
+  } else {
+    // Spring coil.
+    ctx.beginPath();
+    ctx.moveTo(-11, -14);
+    ctx.lineTo(9, -14);
+    ctx.lineTo(-8, -5);
+    ctx.lineTo(9, 4);
+    ctx.lineTo(-8, 13);
+    ctx.lineTo(11, 13);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-13, -17);
+    ctx.lineTo(13, -17);
+    ctx.moveTo(-13, 17);
+    ctx.lineTo(13, 17);
+    ctx.stroke();
+  }
+
+  ctx.restore();
+}
+
 function safeReadBest() {
   try {
     const value = Number(window.localStorage.getItem(BEST_KEY) || 0);
@@ -685,6 +810,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
   const [runKey, setRunKey] = useState(0);
   const [score, setScore] = useState(0);
   const [collected, setCollected] = useState(0);
+  const [activePowerUps, setActivePowerUps] = useState<ActivePowerUp[]>([]);
   const [best, setBest] = useState(safeReadBest);
   const [zone, setZone] = useState<Zone>("alley");
   const [muted, setMuted] = useState(true);
@@ -694,6 +820,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
   const startRun = useCallback(() => {
     setScore(0);
     setCollected(0);
+    setActivePowerUps([]);
     setZone("alley");
     setRunKey((value) => value + 1);
     setPhase("playing");
@@ -840,9 +967,12 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       speed: 315,
       spawnTimer: 1.1,
       planeTimer: 0.7,
+      powerUpTimer: 3.8,
       obstacles: [],
       planes: [],
+      powerUps: [],
       collected: 0,
+      bonusScore: 0,
     };
     let lastZone: Zone = "alley";
     const player: Player = {
@@ -851,6 +981,13 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       vy: 0,
       onGround: true,
       frame: 0,
+      jumpsUsed: 0,
+    };
+    const powerUpExpiry: Record<PowerUpKind, number> = {
+      doubleJump: 0,
+      slowFall: 0,
+      slowTime: 0,
+      highJump: 0,
     };
 
     const resizeCanvas = () => {
@@ -869,6 +1006,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       const currentZone = drawBackground(ctx, world.distance, time, sceneImages, reduceMotion);
       if (phase === "playing") {
         for (const plane of world.planes) drawPlane(ctx, plane, time);
+        for (const powerUp of world.powerUps) drawPowerUp(ctx, powerUp, time);
         for (const obstacle of world.obstacles) {
           if (obstacle.kind === "puddle") drawPuddle(ctx, obstacle);
           else if (obstacle.kind === "bag") drawBag(ctx, obstacle);
@@ -896,18 +1034,23 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
     }
 
     jumpRef.current = () => {
-      if (player.onGround) {
-        beep(520, 0.12, "triangle");
-        player.vy = -720;
+      const canDoubleJump = world.elapsed < powerUpExpiry.doubleJump && player.jumpsUsed < 2;
+      if (player.onGround || canDoubleJump) {
+        const isSecondJump = !player.onGround;
+        const isHighJump = world.elapsed < powerUpExpiry.highJump;
+        player.vy = isHighJump ? -930 : -720;
         player.onGround = false;
+        player.jumpsUsed += 1;
+        beep(isSecondJump ? 760 : isHighJump ? 660 : 520, 0.13, "triangle");
       }
     };
 
     const finishRun = () => {
       lastRunDistanceRef.current = world.distance;
-      const finalScore = Math.floor(world.distance / 12) + world.collected * 35;
+      const finalScore = Math.floor(world.distance / 12) + world.collected * 35 + world.bonusScore;
       setScore(finalScore);
       setCollected(world.collected);
+      setActivePowerUps([]);
       setBest((previous) => Math.max(previous, finalScore));
       try {
         const storedBest = safeReadBest();
@@ -924,16 +1067,22 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       lastTime = timestamp;
 
       world.elapsed += dt;
-      world.speed = Math.min(315 + world.elapsed * 8.5, 610);
+      const baseSpeed = Math.min(315 + world.elapsed * 8.5, 610);
+      const isSlowTime = world.elapsed < powerUpExpiry.slowTime;
+      world.speed = baseSpeed * (isSlowTime ? 0.62 : 1);
       world.distance += world.speed * dt;
       player.frame += dt * 12;
-      player.vy += 1900 * dt;
+      const isSlowFalling = world.elapsed < powerUpExpiry.slowFall;
+      const gravity = isSlowFalling ? 760 : 1900;
+      const fallLimit = isSlowFalling ? 420 : 1100;
+      player.vy = Math.min(player.vy + gravity * dt, fallLimit);
       player.y += player.vy * dt;
 
       if (player.y + PLAYER_H >= GROUND) {
         player.y = GROUND - PLAYER_H;
         player.vy = 0;
         player.onGround = true;
+        player.jumpsUsed = 0;
       }
 
       world.spawnTimer -= dt;
@@ -962,10 +1111,25 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
         world.planeTimer = 1.35 + Math.random() * 1.2;
       }
 
+      world.powerUpTimer -= dt;
+      if (world.powerUpTimer <= 0) {
+        const kinds: PowerUpKind[] = ["doubleJump", "slowFall", "slowTime", "highJump"];
+        const kind = kinds[Math.floor(Math.random() * kinds.length)];
+        world.powerUps.push({
+          x: WIDTH + 38,
+          y: GROUND - 105 - Math.random() * 88,
+          bob: Math.random() * Math.PI * 2,
+          kind,
+        });
+        world.powerUpTimer = 6.8 + Math.random() * 2.4;
+      }
+
       for (const obstacle of world.obstacles) obstacle.x -= world.speed * dt;
       for (const plane of world.planes) plane.x -= world.speed * dt;
+      for (const powerUp of world.powerUps) powerUp.x -= world.speed * dt;
       world.obstacles = world.obstacles.filter((obstacle) => obstacle.x + obstacle.width > -30);
       world.planes = world.planes.filter((plane) => plane.x > -40);
+      world.powerUps = world.powerUps.filter((powerUp) => powerUp.x > -45);
 
       const playerBox = {
         left: player.x + 7,
@@ -1002,10 +1166,40 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       });
       if (before !== world.planes.length) setCollected(world.collected);
 
+      world.powerUps = world.powerUps.filter((powerUp) => {
+        const bobY = Math.sin(world.elapsed * 3.1 + powerUp.bob) * 7;
+        const itemBox = {
+          left: powerUp.x - 21,
+          right: powerUp.x + 21,
+          top: powerUp.y + bobY - 21,
+          bottom: powerUp.y + bobY + 21,
+        };
+        const hit =
+          playerBox.right > itemBox.left &&
+          playerBox.left < itemBox.right &&
+          playerBox.bottom > itemBox.top &&
+          playerBox.top < itemBox.bottom;
+
+        if (hit) {
+          powerUpExpiry[powerUp.kind] = world.elapsed + 5;
+          world.bonusScore += 50;
+          beep(700 + Object.keys(POWER_UP_META).indexOf(powerUp.kind) * 90, 0.24, "sine");
+        }
+        return !hit;
+      });
+
       scoreClock += dt;
       if (scoreClock > 0.12) {
         scoreClock = 0;
-        setScore(Math.floor(world.distance / 12) + world.collected * 35);
+        setScore(Math.floor(world.distance / 12) + world.collected * 35 + world.bonusScore);
+        setActivePowerUps(
+          (Object.keys(powerUpExpiry) as PowerUpKind[])
+            .filter((kind) => powerUpExpiry[kind] > world.elapsed)
+            .map((kind) => ({
+              kind,
+              secondsLeft: powerUpExpiry[kind] - world.elapsed,
+            })),
+        );
       }
 
       drawFrame(world.elapsed);
@@ -1065,6 +1259,12 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
               <p className="little-detour__description">
                 One little run through the places we used to call our whole world.
               </p>
+              <div className="little-detour__item-guide" aria-label="Power-up item guide">
+                <span><b>✦ Wings</b><small>Double jump</small></span>
+                <span><b>❧ Feather</b><small>Slow fall</small></span>
+                <span><b>⌛ Hourglass</b><small>Slow time</small></span>
+                <span><b>↟ Spring</b><small>High jump</small></span>
+              </div>
               <button className="little-detour__primary" onClick={startRun}>
                 Let's go <ArrowUp size={17} />
               </button>
@@ -1097,6 +1297,17 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
               </span>
               <span className="little-detour__score">{score.toLocaleString()} <small>POINTS</small></span>
               <span className="little-detour__collect">✈ {collected}</span>
+              {activePowerUps.length > 0 && (
+                <div className="little-detour__active-powerups" aria-live="polite">
+                  {activePowerUps.map((effect) => (
+                    <span className="little-detour__active-powerup" key={effect.kind}>
+                      <b>{POWER_UP_META[effect.kind].symbol}</b>
+                      {POWER_UP_META[effect.kind].label}
+                      <small>{Math.ceil(effect.secondsLeft)}s</small>
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
