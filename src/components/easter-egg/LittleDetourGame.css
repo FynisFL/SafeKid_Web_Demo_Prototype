@@ -21,8 +21,8 @@
 
 .little-detour__frame {
   display: flex;
-  width: min(1160px, 100%);
-  max-height: calc(100dvh - 24px);
+  width: min(1160px, calc((100dvh - 180px) * 1.7777778), 100%);
+  max-height: none;
   flex-direction: column;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.65);
@@ -119,7 +119,9 @@
 
 .little-detour__stage-wrap {
   position: relative;
+  flex: 0 0 auto;
   width: 100%;
+  min-height: 0;
   overflow: hidden;
   aspect-ratio: 16 / 9;
   background: #a9d6df;
@@ -390,7 +392,8 @@
   }
 
   .little-detour__frame {
-    max-height: calc(100dvh - 16px);
+    width: min(100%, calc((100dvh - 150px) * 1.7777778));
+    max-height: none;
     border-radius: 18px;
   }
 
@@ -419,6 +422,7 @@
   }
 
   .little-detour__stage-wrap {
+    flex: 0 0 auto;
     aspect-ratio: 16 / 9;
   }
 
@@ -486,12 +490,12 @@
 }
 
 @media (max-height: 620px) and (min-width: 681px) {
-  .little-detour__topbar {
-    min-height: 58px;
+  .little-detour__frame {
+    width: min(1160px, calc((100dvh - 142px) * 1.7777778), 100%);
   }
 
-  .little-detour__stage-wrap {
-    max-height: calc(100dvh - 160px);
+  .little-detour__topbar {
+    min-height: 58px;
   }
 
   .little-detour__controls {
