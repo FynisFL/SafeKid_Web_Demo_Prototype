@@ -140,6 +140,7 @@ function drawBackground(
   distance: number,
   time: number,
   sceneImages: Record<Zone, HTMLImageElement>,
+  reduceMotion: boolean,
 ) {
   const zone = zoneFor(distance);
   const image = sceneImages[zone];
@@ -151,7 +152,7 @@ function drawBackground(
     const imageWidth = image.naturalWidth * scale;
     const imageHeight = image.naturalHeight * scale;
     const horizontalTravel = Math.max(0, imageWidth - WIDTH);
-    const camera = 0.5 + Math.sin(distance / 1650) * 0.5;
+    const camera = reduceMotion ? 0.5 : 0.5 + Math.sin(distance / 1650) * 0.5;
     const offsetX = horizontalTravel * camera;
 
     ctx.drawImage(image, -offsetX, (HEIGHT - imageHeight) / 2, imageWidth, imageHeight);
@@ -166,7 +167,8 @@ function drawBackground(
     ctx.save();
     ctx.lineCap = "round";
     for (let i = 0; i < 30; i += 1) {
-      const x = ((i * 41 - distance * 0.7) % (WIDTH + 70) + WIDTH + 70) % (WIDTH + 70) - 35;
+      const drift = reduceMotion ? 0 : distance * 0.7;
+      const x = ((i * 41 - drift) % (WIDTH + 70) + WIDTH + 70) % (WIDTH + 70) - 35;
       const y = GROUND + 18 + (i % 5) * 19;
       ctx.strokeStyle = i % 3 === 0
         ? "rgba(255, 245, 216, 0.28)"
@@ -750,6 +752,8 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       field: new Image(),
     };
     const spriteSheet = new Image();
+    const reduceMotion = typeof window.matchMedia === "function"
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     let disposed = false;
 
     const beep = (frequency: number, duration: number, shape: OscillatorType = "sine") => {
@@ -829,13 +833,13 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       canvas.height = Math.max(1, Math.round(rect.height * dpr));
       ctx.setTransform(canvas.width / WIDTH, 0, 0, canvas.height / HEIGHT, 0, 0);
       if (phase !== "playing") {
-        drawBackground(ctx, 320, 0, sceneImages);
+        drawBackground(ctx, 320, 0, sceneImages, reduceMotion);
         drawPlayer(ctx, player, 0, spriteSheet);
       }
     };
 
     const drawFrame = (time: number) => {
-      const currentZone = drawBackground(ctx, world.distance, time, sceneImages);
+      const currentZone = drawBackground(ctx, world.distance, time, sceneImages, reduceMotion);
       if (phase === "playing") {
         for (const plane of world.planes) drawPlane(ctx, plane, time);
         for (const obstacle of world.obstacles) {
