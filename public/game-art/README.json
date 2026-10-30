@@ -1,0 +1,26 @@
+{
+  "style": "clean hand-painted storybook vector, muted school-and-park palette",
+  "rendering": "Canvas 2D with three 16:9 SVG scene plates and a four-frame aligned SVG runner sprite sheet",
+  "assets": [
+    {
+      "file": "boy-run.svg",
+      "role": "runner sprite sheet: three aligned running poses and one jump pose",
+      "dimensions": "384x96"
+    },
+    {
+      "file": "school.svg",
+      "role": "simple schoolyard opening scene",
+      "dimensions": "1600x900"
+    },
+    {
+      "file": "park.svg",
+      "role": "school park with a simple slide and swing",
+      "dimensions": "1600x900"
+    },
+    {
+      "file": "field.svg",
+      "role": "open green park path for the final scene",
+      "dimensions": "1600x900"
+    }
+  ]
+}

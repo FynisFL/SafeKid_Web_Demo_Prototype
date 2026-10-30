@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a8d2df"/>
+      <stop offset="1" stop-color="#f0efd3"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b5c98f"/>
+      <stop offset="1" stop-color="#7d9d73"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1325" cy="145" r="46" fill="#f5e3b9" opacity=".88"/>
+  <g fill="#fff9e9" opacity=".84">
+    <path d="M240 160c24-42 76-40 98-5 25-42 85-33 94 14 44 4 51 51 4 59H255c-46-5-49-46-15-68z"/>
+    <path d="M900 135c19-35 63-32 82-2 20-34 72-28 79 11 40 4 43 41 3 48H912c-39-5-42-38-12-57z"/>
+  </g>
+  <path d="M0 550Q240 410 470 530T920 500T1360 495T1600 505V780H0Z" fill="#b8cba3"/>
+  <path d="M0 630Q250 500 530 615T1040 580T1450 590T1600 580V800H0Z" fill="#94b188"/>
+  <!-- Loose tree line -->
+  <g fill="#789b75">
+    <circle cx="130" cy="470" r="75"/><circle cx="195" cy="422" r="97"/><circle cx="270" cy="480" r="66"/>
+    <circle cx="1320" cy="460" r="81"/><circle cx="1410" cy="415" r="99"/><circle cx="1510" cy="475" r="69"/>
+  </g>
+  <g stroke="#87664e" stroke-width="23" stroke-linecap="round">
+    <path d="M200 670V470M1410 675V465"/>
+  </g>
+  <!-- Wide winding park path -->
+  <path d="M210 900Q380 800 520 690T780 600" fill="none" stroke="#d9bd91" stroke-width="108" opacity=".85"/>
+  <path d="M210 900Q380 800 520 690T780 600" fill="none" stroke="#f1dfbd" stroke-width="7" stroke-dasharray="22 26" opacity=".62"/>
+  <path d="M0 695Q380 670 770 700T1600 695V900H0Z" fill="url(#grass)"/>
+  <path d="M0 710Q400 686 800 714T1600 707" fill="none" stroke="#d4c39a" stroke-width="15" opacity=".75"/>
+  <g fill="#f6e4b8">
+    <circle cx="95" cy="790" r="6"/><circle cx="325" cy="750" r="5"/><circle cx="650" cy="774" r="6"/>
+    <circle cx="1000" cy="760" r="5"/><circle cx="1450" cy="780" r="6"/>
+  </g>
+</svg>

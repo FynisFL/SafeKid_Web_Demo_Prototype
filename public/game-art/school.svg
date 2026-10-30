@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9ccbdc"/>
+      <stop offset="1" stop-color="#edf0d9"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a9bf91"/>
+      <stop offset="1" stop-color="#7f9e76"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" fill="url(#sky)"/>
+  <circle cx="1320" cy="145" r="54" fill="#f6e3b5" opacity=".85"/>
+  <g fill="#fff8e9" opacity=".82">
+    <path d="M150 175c24-43 77-42 99-5 26-43 89-33 97 15 46 4 53 53 4 61H166c-48-5-51-48-16-71z"/>
+    <path d="M980 125c22-38 68-35 88-2 22-37 78-30 84 12 43 4 46 44 3 52h-161c-42-5-45-40-14-62z"/>
+  </g>
+  <path d="M0 545Q210 420 420 520T840 505T1260 488T1600 500V770H0Z" fill="#b7c9a2"/>
+  <path d="M0 620Q240 500 480 605T960 580T1390 590T1600 570V790H0Z" fill="#91ae87"/>
+  <!-- Simple school building -->
+  <g stroke-linejoin="round">
+    <path d="M640 410L1000 250L1360 410Z" fill="#c98869" stroke="#8c6554" stroke-width="10"/>
+    <path d="M680 405H1320V682H680Z" fill="#e9d2a8" stroke="#aa8666" stroke-width="8"/>
+    <path d="M625 405H1375" stroke="#f6e4c2" stroke-width="20"/>
+    <path d="M916 508V682H1084V508Q1000 430 916 508Z" fill="#779b98" stroke="#795f51" stroke-width="8"/>
+    <path d="M1000 493V682" stroke="#e4d2ae" stroke-width="6"/>
+    <g fill="#86a9a5" stroke="#8b7059" stroke-width="7">
+      <rect x="735" y="470" width="92" height="106" rx="6"/>
+      <rect x="1173" y="470" width="92" height="106" rx="6"/>
+    </g>
+    <g stroke="#f5e5c6" stroke-width="6">
+      <path d="M781 470V576M735 523H827M1219 470V576M1173 523H1265"/>
+    </g>
+    <path d="M948 355H1052V405H948Z" fill="#e7bc8e" stroke="#8c6554" stroke-width="5"/>
+    <path d="M966 365H1034" stroke="#8c6554" stroke-width="4"/>
+  </g>
+  <!-- Two simple trees -->
+  <g>
+    <path d="M245 672Q262 530 290 390" stroke="#87664e" stroke-width="29" fill="none" stroke-linecap="round"/>
+    <path d="M278 510L215 455M280 475L335 420" stroke="#87664e" stroke-width="18" fill="none" stroke-linecap="round"/>
+    <g fill="#789b75">
+      <circle cx="222" cy="395" r="94"/><circle cx="303" cy="347" r="112"/><circle cx="374" cy="420" r="80"/>
+    </g>
+    <g fill="#a9bd87" opacity=".8"><circle cx="250" cy="362" r="35"/><circle cx="321" cy="325" r="43"/></g>
+    <path d="M1450 680Q1435 550 1395 430" stroke="#87664e" stroke-width="27" fill="none" stroke-linecap="round"/>
+    <g fill="#829f74"><circle cx="1350" cy="420" r="82"/><circle cx="1420" cy="365" r="100"/><circle cx="1500" cy="437" r="76"/></g>
+  </g>
+  <!-- Open schoolyard foreground -->
+  <path d="M0 690Q390 662 770 692T1600 685V900H0Z" fill="url(#grass)"/>
+  <path d="M0 706Q400 680 800 710T1600 700" fill="none" stroke="#d4c39a" stroke-width="16" opacity=".8"/>
+  <path d="M650 900Q800 795 820 700" stroke="#d9bd91" stroke-width="95" fill="none" opacity=".65"/>
+  <g fill="#f4dfb7">
+    <circle cx="145" cy="765" r="6"/><circle cx="192" cy="790" r="5"/><circle cx="420" cy="748" r="6"/>
+    <circle cx="1190" cy="770" r="6"/><circle cx="1420" cy="744" r="5"/>
+  </g>
+</svg>

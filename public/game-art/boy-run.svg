@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 96" width="384" height="96">
+  <defs>
+    <linearGradient id="shirt" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0" stop-color="#9bbdb1"/>
+      <stop offset="1" stop-color="#6f958b"/>
+    </linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7d5b0"/>
+      <stop offset="1" stop-color="#dfa77f"/>
+    </linearGradient>
+    <linearGradient id="bag" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d39a73"/>
+      <stop offset="1" stop-color="#aa7057"/>
+    </linearGradient>
+  </defs>
+  <!-- Frame 1: right foot forward -->
+  <g transform="translate(0 0)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 40Q15 40 16 55L20 70Q29 75 39 62L38 45Z" fill="url(#bag)" stroke="#795744" stroke-width="2.5"/>
+    <path d="M34 45Q42 55 37 68" fill="none" stroke="#edc29d" stroke-width="2.5"/>
+    <path d="M43 61L32 76L21 83" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M52 61L64 74L75 78" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M17 81Q12 85 18 90L34 91Q41 88 34 83L25 78Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M69 77Q77 74 82 82L79 89L62 89Q56 86 62 81Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M35 35Q49 28 63 37L67 65Q49 73 31 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
+    <path d="M42 37L49 45L56 37" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
+    <path d="M37 42L25 53L21 47M63 43L76 35L81 41" fill="none" stroke="url(#skin)" stroke-width="7"/>
+    <ellipse cx="52" cy="25" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
+    <path d="M36 25Q33 10 47 7Q64 3 72 17Q77 25 68 31L64 23Q54 15 44 23Z" fill="#56463f"/>
+    <path d="M39 14Q46 4 57 7" fill="none" stroke="#796050" stroke-width="3"/>
+    <circle cx="59" cy="26" r="1.8" fill="#463b36"/>
+    <path d="M62 34Q66 38 70 33" fill="none" stroke="#9f6455" stroke-width="1.6"/>
+    <path d="M31 57L37 63M59 57L65 63" fill="none" stroke="#d7b08b" stroke-width="2"/>
+  </g>
+  <!-- Frame 2: left foot forward -->
+  <g transform="translate(96 0)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 40Q15 40 16 55L20 70Q29 75 39 62L38 45Z" fill="url(#bag)" stroke="#795744" stroke-width="2.5"/>
+    <path d="M34 45Q42 55 37 68" fill="none" stroke="#edc29d" stroke-width="2.5"/>
+    <path d="M43 61L30 74L18 78" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M52 61L63 76L76 83" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M14 76Q7 78 11 86L29 89Q37 87 31 82L22 74Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M70 81Q77 78 83 86L80 92L63 91Q57 88 63 83Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M35 35Q49 28 63 37L67 65Q49 73 31 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
+    <path d="M42 37L49 45L56 37" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
+    <path d="M37 42L24 35L18 42M63 43L77 54L82 48" fill="none" stroke="url(#skin)" stroke-width="7"/>
+    <ellipse cx="52" cy="25" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
+    <path d="M36 25Q33 10 47 7Q64 3 72 17Q77 25 68 31L64 23Q54 15 44 23Z" fill="#56463f"/>
+    <path d="M39 14Q46 4 57 7" fill="none" stroke="#796050" stroke-width="3"/>
+    <circle cx="59" cy="26" r="1.8" fill="#463b36"/>
+    <path d="M62 34Q66 38 70 33" fill="none" stroke="#9f6455" stroke-width="1.6"/>
+  </g>
+  <!-- Frame 3: short stride -->
+  <g transform="translate(192 0)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 40Q15 40 16 55L20 70Q29 75 39 62L38 45Z" fill="url(#bag)" stroke="#795744" stroke-width="2.5"/>
+    <path d="M34 45Q42 55 37 68" fill="none" stroke="#edc29d" stroke-width="2.5"/>
+    <path d="M43 61L39 78L28 85M52 61L56 76L69 78" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M23 83Q19 87 26 91L42 90Q48 86 40 82L32 80Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M63 74Q72 72 78 80L77 86L60 87Q54 83 60 78Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M35 35Q49 28 63 37L67 65Q49 73 31 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
+    <path d="M42 37L49 45L56 37" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
+    <path d="M37 42L24 54L21 62M63 43L76 37L82 43" fill="none" stroke="url(#skin)" stroke-width="7"/>
+    <ellipse cx="52" cy="25" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
+    <path d="M36 25Q33 10 47 7Q64 3 72 17Q77 25 68 31L64 23Q54 15 44 23Z" fill="#56463f"/>
+    <path d="M39 14Q46 4 57 7" fill="none" stroke="#796050" stroke-width="3"/>
+    <circle cx="59" cy="26" r="1.8" fill="#463b36"/>
+    <path d="M62 34Q66 38 70 33" fill="none" stroke="#9f6455" stroke-width="1.6"/>
+  </g>
+  <!-- Frame 4: jump pose, aligned to the same 96x96 cell -->
+  <g transform="translate(288 0)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M27 39Q15 39 17 54L22 68Q31 72 40 60L37 44Z" fill="url(#bag)" stroke="#795744" stroke-width="2.5"/>
+    <path d="M34 44Q42 52 39 64" fill="none" stroke="#edc29d" stroke-width="2.5"/>
+    <path d="M43 62L34 73L25 75M53 61L64 71L74 70" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M20 72Q14 76 20 81L34 82Q41 78 34 73Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M69 67Q77 65 82 72L80 78L65 78Q59 75 65 70Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M35 35Q49 28 63 37L67 65Q49 73 31 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
+    <path d="M42 37L49 45L56 37" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
+    <path d="M37 42L24 29L18 17M63 42L75 27L80 14" fill="none" stroke="url(#skin)" stroke-width="7"/>
+    <ellipse cx="52" cy="25" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
+    <path d="M36 25Q33 10 47 7Q64 3 72 17Q77 25 68 31L64 23Q54 15 44 23Z" fill="#56463f"/>
+    <path d="M39 14Q46 4 57 7" fill="none" stroke="#796050" stroke-width="3"/>
+    <circle cx="59" cy="26" r="1.8" fill="#463b36"/>
+    <path d="M62 34Q66 38 70 33" fill="none" stroke="#9f6455" stroke-width="1.6"/>
+  </g>
+</svg>

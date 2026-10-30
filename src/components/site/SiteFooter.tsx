@@ -1,6 +1,10 @@
+import { lazy, Suspense, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Instagram, Linkedin, Mail, MapPin, Phone, Youtube } from "lucide-react";
 import { BrandMark } from "./BrandMark";
+const LittleDetourGame = lazy(() =>
+  import("../easter-egg/LittleDetourGame").then((module) => ({ default: module.LittleDetourGame })),
+);
 
 const explore = [
   { label: "Home", to: "/" },
@@ -20,6 +24,9 @@ const support = [
 ];
 
 export function SiteFooter() {
+  const [isLittleDetourOpen, setLittleDetourOpen] = useState(false);
+  const closeLittleDetour = useCallback(() => setLittleDetourOpen(false), []);
+
   return (
     <footer className="relative overflow-hidden bg-night text-white">
       <div
@@ -56,7 +63,7 @@ export function SiteFooter() {
 
         <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.25fr_0.8fr_0.9fr_1fr]">
           <div>
-            <BrandMark tone="light" compact />
+            <BrandMark tone="light" compact onSecretUnlock={() => setLittleDetourOpen(true)} />
             <p className="mt-5 max-w-[26ch] text-sm leading-relaxed text-white/55">
               A child-focused watch concept and twelve Vietnamese Zodiac editions, imagined around
               growing independence.
@@ -164,6 +171,11 @@ export function SiteFooter() {
       >
         SafeKid
       </div>
+      {isLittleDetourOpen && (
+        <Suspense fallback={<div style={{ position: "fixed", inset: 0, zIndex: 10000, display: "grid", placeItems: "center", background: "#17363d", color: "#f8f2df", fontFamily: "Plus Jakarta Sans, Inter, sans-serif", fontSize: 12, letterSpacing: "0.12em" }}>Opening a little detour…</div>}>
+          <LittleDetourGame onClose={closeLittleDetour} />
+        </Suspense>
+      )}
     </footer>
   );
 }
