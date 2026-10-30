@@ -65,8 +65,10 @@ const PLAYER_W = 70;
 const PLAYER_H = 88;
 const BEST_KEY = "safekid-little-detour-best-v1";
 const SCENE_ART: Record<Zone, string> = {
-  alley: `${import.meta.env.BASE_URL}game-art/alley.png`,
-  school: `${import.meta.env.BASE_URL}game-art/school.svg`,
+  // Replace the visually busy alley with a simple schoolyard; the next two
+  // chapters move naturally into a neighborhood park and an open green path.
+  alley: `${import.meta.env.BASE_URL}game-art/school.svg`,
+  school: `${import.meta.env.BASE_URL}game-art/park.svg`,
   field: `${import.meta.env.BASE_URL}game-art/field.svg`,
 };
 const PLAYER_SPRITE = `${import.meta.env.BASE_URL}game-art/boy-run.svg`;
@@ -1219,7 +1221,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
   }, [phase, runKey]);
 
   const zoneLabel =
-    zone === "alley" ? "The Little Alley" : zone === "school" ? "After School" : "Somewhere Beyond";
+    zone === "alley" ? "The Schoolyard" : zone === "school" ? "The Park" : "The Open Park";
 
   return createPortal(
     <div className="little-detour" role="dialog" aria-modal="true" aria-label="A Little Detour secret game">
