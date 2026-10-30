@@ -1,66 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 96" width="384" height="96">
   <defs>
-    <linearGradient id="shirt" x2=".2" y2="1"><stop stop-color="#9bbab0"/><stop offset="1" stop-color="#6e9389"/></linearGradient>
-    <linearGradient id="skin" x2=".1" y2="1"><stop stop-color="#f6d0a7"/><stop offset="1" stop-color="#dfa678"/></linearGradient>
-    <linearGradient id="bag" x2="0" y2="1"><stop stop-color="#c98864"/><stop offset="1" stop-color="#8d5c48"/></linearGradient>
-    <filter id="wash" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".055" numOctaves="2" seed="12" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="1.1"/></filter>
+    <linearGradient id="shirt" x1="0" y1="0" x2="0.25" y2="1">
+      <stop offset="0" stop-color="#9bbdb1"/>
+      <stop offset="1" stop-color="#6f958b"/>
+    </linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7d5b0"/>
+      <stop offset="1" stop-color="#dfa77f"/>
+    </linearGradient>
+    <linearGradient id="bag" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d39a73"/>
+      <stop offset="1" stop-color="#aa7057"/>
+    </linearGradient>
   </defs>
-  <g filter="url(#wash)" stroke-linecap="round" stroke-linejoin="round">
-    <g transform="translate(0 0)">
-      <path d="M25 43Q9 38 13 57L19 72Q30 77 38 65L37 47Z" fill="url(#bag)" stroke="#795543" stroke-width="2.5"/>
-      <path d="M30 45Q40 56 37 69" fill="none" stroke="#e4b28a" stroke-width="3"/>
-      <path d="M43 63L35 78L20 84" fill="none" stroke="#76584a" stroke-width="8"/>
-      <path d="M51 62L64 75L76 83" fill="none" stroke="#76584a" stroke-width="8"/>
-      <path d="M15 84q-5 4 0 7l18 1q6-2 2-7l-9-4zM70 82q7-3 11 5l-3 5-18-1q-5-3 0-7z" fill="#5d5048" stroke="#493f3b" stroke-width="2"/>
-      <path d="M35 36Q49 29 62 39L67 67Q49 74 31 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
-      <path d="M42 38l7 8 7-8" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
-      <path d="M36 43L25 55L21 48M64 44L77 39L81 47" fill="none" stroke="url(#skin)" stroke-width="7"/>
-      <path d="M31 39Q25 27 39 19Q55 8 67 23Q78 35 65 45Q57 32 43 38Z" fill="#58473f"/>
-      <ellipse cx="53" cy="30" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
-      <path d="M38 28Q35 10 51 8Q69 5 74 23L67 29Q58 18 47 25Q42 29 38 28Z" fill="#4c403a"/>
-      <path d="M44 12l-7 8m24-13l6 10" stroke="#7b5d4a" stroke-width="4"/>
-      <circle cx="60" cy="31" r="1.8" fill="#463b36"/><path d="M62 38q5 3 8-1" fill="none" stroke="#9f6455" stroke-width="1.6"/>
-      <path d="M29 57l6 7M61 57l4 6" stroke="#d7b08b" stroke-width="2" opacity=".7"/>
-    </g>
-    <g transform="translate(96 0)">
-      <path d="M24 43Q8 40 11 59L18 73Q28 76 37 63L36 47Z" fill="url(#bag)" stroke="#795543" stroke-width="2.5"/>
-      <path d="M29 44Q40 57 35 69" fill="none" stroke="#e4b28a" stroke-width="3"/>
-      <path d="M43 62L35 76L20 81M51 62L68 72L78 84" fill="none" stroke="#76584a" stroke-width="8"/>
-      <path d="M14 80q-3 5 4 9l16 1q7-3 1-8l-10-5zM73 81q6-4 11 3l-2 7-18 1q-7-3-1-8z" fill="#5d5048" stroke="#493f3b" stroke-width="2"/>
-      <path d="M35 36Q49 29 62 39L67 67Q49 74 31 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
-      <path d="M42 38l7 8 7-8" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
-      <path d="M36 43L24 49L18 41M64 44L79 51L83 46" fill="none" stroke="url(#skin)" stroke-width="7"/>
-      <ellipse cx="53" cy="30" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
-      <path d="M38 28Q35 10 51 8Q69 5 74 23L67 29Q58 18 47 25Q42 29 38 28Z" fill="#4c403a"/>
-      <path d="M29 19l12-12m15 0l10 11" stroke="#725346" stroke-width="5"/>
-      <circle cx="60" cy="31" r="1.8" fill="#463b36"/><path d="M62 38q5 3 8-1" fill="none" stroke="#9f6455" stroke-width="1.6"/>
-    </g>
-    <g transform="translate(192 0)">
-      <path d="M24 43Q8 40 12 59L18 73Q28 76 37 63L36 47Z" fill="url(#bag)" stroke="#795543" stroke-width="2.5"/>
-      <path d="M29 44Q40 57 35 69" fill="none" stroke="#e4b28a" stroke-width="3"/>
-      <path d="M43 62L33 76L18 84M51 62L62 74L76 79" fill="none" stroke="#76584a" stroke-width="8"/>
-      <path d="M12 82q-4 6 4 9l16 1q7-3 1-8l-10-5zM70 77q7-3 11 4l-2 8-18 1q-6-3-1-8z" fill="#5d5048" stroke="#493f3b" stroke-width="2"/>
-      <path d="M35 36Q49 29 62 39L67 67Q49 74 31 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
-      <path d="M42 38l7 8 7-8" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
-      <path d="M36 43L22 54L19 66M64 44L78 39L84 47" fill="none" stroke="url(#skin)" stroke-width="7"/>
-      <ellipse cx="53" cy="30" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
-      <path d="M38 28Q35 10 51 8Q69 5 74 23L67 29Q58 18 47 25Q42 29 38 28Z" fill="#4c403a"/>
-      <path d="M31 15l10-10m14 1l11 12" stroke="#725346" stroke-width="5"/>
-      <circle cx="60" cy="31" r="1.8" fill="#463b36"/><path d="M62 38q5 3 8-1" fill="none" stroke="#9f6455" stroke-width="1.6"/>
-    </g>
-    <g transform="translate(288 0)">
-      <path d="M26 43Q11 39 13 57L20 70Q30 74 40 60L37 47Z" fill="url(#bag)" stroke="#795543" stroke-width="2.5"/>
-      <path d="M35 44Q45 56 43 64" fill="none" stroke="#e4b28a" stroke-width="3"/>
-      <path d="M43 65L32 73L24 84M55 65L64 77L75 82" fill="none" stroke="#76584a" stroke-width="8"/>
-      <path d="M18 83q-4 4 3 8l16 1q6-3 0-8l-10-5zM69 80q7-3 12 4l-2 8-18 1q-6-3-1-8z" fill="#5d5048" stroke="#493f3b" stroke-width="2"/>
-      <path d="M36 37Q49 30 62 40L67 67Q50 74 32 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
-      <path d="M42 39l7 8 7-8" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
-      <path d="M37 44L22 33L15 21M64 44L79 34L84 18" fill="none" stroke="url(#skin)" stroke-width="7"/>
-      <ellipse cx="53" cy="30" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
-      <path d="M38 28Q35 10 51 8Q69 5 74 23L67 29Q58 18 47 25Q42 29 38 28Z" fill="#4c403a"/>
-      <path d="M29 17l12-12m15 0l10 11" stroke="#725346" stroke-width="5"/>
-      <circle cx="60" cy="31" r="1.8" fill="#463b36"/><path d="M62 38q5 3 8-1" fill="none" stroke="#9f6455" stroke-width="1.6"/>
-    </g>
+  <!-- Frame 1: right foot forward -->
+  <g transform="translate(0 0)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 40Q15 40 16 55L20 70Q29 75 39 62L38 45Z" fill="url(#bag)" stroke="#795744" stroke-width="2.5"/>
+    <path d="M34 45Q42 55 37 68" fill="none" stroke="#edc29d" stroke-width="2.5"/>
+    <path d="M43 61L32 76L21 83" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M52 61L64 74L75 78" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M17 81Q12 85 18 90L34 91Q41 88 34 83L25 78Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M69 77Q77 74 82 82L79 89L62 89Q56 86 62 81Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M35 35Q49 28 63 37L67 65Q49 73 31 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
+    <path d="M42 37L49 45L56 37" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
+    <path d="M37 42L25 53L21 47M63 43L76 35L81 41" fill="none" stroke="url(#skin)" stroke-width="7"/>
+    <ellipse cx="52" cy="25" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
+    <path d="M36 25Q33 10 47 7Q64 3 72 17Q77 25 68 31L64 23Q54 15 44 23Z" fill="#56463f"/>
+    <path d="M39 14Q46 4 57 7" fill="none" stroke="#796050" stroke-width="3"/>
+    <circle cx="59" cy="26" r="1.8" fill="#463b36"/>
+    <path d="M62 34Q66 38 70 33" fill="none" stroke="#9f6455" stroke-width="1.6"/>
+    <path d="M31 57L37 63M59 57L65 63" fill="none" stroke="#d7b08b" stroke-width="2"/>
+  </g>
+  <!-- Frame 2: left foot forward -->
+  <g transform="translate(96 0)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 40Q15 40 16 55L20 70Q29 75 39 62L38 45Z" fill="url(#bag)" stroke="#795744" stroke-width="2.5"/>
+    <path d="M34 45Q42 55 37 68" fill="none" stroke="#edc29d" stroke-width="2.5"/>
+    <path d="M43 61L30 74L18 78" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M52 61L63 76L76 83" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M14 76Q7 78 11 86L29 89Q37 87 31 82L22 74Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M70 81Q77 78 83 86L80 92L63 91Q57 88 63 83Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M35 35Q49 28 63 37L67 65Q49 73 31 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
+    <path d="M42 37L49 45L56 37" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
+    <path d="M37 42L24 35L18 42M63 43L77 54L82 48" fill="none" stroke="url(#skin)" stroke-width="7"/>
+    <ellipse cx="52" cy="25" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
+    <path d="M36 25Q33 10 47 7Q64 3 72 17Q77 25 68 31L64 23Q54 15 44 23Z" fill="#56463f"/>
+    <path d="M39 14Q46 4 57 7" fill="none" stroke="#796050" stroke-width="3"/>
+    <circle cx="59" cy="26" r="1.8" fill="#463b36"/>
+    <path d="M62 34Q66 38 70 33" fill="none" stroke="#9f6455" stroke-width="1.6"/>
+  </g>
+  <!-- Frame 3: short stride -->
+  <g transform="translate(192 0)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M28 40Q15 40 16 55L20 70Q29 75 39 62L38 45Z" fill="url(#bag)" stroke="#795744" stroke-width="2.5"/>
+    <path d="M34 45Q42 55 37 68" fill="none" stroke="#edc29d" stroke-width="2.5"/>
+    <path d="M43 61L39 78L28 85M52 61L56 76L69 78" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M23 83Q19 87 26 91L42 90Q48 86 40 82L32 80Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M63 74Q72 72 78 80L77 86L60 87Q54 83 60 78Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M35 35Q49 28 63 37L67 65Q49 73 31 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
+    <path d="M42 37L49 45L56 37" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
+    <path d="M37 42L24 54L21 62M63 43L76 37L82 43" fill="none" stroke="url(#skin)" stroke-width="7"/>
+    <ellipse cx="52" cy="25" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
+    <path d="M36 25Q33 10 47 7Q64 3 72 17Q77 25 68 31L64 23Q54 15 44 23Z" fill="#56463f"/>
+    <path d="M39 14Q46 4 57 7" fill="none" stroke="#796050" stroke-width="3"/>
+    <circle cx="59" cy="26" r="1.8" fill="#463b36"/>
+    <path d="M62 34Q66 38 70 33" fill="none" stroke="#9f6455" stroke-width="1.6"/>
+  </g>
+  <!-- Frame 4: jump pose, aligned to the same 96x96 cell -->
+  <g transform="translate(288 0)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M27 39Q15 39 17 54L22 68Q31 72 40 60L37 44Z" fill="url(#bag)" stroke="#795744" stroke-width="2.5"/>
+    <path d="M34 44Q42 52 39 64" fill="none" stroke="#edc29d" stroke-width="2.5"/>
+    <path d="M43 62L34 73L25 75M53 61L64 71L74 70" fill="none" stroke="#76584a" stroke-width="8"/>
+    <path d="M20 72Q14 76 20 81L34 82Q41 78 34 73Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M69 67Q77 65 82 72L80 78L65 78Q59 75 65 70Z" fill="#5b5049" stroke="#493f3b" stroke-width="2"/>
+    <path d="M35 35Q49 28 63 37L67 65Q49 73 31 64Z" fill="url(#shirt)" stroke="#6c594d" stroke-width="2.5"/>
+    <path d="M42 37L49 45L56 37" fill="none" stroke="#f0dfc2" stroke-width="2.5"/>
+    <path d="M37 42L24 29L18 17M63 42L75 27L80 14" fill="none" stroke="url(#skin)" stroke-width="7"/>
+    <ellipse cx="52" cy="25" rx="15" ry="17" fill="url(#skin)" stroke="#76574a" stroke-width="2"/>
+    <path d="M36 25Q33 10 47 7Q64 3 72 17Q77 25 68 31L64 23Q54 15 44 23Z" fill="#56463f"/>
+    <path d="M39 14Q46 4 57 7" fill="none" stroke="#796050" stroke-width="3"/>
+    <circle cx="59" cy="26" r="1.8" fill="#463b36"/>
+    <path d="M62 34Q66 38 70 33" fill="none" stroke="#9f6455" stroke-width="1.6"/>
   </g>
 </svg>
