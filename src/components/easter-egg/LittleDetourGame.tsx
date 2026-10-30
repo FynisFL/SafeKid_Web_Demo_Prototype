@@ -724,7 +724,10 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
         return;
       }
 
-      if (event.code === "Space" || event.code === "ArrowUp" || event.code === "KeyW") {
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("button, a, input, textarea, select")) return;
+
+      if (event.code === "Space" || event.code === "ArrowUp" || event.code === "KeyW")
         event.preventDefault();
         if (phase === "playing") jump();
         else if (phase === "intro" || phase === "gameover") startRun();
@@ -923,7 +926,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       if (world.planeTimer <= 0) {
         world.planes.push({
           x: WIDTH + 30,
-          y: 280 + Math.random() * 90,
+          y: 250 + Math.random() * 65,
           bob: Math.random() * Math.PI * 2,
         });
         world.planeTimer = 1.35 + Math.random() * 1.2;
