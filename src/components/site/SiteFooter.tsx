@@ -1,6 +1,8 @@
+import { useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Instagram, Linkedin, Mail, MapPin, Phone, Youtube } from "lucide-react";
 import { BrandMark } from "./BrandMark";
+import { LittleDetourGame } from "../easter-egg/LittleDetourGame";
 
 const explore = [
   { label: "Home", to: "/" },
@@ -56,7 +58,7 @@ export function SiteFooter() {
 
         <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.25fr_0.8fr_0.9fr_1fr]">
           <div>
-            <BrandMark tone="light" compact />
+            <BrandMark tone="light" compact onSecretUnlock={() => setLittleDetourOpen(true)} />
             <p className="mt-5 max-w-[26ch] text-sm leading-relaxed text-white/55">
               A child-focused watch concept and twelve Vietnamese Zodiac editions, imagined around
               growing independence.
