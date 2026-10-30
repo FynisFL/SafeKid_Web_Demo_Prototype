@@ -445,6 +445,14 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
   }, []);
 
   useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, []);
+
+  useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Escape") {
         event.preventDefault();
@@ -679,6 +687,9 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           <canvas
             ref={canvasRef}
             className="little-detour__canvas"
+            onPointerDown={() => {
+              if (phase === "playing") jump();
+            }}
             aria-label="A hand-drawn endless runner. Jump over puddles, bags and fences; collect paper planes."
           />
           <div className="little-detour__stage-shade" />
