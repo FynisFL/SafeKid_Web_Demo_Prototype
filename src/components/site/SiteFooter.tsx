@@ -166,6 +166,7 @@ export function SiteFooter() {
       >
         SafeKid
       </div>
+      {isLittleDetourOpen && <LittleDetourGame onClose={closeLittleDetour} />}
     </footer>
   );
 }
