@@ -13,7 +13,7 @@ const router = createBrowserRouter([
     element: <RootShell />,
     children: routers,
   },
-]);
+], { basename: "/SafeKid_Web_Demo_Prototype" });
 
 function PageLoader() {
   return (
