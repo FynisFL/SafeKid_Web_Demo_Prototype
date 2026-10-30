@@ -42,15 +42,15 @@ type World = {
 const WIDTH = 960;
 const HEIGHT = 540;
 const GROUND = 430;
-const PLAYER_X = 150;
-const PLAYER_W = 48;
-const PLAYER_H = 76;
+const PLAYER_X = 142;
+const PLAYER_W = 60;
+const PLAYER_H = 88;
 const BEST_KEY = "safekid-little-detour-best-v1";
 const GAME_ART = `${import.meta.env.BASE_URL}game-art/alley.png`;
 
 function zoneFor(distance: number): Zone {
-  if (distance < 1500) return "alley";
-  if (distance < 4300) return "school";
+  if (distance < 2500) return "alley";
+  if (distance < 6100) return "school";
   return "field";
 }
 
@@ -132,212 +132,378 @@ function drawTree(ctx: CanvasRenderingContext2D, x: number, y: number, scale = 1
 
 function drawBackground(ctx: CanvasRenderingContext2D, distance: number, time: number, background: HTMLImageElement | null) {
   const zone = zoneFor(distance);
-  if (background?.complete && background.naturalWidth) {
-    const scale = Math.max(WIDTH / background.naturalWidth, HEIGHT / background.naturalHeight);
-    const bw = background.naturalWidth * scale; const bh = background.naturalHeight * scale;
-    const offset = (distance * 0.12) % Math.max(1, bw - WIDTH);
-    ctx.drawImage(background, -offset, (HEIGHT - bh) / 2, bw, bh);
-    ctx.fillStyle = zone === "school" ? "rgba(255, 226, 170, .16)" : zone === "field" ? "rgba(186, 211, 151, .17)" : "rgba(255, 244, 215, .1)";
-    ctx.fillRect(0, 0, WIDTH, HEIGHT);
-    ctx.fillStyle = "rgba(192, 156, 107, .9)"; ctx.fillRect(0, GROUND, WIDTH, HEIGHT-GROUND);
-    ctx.fillStyle = "#8da879"; ctx.fillRect(0, GROUND-5, WIDTH, 8);
-    return zone;
-  }
   const sky = ctx.createLinearGradient(0, 0, 0, HEIGHT);
-  sky.addColorStop(0, zone === "field" ? "#94c6d0" : "#a9d6df");
-  sky.addColorStop(0.7, "#f3ddb8");
-  sky.addColorStop(1, "#f5d7a4");
+  sky.addColorStop(0, zone === "field" ? "#9bcbd5" : "#acd7e2");
+  sky.addColorStop(0.68, "#f5e4c4");
+  sky.addColorStop(1, "#f1d7ad");
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, WIDTH, HEIGHT);
 
-  ctx.fillStyle = "rgba(255, 224, 151, 0.88)";
-  ctx.beginPath();
-  ctx.arc(770, 105, 43, 0, Math.PI * 2);
-  ctx.fill();
+  const cloudOffset = (distance * 0.055) % 1180;
+  drawCloud(ctx, 110 - cloudOffset, 92, 0.88);
+  drawCloud(ctx, 475 - cloudOffset * 0.72, 145, 0.72);
+  drawCloud(ctx, 900 - cloudOffset, 84, 1.02);
+  drawCloud(ctx, 1160 - cloudOffset * 0.8, 164, 0.64);
 
-  const cloudOffset = (distance * 0.08) % 1180;
-  drawCloud(ctx, 130 - cloudOffset, 105, 0.9);
-  drawCloud(ctx, 520 - cloudOffset * 0.68, 155, 0.7);
-  drawCloud(ctx, 990 - cloudOffset, 90, 1.05);
-  drawCloud(ctx, 1180 - cloudOffset * 0.8, 185, 0.62);
-
-  if (zone === "alley") {
-    ctx.fillStyle = "#b5c9ad";
+  if (zone === "alley" && background?.complete && background.naturalWidth) {
+    // Crop a little wider than the viewport and ease the camera across the painting.
+    // The source image is not seamless, so a slow back-and-forth pan avoids a hard tile seam.
+    const scale = Math.max(WIDTH / background.naturalWidth, (GROUND + 12) / background.naturalHeight) * 1.12;
+    const bw = background.naturalWidth * scale;
+    const bh = background.naturalHeight * scale;
+    const travel = Math.max(0, bw - WIDTH);
+    const offset = travel * (0.5 + 0.5 * Math.sin(distance / 980));
+    ctx.drawImage(background, -offset, (GROUND - bh) / 2, bw, bh);
+    ctx.fillStyle = "rgba(255, 240, 211, 0.09)";
+    ctx.fillRect(0, 0, WIDTH, GROUND);
+  } else if (zone === "alley") {
+    ctx.fillStyle = "#b7c9ad";
     ctx.beginPath();
-    ctx.moveTo(0, 335);
-    ctx.quadraticCurveTo(230, 285, 450, 330);
-    ctx.quadraticCurveTo(710, 290, WIDTH, 330);
+    ctx.moveTo(0, 326);
+    ctx.quadraticCurveTo(210, 273, 430, 326);
+    ctx.quadraticCurveTo(690, 278, WIDTH, 322);
     ctx.lineTo(WIDTH, GROUND);
     ctx.lineTo(0, GROUND);
     ctx.fill();
-
-    const houseOffset = (distance * 0.34) % 400;
-    drawHouse(ctx, 30 - houseOffset, 245, 145, 185, "#d69e79");
-    drawHouse(ctx, 270 - houseOffset, 265, 125, 165, "#d7bd8d");
-    drawHouse(ctx, 500 - houseOffset, 235, 160, 195, "#c98970");
-    drawHouse(ctx, 760 - houseOffset, 260, 145, 170, "#d8b88b");
-    drawTree(ctx, 230 - ((distance * 0.28) % 1040), 424, 0.95);
-    drawTree(ctx, 700 - ((distance * 0.28) % 1040), 424, 0.85);
+    const houseOffset = (distance * 0.22) % 920;
+    for (let i = 0; i < 5; i += 1) {
+      const x = i * 235 - houseOffset;
+      drawHouse(ctx, x, 248 + (i % 2) * 17, 150, 182 - (i % 2) * 16, i % 2 ? "#d8bd91" : "#d69e79");
+    }
+    drawTree(ctx, 160 - ((distance * 0.18) % 1000), 426, 0.9);
+    drawTree(ctx, 710 - ((distance * 0.18) % 1000), 426, 0.92);
   } else if (zone === "school") {
-    ctx.fillStyle = "#a9c19c";
+    // Soft distant hills and the schoolyard create a genuinely different second chapter.
+    ctx.fillStyle = "#b6c9a9";
     ctx.beginPath();
-    ctx.moveTo(0, 350);
-    ctx.quadraticCurveTo(250, 305, 500, 350);
-    ctx.quadraticCurveTo(750, 300, WIDTH, 345);
+    ctx.moveTo(0, 314);
+    ctx.quadraticCurveTo(190, 255, 390, 304);
+    ctx.quadraticCurveTo(660, 254, WIDTH, 302);
     ctx.lineTo(WIDTH, GROUND);
     ctx.lineTo(0, GROUND);
     ctx.fill();
 
-    const schoolOffset = (distance * 0.24) % 720;
+    const schoolShift = (distance * 0.16) % 1280;
     ctx.save();
-    ctx.translate(440 - schoolOffset, 0);
-    ctx.fillStyle = "#e7bd8b";
-    ctx.strokeStyle = "#886c58";
+    ctx.translate(420 - schoolShift, 0);
+    ctx.fillStyle = "rgba(117, 91, 69, 0.13)";
+    ctx.beginPath();
+    ctx.ellipse(175, 414, 210, 17, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = "#e7c99a";
+    ctx.strokeStyle = "#9a775c";
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.moveTo(0, 286);
-    ctx.lineTo(40, 225);
-    ctx.lineTo(300, 225);
-    ctx.lineTo(340, 286);
-    ctx.lineTo(340, 430);
-    ctx.lineTo(0, 430);
+    ctx.lineTo(42, 233);
+    ctx.quadraticCurveTo(172, 207, 306, 233);
+    ctx.lineTo(350, 286);
+    ctx.lineTo(350, 414);
+    ctx.quadraticCurveTo(177, 428, 0, 414);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
-    ctx.fillStyle = "#73949a";
-    roundedRect(ctx, 134, 250, 72, 180, 34);
+
+    // Loose roof strokes keep the architecture in the same storybook language.
+    ctx.strokeStyle = "#aa7658";
+    ctx.lineWidth = 8;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(12, 283);
+    ctx.quadraticCurveTo(176, 207, 338, 283);
+    ctx.stroke();
+    ctx.strokeStyle = "rgba(255, 244, 215, 0.65)";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(34, 277);
+    ctx.quadraticCurveTo(176, 224, 318, 277);
+    ctx.stroke();
+
+    ctx.fillStyle = "#76999a";
+    roundedRect(ctx, 140, 290, 70, 124, 34);
     ctx.fill();
-    ctx.fillStyle = "#f7e5bf";
+    ctx.strokeStyle = "#8f6c54";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+    ctx.fillStyle = "#f5e6c6";
     for (let i = 0; i < 4; i += 1) {
-      roundedRect(ctx, 25 + i * 76, 300, 45, 54, 6);
+      roundedRect(ctx, 28 + i * 79, 305, 45, 55, 7);
       ctx.fill();
+      ctx.strokeStyle = "rgba(135, 105, 78, 0.65)";
+      ctx.stroke();
+      ctx.fillStyle = "#8f9f91";
+      ctx.fillRect(49 + i * 79, 305, 2, 55);
+      ctx.fillStyle = "#f5e6c6";
     }
-    ctx.restore();
-    drawTree(ctx, 120 - ((distance * 0.3) % 1100), 424, 0.95);
-    drawTree(ctx, 850 - ((distance * 0.3) % 1100), 424, 1.1);
-  } else {
-    ctx.fillStyle = "#83a982";
-    ctx.beginPath();
-    ctx.moveTo(0, 355);
-    ctx.quadraticCurveTo(210, 280, 430, 345);
-    ctx.quadraticCurveTo(730, 270, WIDTH, 342);
-    ctx.lineTo(WIDTH, GROUND);
-    ctx.lineTo(0, GROUND);
+    ctx.fillStyle = "#b8795f";
+    roundedRect(ctx, 149, 248, 54, 26, 8);
     ctx.fill();
-    ctx.fillStyle = "#a6bd89";
+    ctx.fillStyle = "#fff2d8";
+    ctx.font = "bold 12px Georgia, serif";
+    ctx.textAlign = "center";
+    ctx.fillText("SCHOOL", 176, 266);
+    ctx.restore();
+
+    // Trees and a low fence move at different speeds for gentle parallax.
+    drawTree(ctx, 100 - ((distance * 0.25) % 1120), 425, 1.05);
+    drawTree(ctx, 830 - ((distance * 0.25) % 1120), 425, 0.88);
+    ctx.strokeStyle = "rgba(139, 111, 78, 0.75)";
+    ctx.lineWidth = 5;
+    const fenceShift = (distance * 0.31) % 94;
+    for (let i = -1; i < 12; i += 1) {
+      const x = i * 94 - fenceShift;
+      ctx.beginPath();
+      ctx.moveTo(x, 404);
+      ctx.lineTo(x, 375);
+      ctx.moveTo(x + 48, 404);
+      ctx.lineTo(x + 48, 375);
+      ctx.stroke();
+    }
     ctx.beginPath();
-    ctx.moveTo(0, 385);
-    ctx.quadraticCurveTo(330, 330, 600, 383);
-    ctx.quadraticCurveTo(820, 345, WIDTH, 375);
+    ctx.moveTo(0, 386);
+    ctx.lineTo(WIDTH, 386);
+    ctx.moveTo(0, 398);
+    ctx.lineTo(WIDTH, 398);
+    ctx.stroke();
+  } else {
+    // Open countryside: layered meadow hills, a distant tree line and a winding path.
+    ctx.fillStyle = "#a4c4a0";
+    ctx.beginPath();
+    ctx.moveTo(0, 322);
+    ctx.quadraticCurveTo(180, 270, 370, 320);
+    ctx.quadraticCurveTo(650, 247, WIDTH, 317);
     ctx.lineTo(WIDTH, GROUND);
     ctx.lineTo(0, GROUND);
     ctx.fill();
 
-    for (let i = 0; i < 9; i += 1) {
-      const x = ((i * 137 - distance * 0.18) % 1180 + 1180) % 1180 - 100;
-      ctx.strokeStyle = "#f4e8bd";
-      ctx.lineWidth = 3;
+    ctx.fillStyle = "#8eb184";
+    ctx.beginPath();
+    ctx.moveTo(0, 357);
+    ctx.quadraticCurveTo(200, 308, 440, 354);
+    ctx.quadraticCurveTo(700, 299, WIDTH, 350);
+    ctx.lineTo(WIDTH, GROUND);
+    ctx.lineTo(0, GROUND);
+    ctx.fill();
+
+    const treeShift = (distance * 0.13) % 1180;
+    for (let i = 0; i < 6; i += 1) {
+      const x = i * 235 - treeShift;
+      drawTree(ctx, x + 80, 395, 0.55 + (i % 2) * 0.13);
+    }
+
+    ctx.fillStyle = "#c0c98e";
+    ctx.beginPath();
+    ctx.moveTo(0, 375);
+    ctx.quadraticCurveTo(240, 339, 450, 382);
+    ctx.quadraticCurveTo(730, 340, WIDTH, 373);
+    ctx.lineTo(WIDTH, GROUND);
+    ctx.lineTo(0, GROUND);
+    ctx.fill();
+
+    // Flower dots and meadow strokes drift more quickly than the far hills.
+    for (let i = 0; i < 34; i += 1) {
+      const x = ((i * 47 - distance * 0.34) % (WIDTH + 80) + WIDTH + 80) % (WIDTH + 80) - 40;
+      const y = 354 + (i % 5) * 13;
+      ctx.fillStyle = i % 3 === 0 ? "#f3d6b1" : i % 3 === 1 ? "#e9e4bb" : "#d69a82";
       ctx.beginPath();
-      ctx.moveTo(x, 375 + Math.sin(i) * 9);
-      ctx.lineTo(x + 12, 350 + Math.cos(i) * 10);
-      ctx.stroke();
+      ctx.arc(x, y, 2.4 + (i % 2), 0, Math.PI * 2);
+      ctx.fill();
     }
   }
 
-  ctx.fillStyle = "#d6b783";
-  ctx.fillRect(0, GROUND, WIDTH, HEIGHT - GROUND);
-  ctx.fillStyle = "#8da879";
-  ctx.fillRect(0, GROUND - 5, WIDTH, 8);
-  ctx.strokeStyle = "rgba(118, 91, 61, 0.22)";
-  ctx.lineWidth = 2;
-  for (let i = 0; i < 30; i += 1) {
-    const x = ((i * 61 - distance * 0.8) % (WIDTH + 100) + WIDTH + 100) % (WIDTH + 100) - 50;
-    const y = GROUND + 26 + (i % 4) * 22;
+  // A softly painted, moving path gives the runner a grounded surface instead of a flat block.
+  const ground = ctx.createLinearGradient(0, GROUND, 0, HEIGHT);
+  ground.addColorStop(0, zone === "field" ? "#c3ad7e" : "#c7a477");
+  ground.addColorStop(1, "#b28d64");
+  ctx.fillStyle = ground;
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND - 1);
+  ctx.quadraticCurveTo(260, GROUND + 2, 510, GROUND - 1);
+  ctx.quadraticCurveTo(760, GROUND + 2, WIDTH, GROUND - 1);
+  ctx.lineTo(WIDTH, HEIGHT);
+  ctx.lineTo(0, HEIGHT);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = "#8fa879";
+  ctx.lineWidth = 8;
+  ctx.beginPath();
+  ctx.moveTo(0, GROUND - 3);
+  ctx.quadraticCurveTo(250, GROUND + 1, 510, GROUND - 3);
+  ctx.quadraticCurveTo(760, GROUND + 1, WIDTH, GROUND - 3);
+  ctx.stroke();
+
+  // Small, irregular paper-grain marks scroll underfoot.
+  ctx.lineCap = "round";
+  for (let i = 0; i < 42; i += 1) {
+    const x = ((i * 43 - distance * 0.8) % (WIDTH + 60) + WIDTH + 60) % (WIDTH + 60) - 30;
+    const y = GROUND + 18 + (i % 6) * 16;
+    ctx.strokeStyle = i % 3 === 0 ? "rgba(255, 235, 193, 0.35)" : "rgba(114, 83, 55, 0.17)";
+    ctx.lineWidth = i % 4 === 0 ? 2 : 1;
     ctx.beginPath();
     ctx.moveTo(x, y);
-    ctx.quadraticCurveTo(x + 8, y - 3, x + 18, y + 1);
+    ctx.quadraticCurveTo(x + 5, y - 2, x + 12, y + 1);
     ctx.stroke();
   }
 
-  ctx.fillStyle = "rgba(255, 248, 224, 0.16)";
-  ctx.fillRect(0, 0, WIDTH, HEIGHT);
   return zone;
 }
 
 function drawPlayer(ctx: CanvasRenderingContext2D, player: Player, time: number) {
-  const run = Math.sin(time * 13);
+  const run = Math.sin(time * 12.5);
   const airborne = !player.onGround;
   const x = player.x;
   const y = player.y;
+  const swing = airborne ? 4 : run * 8;
 
   ctx.save();
-  ctx.fillStyle = "rgba(79, 70, 59, 0.16)";
+
+  // Ground shadow narrows and softens while the child is in the air.
+  ctx.fillStyle = "rgba(76, 67, 52, 0.19)";
   ctx.beginPath();
-  ctx.ellipse(x + 24, GROUND + 1, airborne ? 17 : 25 - Math.abs(run) * 2, 6, 0, 0, Math.PI * 2);
+  ctx.ellipse(x + 29, GROUND + 1, airborne ? 15 : 25 - Math.abs(run) * 2, 5, 0, 0, Math.PI * 2);
   ctx.fill();
 
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
-  const legSwing = airborne ? 5 : run * 9;
-  ctx.strokeStyle = "#67504a";
-  ctx.lineWidth = 9;
+
+  // Backpack sits behind the shoulder and bounces with each step.
+  ctx.fillStyle = "#bd8060";
+  ctx.strokeStyle = "#76584b";
+  ctx.lineWidth = 2.5;
   ctx.beginPath();
-  ctx.moveTo(x + 22, y + 54);
-  ctx.lineTo(x + 20 + legSwing, y + 69);
-  ctx.lineTo(x + 14 + legSwing, y + 73);
+  ctx.moveTo(x + 5, y + 38);
+  ctx.quadraticCurveTo(x + 1, y + 34, x + 5, y + 31);
+  ctx.lineTo(x + 19, y + 34);
+  ctx.lineTo(x + 21, y + 59);
+  ctx.quadraticCurveTo(x + 8, y + 64, x + 4, y + 55);
+  ctx.closePath();
+  ctx.fill();
   ctx.stroke();
+  ctx.strokeStyle = "rgba(255, 225, 184, 0.75)";
+  ctx.lineWidth = 2;
   ctx.beginPath();
-  ctx.moveTo(x + 30, y + 54);
-  ctx.lineTo(x + 34 - legSwing, y + 68);
-  ctx.lineTo(x + 42 - legSwing, y + 72);
+  ctx.moveTo(x + 8, y + 43);
+  ctx.quadraticCurveTo(x + 15, y + 46, x + 15, y + 57);
   ctx.stroke();
 
-  ctx.fillStyle = "#e3a36e";
-  ctx.strokeStyle = "#76574b";
-  ctx.lineWidth = 3;
+  // Legs, rolled shorts and rounded shoes.
+  ctx.strokeStyle = "#75594d";
+  ctx.lineWidth = 8;
   ctx.beginPath();
-  ctx.moveTo(x + 12, y + 28);
-  ctx.quadraticCurveTo(x + 23, y + 18, x + 37, y + 28);
-  ctx.lineTo(x + 40, y + 56);
-  ctx.quadraticCurveTo(x + 26, y + 64, x + 11, y + 55);
+  ctx.moveTo(x + 24, y + 63);
+  ctx.lineTo(x + 19 + swing, y + 78);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x + 37, y + 62);
+  ctx.lineTo(x + 40 - swing, y + 77);
+  ctx.stroke();
+
+  ctx.fillStyle = "#594c43";
+  ctx.beginPath();
+  ctx.ellipse(x + 14 + swing, y + 81, 10, 5, -0.12, 0, Math.PI * 2);
+  ctx.ellipse(x + 44 - swing, y + 80, 10, 5, 0.1, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#e8c9a0";
+  ctx.lineWidth = 1.8;
+  ctx.beginPath();
+  ctx.moveTo(x + 9 + swing, y + 82);
+  ctx.lineTo(x + 18 + swing, y + 82);
+  ctx.moveTo(x + 39 - swing, y + 81);
+  ctx.lineTo(x + 48 - swing, y + 81);
+  ctx.stroke();
+
+  // Shorts.
+  ctx.fillStyle = "#9b7660";
+  ctx.strokeStyle = "#76584b";
+  ctx.lineWidth = 2.5;
+  ctx.beginPath();
+  ctx.moveTo(x + 18, y + 52);
+  ctx.quadraticCurveTo(x + 29, y + 57, x + 42, y + 51);
+  ctx.lineTo(x + 43, y + 66);
+  ctx.quadraticCurveTo(x + 36, y + 70, x + 30, y + 65);
+  ctx.quadraticCurveTo(x + 23, y + 70, x + 17, y + 65);
   ctx.closePath();
   ctx.fill();
   ctx.stroke();
 
-  ctx.strokeStyle = "#e3a36e";
+  // Shirt with a soft collar and small hand-painted folds.
+  ctx.fillStyle = "#78a29a";
+  ctx.strokeStyle = "#6c594b";
+  ctx.lineWidth = 2.8;
+  ctx.beginPath();
+  ctx.moveTo(x + 17, y + 31);
+  ctx.quadraticCurveTo(x + 29, y + 23, x + 41, y + 32);
+  ctx.lineTo(x + 43, y + 57);
+  ctx.quadraticCurveTo(x + 30, y + 64, x + 15, y + 57);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.strokeStyle = "rgba(255, 240, 205, 0.75)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(x + 25, y + 32);
+  ctx.lineTo(x + 30, y + 39);
+  ctx.lineTo(x + 35, y + 32);
+  ctx.moveTo(x + 20, y + 47);
+  ctx.quadraticCurveTo(x + 25, y + 49, x + 26, y + 54);
+  ctx.stroke();
+
+  // Arms swing opposite to the legs.
+  ctx.strokeStyle = "#e7b789";
   ctx.lineWidth = 7;
   ctx.beginPath();
-  ctx.moveTo(x + 12, y + 34);
-  ctx.lineTo(x + 4, y + (airborne ? 28 : 42 + run * 5));
-  ctx.moveTo(x + 37, y + 34);
-  ctx.lineTo(x + 46, y + (airborne ? 23 : 42 - run * 5));
+  ctx.moveTo(x + 17, y + 37);
+  ctx.quadraticCurveTo(x + 9, y + 41, x + 7 - swing * 0.35, y + (airborne ? 31 : 47 + swing * 0.35));
+  ctx.moveTo(x + 41, y + 37);
+  ctx.quadraticCurveTo(x + 48, y + 41, x + 51 + swing * 0.35, y + (airborne ? 27 : 46 - swing * 0.35));
   ctx.stroke();
 
-  ctx.fillStyle = "#f0bd8c";
+  // Face and neck.
+  ctx.fillStyle = "#eebd91";
+  ctx.strokeStyle = "#76584b";
+  ctx.lineWidth = 2.3;
   ctx.beginPath();
-  ctx.arc(x + 25, y + 15, 15, 0, Math.PI * 2);
+  ctx.arc(x + 30, y + 18, 16, 0, Math.PI * 2);
   ctx.fill();
-  ctx.strokeStyle = "#76574b";
-  ctx.lineWidth = 2.5;
   ctx.stroke();
+  ctx.fillStyle = "#eebd91";
+  roundedRect(ctx, x + 25, y + 29, 10, 9, 3);
+  ctx.fill();
 
+  // Tousled hair, with an uneven silhouette rather than a flat semicircle.
   ctx.fillStyle = "#59483f";
   ctx.beginPath();
-  ctx.arc(x + 23, y + 7, 15, Math.PI, Math.PI * 2);
-  ctx.quadraticCurveTo(x + 42, y + 8, x + 38, y + 19);
-  ctx.quadraticCurveTo(x + 30, y + 13, x + 15, y + 15);
+  ctx.moveTo(x + 14, y + 19);
+  ctx.quadraticCurveTo(x + 10, y + 7, x + 22, y + 3);
+  ctx.quadraticCurveTo(x + 27, y - 2, x + 34, y + 3);
+  ctx.quadraticCurveTo(x + 45, y + 3, x + 46, y + 16);
+  ctx.quadraticCurveTo(x + 40, y + 13, x + 37, y + 17);
+  ctx.quadraticCurveTo(x + 30, y + 11, x + 22, y + 18);
+  ctx.quadraticCurveTo(x + 17, y + 16, x + 14, y + 19);
   ctx.closePath();
   ctx.fill();
-
-  ctx.fillStyle = "#59483f";
-  ctx.beginPath();
-  ctx.arc(x + 31, y + 16, 1.8, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = "#a56d59";
+  ctx.strokeStyle = "rgba(228, 190, 145, 0.35)";
   ctx.lineWidth = 1.5;
   ctx.beginPath();
-  ctx.arc(x + 30, y + 22, 4, 0.15, 1.55);
+  ctx.moveTo(x + 23, y + 7);
+  ctx.quadraticCurveTo(x + 31, y + 2, x + 38, y + 8);
   ctx.stroke();
+
+  // One visible eye, tiny nose and a quiet smile.
+  ctx.fillStyle = "#51443d";
+  ctx.beginPath();
+  ctx.arc(x + 36, y + 20, 1.7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "#a8735d";
+  ctx.lineWidth = 1.3;
+  ctx.beginPath();
+  ctx.moveTo(x + 41, y + 24);
+  ctx.lineTo(x + 43, y + 25);
+  ctx.moveTo(x + 33, y + 29);
+  ctx.quadraticCurveTo(x + 37, y + 32, x + 40, y + 28);
+  ctx.stroke();
+
   ctx.restore();
 }
 
@@ -553,6 +719,10 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
         lastZone = currentZone;
         setZone(currentZone);
       }
+    };
+
+    background.onload = () => {
+      if (phase !== "playing") drawFrame(0);
     };
 
     resizeCanvas();
