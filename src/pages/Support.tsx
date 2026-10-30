@@ -57,7 +57,7 @@ const FAQS = [
   {
     question: "How can I contact the team?",
     answer:
-      "Use the Contact page or email support@safekid.com to reach the SafeKid / DigiBabi team.",
+      "Use the Contact page or email safekid.digibabi@gmail.com to reach the SafeKid / DigiBabi team.",
   },
 ];
 

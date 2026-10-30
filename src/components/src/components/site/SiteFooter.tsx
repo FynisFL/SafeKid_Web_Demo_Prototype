@@ -41,7 +41,7 @@ export function SiteFooter() {
           </div>
           <div className="flex flex-col items-start gap-4 md:items-end">
             <a
-              href="mailto:support@safekid.com"
+              href="mailto:safekid.digibabi@gmail.com"
               className="group inline-flex items-center gap-3 rounded-full bg-white px-6 py-3.5 text-[14px] font-medium text-ink transition-all duration-300 hover:-translate-y-0.5 hover:bg-aqua-soft btn-motion btn-motion-light"
             >
               Tell us what you think
@@ -122,11 +122,11 @@ export function SiteFooter() {
             <ul className="mt-5 space-y-3 text-sm text-white/70">
               <li>
                 <a
-                  href="mailto:support@safekid.com"
+                  href="mailto:safekid.digibabi@gmail.com"
                   className="inline-flex items-center gap-2.5 transition-colors hover:text-primary"
                 >
                   <Mail className="h-4 w-4 text-primary/80" aria-hidden="true" />
-                  support@safekid.com
+                  safekid.digibabi@gmail.com
                 </a>
               </li>
               <li>

@@ -10,8 +10,8 @@ const DETAILS = [
   {
     icon: Mail,
     label: "Email",
-    value: "support@safekid.com",
-    href: "mailto:support@safekid.com",
+    value: "safekid.digibabi@gmail.com",
+    href: "mailto:safekid.digibabi@gmail.com",
   },
   {
     icon: Phone,
@@ -43,7 +43,7 @@ export default function Contact() {
     const body = [`Name: ${name}`, `Email: ${email}`, "", message].join("\n");
 
     setDraftOpened(true);
-    window.location.href = `mailto:support@safekid.com?subject=${encodeURIComponent(
+    window.location.href = `mailto:safekid.digibabi@gmail.com?subject=${encodeURIComponent(
       subject
     )}&body=${encodeURIComponent(body)}`;
   }
@@ -66,7 +66,7 @@ export default function Contact() {
         intro="Curious about SafeKid or the idea behind the collection? We'd love to hear what you think."
         actions={
           <a
-            href="mailto:support@safekid.com"
+            href="mailto:safekid.digibabi@gmail.com"
             className="group inline-flex h-12 items-center gap-2 rounded-full bg-ink px-6 text-[13.5px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-night btn-motion"
           >
             Write to the SafeKid team
@@ -185,9 +185,9 @@ export default function Contact() {
                     An email draft should have opened. If nothing happened, email{" "}
                     <a
                       className="font-medium text-ink underline decoration-primary/40 underline-offset-2"
-                      href="mailto:support@safekid.com"
+                      href="mailto:safekid.digibabi@gmail.com"
                     >
-                      support@safekid.com
+                      safekid.digibabi@gmail.com
                     </a>
                     . This concept site does not send messages automatically.
                   </div>
