@@ -1,8 +1,10 @@
-import { useCallback, useState } from "react";
+import { lazy, Suspense, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowUpRight, Instagram, Linkedin, Mail, MapPin, Phone, Youtube } from "lucide-react";
 import { BrandMark } from "./BrandMark";
-import { LittleDetourGame } from "../easter-egg/LittleDetourGame";
+const LittleDetourGame = lazy(() =>
+  import("../easter-egg/LittleDetourGame").then((module) => ({ default: module.LittleDetourGame })),
+);
 
 const explore = [
   { label: "Home", to: "/" },
@@ -169,7 +171,11 @@ export function SiteFooter() {
       >
         SafeKid
       </div>
-      {isLittleDetourOpen && <LittleDetourGame onClose={closeLittleDetour} />}
+      {isLittleDetourOpen && (
+        <Suspense fallback={<div className="little-detour__loading">Opening a little detour…</div>}>
+          <LittleDetourGame onClose={closeLittleDetour} />
+        </Suspense>
+      )}
     </footer>
   );
 }
