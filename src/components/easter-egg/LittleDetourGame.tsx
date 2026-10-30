@@ -666,7 +666,8 @@ function drawPlane(ctx: CanvasRenderingContext2D, plane: PaperPlane, time: numbe
 
 function safeReadBest() {
   try {
-    return Number(window.localStorage.getItem(BEST_KEY) || 0);
+    const value = Number(window.localStorage.getItem(BEST_KEY) || 0);
+    return Number.isFinite(value) && value > 0 ? Math.floor(value) : 0;
   } catch {
     return 0;
   }
@@ -876,15 +877,13 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       const finalScore = Math.floor(world.distance / 12) + world.collected * 35;
       setScore(finalScore);
       setCollected(world.collected);
-      setBest((previous) => {
-        const next = Math.max(previous, finalScore);
-        try {
-          window.localStorage.setItem(BEST_KEY, String(next));
-        } catch {
-          // Local score storage is optional; the game remains playable without it.
-        }
-        return next;
-      });
+      setBest((previous) => Math.max(previous, finalScore));
+      try {
+        const storedBest = safeReadBest();
+        window.localStorage.setItem(BEST_KEY, String(Math.max(storedBest, finalScore)));
+      } catch {
+        // Local score storage is optional; the game remains playable without it.
+      }
       setPhase("gameover");
     };
 
