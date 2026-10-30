@@ -703,6 +703,32 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
     jumpRef.current?.();
   }, []);
 
+  // Unlock/resume Web Audio directly inside the user's click gesture.
+  // Creating or resuming AudioContext later from the animation loop can be
+  // blocked by browser autoplay policies, leaving the unmuted game silent.
+  const toggleMuted = useCallback(() => {
+    if (muted) {
+      try {
+        const AudioContextConstructor = window.AudioContext;
+        if (AudioContextConstructor) {
+          let context = audioContextRef.current;
+          if (!context || context.state === "closed") {
+            context = new AudioContextConstructor();
+            audioContextRef.current = context;
+          }
+          if (context.state === "suspended") {
+            void context.resume().catch(() => undefined);
+          }
+        }
+      } catch {
+        // Audio is optional; the game remains playable if it is unavailable.
+      }
+      setMuted(false);
+    } else {
+      setMuted(true);
+    }
+  }, [muted]);
+
   useEffect(() => () => {
     const context = audioContextRef.current;
     audioContextRef.current = null;
@@ -1014,7 +1040,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           </div>
           <div className="little-detour__top-actions">
             <span className="little-detour__best">BEST <b>{best.toLocaleString()}</b></span>
-            <button className="little-detour__icon-button" onClick={() => setMuted((value) => !value)} aria-label={muted ? "Enable sound" : "Mute sound"} title={muted ? "Enable sound" : "Mute sound"}>{muted ? <VolumeX size={17} /> : <Volume2 size={17} />}</button>
+            <button className="little-detour__icon-button" onClick={toggleMuted} aria-label={muted ? "Enable sound" : "Mute sound"} title={muted ? "Enable sound" : "Mute sound"}>{muted ? <VolumeX size={17} /> : <Volume2 size={17} />}</button>
             <button className="little-detour__icon-button" onClick={onClose} aria-label="Close secret game">
               <X size={19} />
             </button>
