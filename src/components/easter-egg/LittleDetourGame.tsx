@@ -187,62 +187,62 @@ function drawBackground(ctx: CanvasRenderingContext2D, distance: number, time: n
     for (const schoolX of [420, 1700]) {
       ctx.save();
       ctx.translate(schoolX - schoolShift, 0);
-    ctx.fillStyle = "rgba(117, 91, 69, 0.13)";
-    ctx.beginPath();
-    ctx.ellipse(175, 414, 210, 17, 0, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = "#e7c99a";
-    ctx.strokeStyle = "#9a775c";
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.moveTo(0, 286);
-    ctx.lineTo(42, 233);
-    ctx.quadraticCurveTo(172, 207, 306, 233);
-    ctx.lineTo(350, 286);
-    ctx.lineTo(350, 414);
-    ctx.quadraticCurveTo(177, 428, 0, 414);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    // Loose roof strokes keep the architecture in the same storybook language.
-    ctx.strokeStyle = "#aa7658";
-    ctx.lineWidth = 8;
-    ctx.lineCap = "round";
-    ctx.beginPath();
-    ctx.moveTo(12, 283);
-    ctx.quadraticCurveTo(176, 207, 338, 283);
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(255, 244, 215, 0.65)";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(34, 277);
-    ctx.quadraticCurveTo(176, 224, 318, 277);
-    ctx.stroke();
-
-    ctx.fillStyle = "#76999a";
-    roundedRect(ctx, 140, 290, 70, 124, 34);
-    ctx.fill();
-    ctx.strokeStyle = "#8f6c54";
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    ctx.fillStyle = "#f5e6c6";
-    for (let i = 0; i < 4; i += 1) {
-      roundedRect(ctx, 28 + i * 79, 305, 45, 55, 7);
+      ctx.fillStyle = "rgba(117, 91, 69, 0.13)";
+      ctx.beginPath();
+      ctx.ellipse(175, 414, 210, 17, 0, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = "rgba(135, 105, 78, 0.65)";
+      ctx.fillStyle = "#e7c99a";
+      ctx.strokeStyle = "#9a775c";
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(0, 286);
+      ctx.lineTo(42, 233);
+      ctx.quadraticCurveTo(172, 207, 306, 233);
+      ctx.lineTo(350, 286);
+      ctx.lineTo(350, 414);
+      ctx.quadraticCurveTo(177, 428, 0, 414);
+      ctx.closePath();
+      ctx.fill();
       ctx.stroke();
-      ctx.fillStyle = "#8f9f91";
-      ctx.fillRect(49 + i * 79, 305, 2, 55);
+
+      // Loose roof strokes keep the architecture in the same storybook language.
+      ctx.strokeStyle = "#aa7658";
+      ctx.lineWidth = 8;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(12, 283);
+      ctx.quadraticCurveTo(176, 207, 338, 283);
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(255, 244, 215, 0.65)";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(34, 277);
+      ctx.quadraticCurveTo(176, 224, 318, 277);
+      ctx.stroke();
+
+      ctx.fillStyle = "#76999a";
+      roundedRect(ctx, 140, 290, 70, 124, 34);
+      ctx.fill();
+      ctx.strokeStyle = "#8f6c54";
+      ctx.lineWidth = 3;
+      ctx.stroke();
       ctx.fillStyle = "#f5e6c6";
-    }
-    ctx.fillStyle = "#b8795f";
-    roundedRect(ctx, 149, 248, 54, 26, 8);
-    ctx.fill();
-    ctx.fillStyle = "#fff2d8";
-    ctx.font = "bold 12px Georgia, serif";
-    ctx.textAlign = "center";
-    ctx.fillText("SCHOOL", 176, 266);
+      for (let i = 0; i < 4; i += 1) {
+        roundedRect(ctx, 28 + i * 79, 305, 45, 55, 7);
+        ctx.fill();
+        ctx.strokeStyle = "rgba(135, 105, 78, 0.65)";
+        ctx.stroke();
+        ctx.fillStyle = "#8f9f91";
+        ctx.fillRect(49 + i * 79, 305, 2, 55);
+        ctx.fillStyle = "#f5e6c6";
+      }
+      ctx.fillStyle = "#b8795f";
+      roundedRect(ctx, 149, 248, 54, 26, 8);
+      ctx.fill();
+      ctx.fillStyle = "#fff2d8";
+      ctx.font = "bold 12px Georgia, serif";
+      ctx.textAlign = "center";
+      ctx.fillText("SCHOOL", 176, 266);
       ctx.restore();
     }
 
