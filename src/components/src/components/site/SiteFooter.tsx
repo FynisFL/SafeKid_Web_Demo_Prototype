@@ -63,7 +63,7 @@ export function SiteFooter() {
             </p>
             <div className="mt-6 flex items-center gap-2" aria-label="Social channels">
               <a
-                href="https://www.facebook.com/share/1CennHRUEi/"
+                href="https://facebook.com/DigiBabi"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="SafeKid on Facebook"

@@ -25,7 +25,7 @@ const DETAILS = [
     icon: Facebook,
     label: "Facebook",
     value: "SafeKid on Facebook",
-    href: "https://www.facebook.com/share/1CennHRUEi/",
+    href: "https://facebook.com/DigiBabi",
     external: true,
   },
   {
