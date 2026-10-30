@@ -44,10 +44,10 @@
     <g fill="#6f936e"><circle cx="1435" cy="360" r="110"/><circle cx="1518" cy="330" r="105"/><circle cx="1368" cy="440" r="79"/></g>
   </g>
   <!-- Schoolyard fence and flowering edges -->
-  <g stroke="#8e7659" stroke-width="9" fill="none" opacity=".86"><path d="M0 688H1600M0 730H1600"/><path d="M45 656v90m90-90v90m90-90v90m90-90v90m90-90v90m90-90v90m90-90v90m90-90v90m90-90v90m90-90v90m90-90v90m90-90v90m90-90v90m90-90v90m90-90v90m90-90v90"/></g>
+  <g stroke="#8e7659" stroke-width="9" fill="none" opacity=".86"><path d="M0 650H1600M0 685H1600"/><path d="M45 620v80m90-80v80m90-80v80m90-80v80m90-80v80m90-80v80m90-80v80m90-80v80m90-80v80m90-80v80m90-80v80m90-80v80m90-80v80m90-80v80m90-80v80m90-80v80"/></g>
   <g fill="#d7a078" opacity=".9"><circle cx="268" cy="668" r="9"/><circle cx="290" cy="650" r="8"/><circle cx="315" cy="677" r="10"/><circle cx="470" cy="668" r="8"/><circle cx="510" cy="650" r="10"/><circle cx="540" cy="674" r="7"/><circle cx="1430" cy="668" r="9"/><circle cx="1460" cy="650" r="8"/></g>
-  <path d="M0 742Q380 710 780 745T1600 735V900H0Z" fill="url(#earth)"/>
-  <path d="M0 750Q390 728 790 753T1600 744" fill="none" stroke="#8ba477" stroke-width="16" opacity=".8"/>
+  <path d="M0 700Q380 678 780 704T1600 696V900H0Z" fill="url(#earth)"/>
+  <path d="M0 708Q390 690 790 713T1600 705" fill="none" stroke="#8ba477" stroke-width="16" opacity=".8"/>
   <g fill="#f6e4b8" opacity=".28"><path d="M100 820q60-20 115 0t100-3v10H100z"/><path d="M780 850q60-24 120-2t110-4v10H780z"/><path d="M1300 805q60-18 110-2t105 0v10h-215z"/></g>
   <rect width="1600" height="900" fill="url(#paper)" opacity=".45"/>
 </svg>
