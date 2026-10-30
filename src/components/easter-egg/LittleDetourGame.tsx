@@ -1248,7 +1248,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
             onPointerDown={() => {
               if (phase === "playing") jump();
             }}
-            aria-label="A hand-drawn endless runner. Jump over puddles, bags and fences; collect paper planes."
+            aria-label="A hand-drawn endless runner. Jump over obstacles, collect paper planes and four power-up items."
           />
           <div className="little-detour__stage-shade" />
 
@@ -1260,10 +1260,12 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
                 One little run through the places we used to call our whole world.
               </p>
               <div className="little-detour__item-guide" aria-label="Power-up item guide">
-                <span><b>✦ Wings</b><small>Double jump</small></span>
-                <span><b>❧ Feather</b><small>Slow fall</small></span>
-                <span><b>⌛ Hourglass</b><small>Slow time</small></span>
-                <span><b>↟ Spring</b><small>High jump</small></span>
+                {(Object.keys(POWER_UP_META) as PowerUpKind[]).map((kind) => (
+                  <span key={kind}>
+                    <b>{POWER_UP_META[kind].symbol} {POWER_UP_META[kind].item}</b>
+                    <small>{POWER_UP_META[kind].label}</small>
+                  </span>
+                ))}
               </div>
               <button className="little-detour__primary" onClick={startRun}>
                 Let's go <ArrowUp size={17} />
