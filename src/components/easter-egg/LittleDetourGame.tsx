@@ -676,6 +676,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const jumpRef = useRef<(() => void) | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
+  const lastRunDistanceRef = useRef(0);
   const [phase, setPhase] = useState<Phase>("intro");
   const [runKey, setRunKey] = useState(0);
   const [score, setScore] = useState(0);
@@ -799,7 +800,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
     let lastTime = 0;
     let scoreClock = 0;
     let world: World = {
-      distance: 0,
+      distance: phase === "gameover" ? lastRunDistanceRef.current : 0,
       elapsed: 0,
       speed: 315,
       spawnTimer: 1.1,
@@ -854,6 +855,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
     if (phase !== "playing") {
       drawFrame(0);
       return () => {
+        disposed = true;
         window.removeEventListener("resize", resizeCanvas);
       };
     }
@@ -867,6 +869,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
     };
 
     const finishRun = () => {
+      lastRunDistanceRef.current = world.distance;
       const finalScore = Math.floor(world.distance / 12) + world.collected * 35;
       setScore(finalScore);
       setCollected(world.collected);
