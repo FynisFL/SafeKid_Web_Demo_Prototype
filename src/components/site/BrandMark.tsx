@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, type PointerEvent, type MouseEvent } from "react";
 import { Link } from "react-router-dom";
 import logo from "@/assets/safekid/logo.webp";
 import { cn } from "@/lib/utils";
@@ -28,7 +28,7 @@ export function BrandMark({
     setIsHolding(false);
   };
 
-  const handlePointerDown = (event: React.PointerEvent<HTMLAnchorElement>) => {
+  const handlePointerDown = (event: PointerEvent<HTMLAnchorElement>) => {
     if (!onSecretUnlock || (event.pointerType === "mouse" && event.button !== 0)) return;
     unlockedByHold.current = false;
     setIsHolding(true);
@@ -38,7 +38,7 @@ export function BrandMark({
     }, 3000);
   };
 
-  const handleClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+  const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {
     if (unlockedByHold.current) {
       event.preventDefault();
       event.stopPropagation();
