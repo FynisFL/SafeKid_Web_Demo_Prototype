@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, ArrowUpRight, MoveHorizontal } from "lucide-react";
@@ -9,30 +9,59 @@ type ZodiacStageProps = {
   variant?: "home" | "page";
 };
 
+const COUNT = zodiacProducts.length;
+const DEGREES_PER_STEP = 360 / COUNT;
+
 export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
   const [index, setIndex] = useState(0);
-  const [direction, setDirection] = useState(1);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  // Cumulative dial angle in degrees. Invariant: dial is congruent to index * 30 (mod 360).
+  const [dial, setDial] = useState(0);
   const reduce = useReducedMotion();
+  const pillId = useId();
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  // Always the latest selection, so rapid inputs never compute from a stale render.
+  const indexRef = useRef(0);
   const product = zodiacProducts[index];
 
-  function select(next: number) {
-    const count = zodiacProducts.length;
-    const normalized = ((next % count) + count) % count;
-    setDirection(normalized > index || (index === count - 1 && normalized === 0) ? 1 : -1);
-    setIndex(normalized);
+  // One place that changes the selection. The image slides in `dir`, and the dial turns the
+  // same way by the same number of editions, so the two can never disagree.
+  function go(next: number, dir: 1 | -1, steps: number) {
+    if (next === indexRef.current) return;
+    indexRef.current = next;
+    setDirection(dir);
+    setIndex(next);
+    setDial((angle) => angle + dir * steps * DEGREES_PER_STEP);
   }
 
-  function handleKeyDown(event: React.KeyboardEvent, currentIndex: number) {
+  // Arrow keys, prev/next buttons and drag: one edition at a time, wrapping around.
+  function step(dir: 1 | -1) {
+    go((indexRef.current + dir + COUNT) % COUNT, dir, 1);
+  }
+
+  // A click in the (vertical) list follows list order, not the shortest way round.
+  function pick(target: number) {
+    const current = indexRef.current;
+    if (target === current) return;
+    go(target, target > current ? 1 : -1, Math.abs(target - current));
+  }
+
+  function handleKeyDown(event: React.KeyboardEvent) {
     const forward = event.key === "ArrowDown" || event.key === "ArrowRight";
     const back = event.key === "ArrowUp" || event.key === "ArrowLeft";
     if (!forward && !back) return;
 
     event.preventDefault();
-    const next = (currentIndex + (forward ? 1 : -1) + zodiacProducts.length) % zodiacProducts.length;
-    select(next);
-    itemRefs.current[next]?.focus();
+    step(forward ? 1 : -1);
+    itemRefs.current[indexRef.current]?.focus();
   }
+
+  // Reduced motion: every swap, pill move and dial turn is immediate.
+  const instant = { duration: 0 };
+  const imageTransition = reduce ? instant : { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const };
+  // Settles in about the time the image swap takes (exit + enter), so the marker lands as the new image arrives.
+  const dialTransition = reduce ? instant : { type: "spring" as const, stiffness: 40, damping: 12 };
+  const pillTransition = reduce ? instant : { type: "spring" as const, stiffness: 420, damping: 36 };
 
   const slide = {
     enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 56 : -56, scale: 0.97 }),
@@ -95,15 +124,23 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
                         itemRefs.current[itemIndex] = node;
                       }}
                       type="button"
-                      onClick={() => select(itemIndex)}
-                      onKeyDown={(event) => handleKeyDown(event, itemIndex)}
+                      onClick={() => pick(itemIndex)}
+                      onKeyDown={handleKeyDown}
                       aria-pressed={selected}
                       tabIndex={selected ? 0 : -1}
                       className={cn(
-                        "group flex w-full items-center gap-3 rounded-lg border-b border-ink/[0.07] px-2 py-3 text-left transition-colors",
-                        selected ? "bg-mist/70 text-ink" : "text-deep/55 hover:bg-mist/40 hover:text-ink"
+                        "group relative isolate flex w-full items-center gap-3 rounded-lg border-b border-ink/[0.07] px-2 py-3 text-left transition-colors",
+                        selected ? "text-ink" : "text-deep/55 hover:bg-mist/40 hover:text-ink"
                       )}
                     >
+                      {selected && (
+                        <motion.span
+                          layoutId={pillId}
+                          aria-hidden="true"
+                          transition={pillTransition}
+                          className="absolute inset-0 -z-10 rounded-lg bg-mist/70"
+                        />
+                      )}
                       <span
                         className={cn(
                           "text-[9px] tabular-nums tracking-[0.12em] transition-colors",
@@ -154,13 +191,34 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
                 className="absolute inset-[17%] rounded-full border border-dashed border-primary/25 animate-sk-spin"
               />
 
+              {/* Dial: 12 stations, one per edition, and a marker that turns to the chosen one. */}
+              <div aria-hidden="true" className="pointer-events-none absolute inset-[9%]">
+                {Array.from({ length: COUNT }).map((_, tick) => (
+                  <span
+                    key={tick}
+                    className="absolute inset-0"
+                    style={{ transform: `rotate(${tick * DEGREES_PER_STEP}deg)` }}
+                  >
+                    <span className="absolute left-1/2 top-0 h-1 w-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/35" />
+                  </span>
+                ))}
+                <motion.div
+                  className="absolute inset-0"
+                  initial={false}
+                  animate={{ rotate: dial }}
+                  transition={dialTransition}
+                >
+                  <span className="absolute left-1/2 top-0 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary shadow-[0_0_0_4px_hsl(var(--primary)/0.15)]" />
+                </motion.div>
+              </div>
+
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span
                   key={product.animal}
                   initial={{ opacity: 0, scale: 1.04 }}
                   animate={{ opacity: 0.5, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  transition={reduce ? instant : { duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
                   aria-hidden="true"
                   className="pointer-events-none absolute inset-0 flex select-none items-center justify-center font-display text-[40vw] font-extrabold leading-none text-primary/[0.13] sm:text-[17rem]"
                 >
@@ -173,8 +231,8 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.08}
                 onDragEnd={(_, info) => {
-                  if (info.offset.x < -48 || info.velocity.x < -320) select(index + 1);
-                  else if (info.offset.x > 48 || info.velocity.x > 320) select(index - 1);
+                  if (info.offset.x < -48 || info.velocity.x < -320) step(1);
+                  else if (info.offset.x > 48 || info.velocity.x > 320) step(-1);
                 }}
                 className="absolute inset-0 cursor-grab touch-pan-y active:cursor-grabbing"
               >
@@ -188,7 +246,7 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
                     initial="enter"
                     animate="center"
                     exit="exit"
-                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                    transition={imageTransition}
                     className="absolute inset-0 h-full w-full select-none object-contain drop-shadow-[0_40px_60px_rgba(16,42,56,0.14)]"
                     draggable={false}
                   />
@@ -198,7 +256,7 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
               <div className="absolute right-0 top-2 flex items-center gap-1.5">
                 <button
                   type="button"
-                  onClick={() => select(index - 1)}
+                  onClick={() => step(-1)}
                   aria-label="Previous edition"
                   className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/10 bg-white/70 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
                 >
@@ -206,7 +264,7 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => select(index + 1)}
+                  onClick={() => step(1)}
                   aria-label="Next edition"
                   className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/10 bg-white/70 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
                 >
@@ -231,7 +289,7 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
                     initial={{ opacity: 0, y: 8 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.3 }}
+                    transition={reduce ? instant : { duration: 0.3 }}
                     className="mt-1 font-display text-[22px] font-medium tracking-[-0.04em] text-ink"
                   >
                     {product.label} edition

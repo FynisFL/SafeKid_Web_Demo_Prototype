@@ -1,7 +1,8 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   motion,
+  useMotionValueEvent,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -9,22 +10,43 @@ import {
 } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
+import { cn } from "@/lib/utils";
 
 const STATEMENT = ["Growing", "up", "means", "taking", "small", "steps."];
+// The last two words land in turquoise.
+const ACCENT = new Set(["small", "steps."]);
 
 function Word({
   children,
   progress,
   range,
+  accent = false,
 }: {
   children: string;
   progress: MotionValue<number>;
   range: [number, number];
+  accent?: boolean;
 }) {
   const opacity = useTransform(progress, range, [0.24, 1]);
+  // A small rise travels with the opacity. The span is inline-block so the transform applies.
+  const y = useTransform(progress, range, [6, 0]);
+
+  // Accent words stay neutral while they are dim, so they never read as a rendering defect,
+  // and turn turquoise only once they are almost fully lit. State flips at one threshold only.
+  const litAt = range[0] + (range[1] - range[0]) * 0.8;
+  const [lit, setLit] = useState(() => accent && progress.get() >= litAt);
+  useMotionValueEvent(progress, "change", (value) => {
+    if (accent) setLit(value >= litAt);
+  });
+
   return (
     <span className="relative mr-[0.22em] inline-block">
-      <motion.span style={{ opacity }}>{children}</motion.span>
+      <motion.span
+        className={cn("inline-block transition-colors duration-500", accent && lit && "text-primary")}
+        style={{ opacity, y }}
+      >
+        {children}
+      </motion.span>
     </span>
   );
 }
@@ -56,11 +78,19 @@ export function Thesis() {
               const start = index / STATEMENT.length;
               const end = Math.min(1, start + 0.42);
               return reduce ? (
-                <span key={word} className="mr-[0.22em] inline-block">
+                <span
+                  key={word}
+                  className={cn("mr-[0.22em] inline-block", ACCENT.has(word) && "text-primary")}
+                >
                   {word}
                 </span>
               ) : (
-                <Word key={word} progress={scrollYProgress} range={[start, end]}>
+                <Word
+                  key={word}
+                  progress={scrollYProgress}
+                  range={[start, end]}
+                  accent={ACCENT.has(word)}
+                >
                   {word}
                 </Word>
               );

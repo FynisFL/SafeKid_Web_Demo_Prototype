@@ -62,6 +62,11 @@ export function Hero() {
   const artY = useTransform(scrollYProgress, [0, 1], [0, -64]);
   const artScale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
   const copyY = useTransform(scrollYProgress, [0, 1], [0, 40]);
+  // Starts late on purpose: the CTAs sit about 60-70% down the hero and must stay readable
+  // (>= ~0.7 opacity) for as long as they are on screen. See HE-1.
+  const copyOpacity = useTransform(scrollYProgress, [0.6, 1], [1, 0.25]);
+  // 36 degrees in total while the hero scrolls away.
+  const ticksRotate = useTransform(scrollYProgress, [0, 1], [0, 36]);
 
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
@@ -124,10 +129,17 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-[7%] hidden w-px bg-ink/[0.05] lg:block"
       />
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-y-0 left-[7%] hidden w-px origin-top bg-primary/35 lg:block"
+        initial={reduce ? false : { scaleY: 0 }}
+        animate={{ scaleY: 1 }}
+        transition={{ duration: 1.8, delay: 0.5, ease }}
+      />
 
       <div className="shell relative grid items-center gap-12 pb-8 pt-6 lg:grid-cols-[1.02fr_0.98fr] lg:gap-4 lg:pb-12">
         <motion.div
-          style={reduce ? undefined : { y: copyY }}
+          style={reduce ? undefined : { y: copyY, opacity: copyOpacity }}
           {...motionProps}
           variants={container}
           className="relative z-10 max-w-[620px]"
@@ -218,7 +230,13 @@ export function Hero() {
             className="perspective-1200 relative aspect-square w-full max-w-[520px] lg:max-w-[580px]"
           >
             <div aria-hidden="true" className="stage-glow absolute inset-[2%] rounded-full" />
-            <OrbitTicks />
+            <motion.div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={reduce ? undefined : { rotate: ticksRotate }}
+            >
+              <OrbitTicks />
+            </motion.div>
             <span
               aria-hidden="true"
               className="absolute inset-[21%] rounded-full border border-primary/25"
