@@ -183,9 +183,10 @@ function drawBackground(ctx: CanvasRenderingContext2D, distance: number, time: n
     ctx.lineTo(0, GROUND);
     ctx.fill();
 
-    const schoolShift = (distance * 0.16) % 1280;
-    ctx.save();
-    ctx.translate(420 - schoolShift, 0);
+    const schoolShift = ((distance - 2500) * 0.16) % 1280;
+    for (const schoolX of [420, 1700]) {
+      ctx.save();
+      ctx.translate(schoolX - schoolShift, 0);
     ctx.fillStyle = "rgba(117, 91, 69, 0.13)";
     ctx.beginPath();
     ctx.ellipse(175, 414, 210, 17, 0, 0, Math.PI * 2);
@@ -242,7 +243,8 @@ function drawBackground(ctx: CanvasRenderingContext2D, distance: number, time: n
     ctx.font = "bold 12px Georgia, serif";
     ctx.textAlign = "center";
     ctx.fillText("SCHOOL", 176, 266);
-    ctx.restore();
+      ctx.restore();
+    }
 
     // Trees and a low fence move at different speeds for gentle parallax.
     drawTree(ctx, 100 - ((distance * 0.25) % 1120), 425, 1.05);
