@@ -1058,7 +1058,10 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
 
           {phase === "playing" && (
             <div className="little-detour__hud">
-              <span className="little-detour__zone">{zoneLabel}</span>
+              <span className="little-detour__zone" key={zone}>
+                <span aria-hidden="true">{zone === "alley" ? "⌂" : zone === "school" ? "✎" : "✿"}</span>
+                {zoneLabel}
+              </span>
               <span className="little-detour__score">{score.toLocaleString()} <small>POINTS</small></span>
               <span className="little-detour__collect">✈ {collected}</span>
             </div>
