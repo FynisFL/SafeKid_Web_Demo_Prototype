@@ -202,8 +202,14 @@ function ParentApp({ chapter, compact = false }: { chapter: number; compact?: bo
             transition={{ duration: 0.4, ease }}
             className="absolute inset-x-3.5 bottom-3.5 flex items-center gap-2.5 rounded-[18px] border border-primary/25 bg-night px-3 py-2.5 text-white shadow-lg"
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary/20 text-primary">
-              <Phone className="h-3.5 w-3.5" aria-hidden="true" />
+            <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-primary/20 text-primary">
+              <span aria-hidden="true" className="animate-sk-ring absolute inset-0 rounded-full border border-primary/60" />
+              <span
+                aria-hidden="true"
+                style={{ animationDelay: "1.3s" }}
+                className="animate-sk-ring absolute inset-0 rounded-full border border-primary/40"
+              />
+              <Phone className="relative h-3.5 w-3.5" aria-hidden="true" />
             </span>
             <div className="flex-1">
               <p className="text-[10px] uppercase tracking-[0.16em] text-white/60">Incoming call</p>
@@ -259,26 +265,48 @@ function WatchPanel({ chapter, className }: { chapter: number; className?: strin
   );
 }
 
-function ChapterCopy({ chapter }: { chapter: number }) {
+function ChapterCopy({ chapter, direction }: { chapter: number; direction: 1 | -1 }) {
   const item = CHAPTERS[chapter];
+  const slide = {
+    enter: (dir: number) => ({ opacity: 0, y: dir * 20 }),
+    center: { opacity: 1, y: 0, transition: { duration: 0.4, ease } },
+    exit: (dir: number) => ({ opacity: 0, y: dir * -14, transition: { duration: 0.22 } }),
+  };
+  // Each line arrives a beat after the one above it.
+  const line = (delay: number) => ({
+    initial: { opacity: 0, y: direction * 14 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5, ease, delay },
+  });
+
   return (
     <div className="min-h-[176px]">
-      <motion.div
-        key={item.id}
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.45, ease }}
-      >
-        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
-          {item.kicker}
-        </p>
-        <h3 className="mt-4 font-display text-[clamp(1.9rem,2.7vw,2.7rem)] font-medium leading-[1.02] tracking-[-0.045em] text-white">
-          {item.title}
-        </h3>
-        <p className="mt-4 max-w-[36ch] text-[14px] leading-relaxed text-white/55">
-          {item.body}
-        </p>
-      </motion.div>
+      <AnimatePresence mode="wait" initial={false} custom={direction}>
+        <motion.div
+          key={item.id}
+          custom={direction}
+          variants={slide}
+          initial="enter"
+          animate="center"
+          exit="exit"
+        >
+          <motion.p
+            {...line(0.04)}
+            className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary"
+          >
+            {item.kicker}
+          </motion.p>
+          <motion.h3
+            {...line(0.1)}
+            className="mt-4 font-display text-[clamp(1.9rem,2.7vw,2.7rem)] font-medium leading-[1.02] tracking-[-0.045em] text-white"
+          >
+            {item.title}
+          </motion.h3>
+          <motion.p {...line(0.18)} className="mt-4 max-w-[36ch] text-[14px] leading-relaxed text-white/55">
+            {item.body}
+          </motion.p>
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 }
@@ -404,6 +432,8 @@ export function StorySequence() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const activeRef = useRef(0);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -413,8 +443,14 @@ export function StorySequence() {
 
   useMotionValueEvent(progress, "change", (value) => {
     const next = Math.max(0, Math.min(CHAPTERS.length - 1, Math.floor(value * CHAPTERS.length)));
-    setActive((current) => (current === next ? current : next));
+    if (next === activeRef.current) return;
+    setDirection(next > activeRef.current ? 1 : -1);
+    activeRef.current = next;
+    setActive(next);
   });
+
+  // The top edge starts rounded and flattens as the stage pins, like a sheet settling into place.
+  const topRadius = useTransform(scrollYProgress, [0, 0.06], [48, 0]);
 
   const watchX = useTransform(progress, [0, 1], [-26, 0]);
   const appX = useTransform(progress, [0, 1], [46, 0]);
@@ -434,11 +470,15 @@ export function StorySequence() {
   if (reduce) return <StaticStory />;
 
   return (
-    <div id="story">
-      <section
+    <div id="story" className="lg:bg-mist">
+      <motion.section
         ref={sectionRef}
         className="relative hidden bg-night lg:block"
-        style={{ height: `${CHAPTERS.length * 100}vh` }}
+        style={{
+          height: `${CHAPTERS.length * 100}vh`,
+          borderTopLeftRadius: topRadius,
+          borderTopRightRadius: topRadius,
+        }}
         aria-label="The SafeKid story: from the child's watch to the parent's app"
       >
         <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden pt-[66px]">
@@ -465,7 +505,7 @@ export function StorySequence() {
 
           <div className="shell relative grid flex-1 items-center gap-8 py-6 lg:grid-cols-[0.62fr_1.38fr] xl:gap-10">
             <div className="max-w-[340px]">
-              <ChapterCopy chapter={active} />
+              <ChapterCopy chapter={active} direction={direction} />
               <Link
                 to="/zodiac"
                 className="group mt-7 inline-flex items-center gap-2 text-[13px] font-medium text-white/75 transition-colors hover:text-white"
@@ -507,10 +547,10 @@ export function StorySequence() {
                 >
                   <span className="relative block h-px w-full overflow-hidden bg-white/15">
                     <motion.span
-                      className="absolute inset-y-0 left-0 bg-primary"
+                      className="absolute inset-y-0 left-0 w-full origin-left bg-primary"
                       initial={false}
                       animate={{
-                        width: active >= index ? "100%" : "0%",
+                        scaleX: active >= index ? 1 : 0,
                         opacity: active > index ? 0.35 : 1,
                       }}
                       transition={{ duration: 0.6, ease }}
@@ -533,7 +573,7 @@ export function StorySequence() {
             </p>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       <section id="story-mobile" className="bg-night pb-16 lg:hidden">
         <div className="shell pt-14">

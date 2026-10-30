@@ -10,6 +10,8 @@ export default defineConfig(({ mode }) => {
   if (mode === 'development') {
     plugins.push(...enterDevPlugin());
   }
+  const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
+
   return {
     server: {
       host: "::",
@@ -21,7 +23,9 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
-    base: '/SafeKid_Web_Demo_Prototype/',
+    // GitHub Pages serves this repository as a project site under /<repo>/.
+    // Keep local development at the root for a simpler localhost URL.
+    base: isGitHubActions ? '/SafeKid_Web_Demo_Prototype/' : '/',
     build: {
       outDir: 'dist',
       rollupOptions: {

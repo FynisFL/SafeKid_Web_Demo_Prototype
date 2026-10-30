@@ -5,12 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "NODE_ENV=development vite build --mode development",
+    "build": "vite build",
     "build:prod": "vite build",
     "check": "pnpm lint && pnpm exec tsc --noEmit",
     "lint": "eslint .",
     "preview": "vite preview",
-    "pInstall": "pnpm install"
+    "pInstall": "pnpm install",
+    "build:dev": "vite build --mode development"
   },
   "dependencies": {
     "@enter-pro/analytics-sdk": "^0.0.10",

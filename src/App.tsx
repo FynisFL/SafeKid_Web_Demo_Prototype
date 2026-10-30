@@ -13,7 +13,9 @@ const router = createBrowserRouter([
     element: <RootShell />,
     children: routers,
   },
-], { basename: "/SafeKid_Web_Demo_Prototype" });
+], {
+  basename: import.meta.env.BASE_URL.replace(/\/$/, '') || '/',
+});
 
 function PageLoader() {
   return (

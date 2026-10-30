@@ -14,14 +14,27 @@ import heroWatch from "@/assets/safekid/hero-watch.webp";
 const ease = [0.16, 1, 0.3, 1] as const;
 
 function OrbitTicks() {
+  const reduce = useReducedMotion();
+
   return (
     <svg
       viewBox="0 0 400 400"
       aria-hidden="true"
       className="absolute inset-0 h-full w-full text-primary/45"
     >
-      <circle cx="200" cy="200" r="196" fill="none" stroke="currentColor" strokeWidth="0.6" opacity="0.45" />
-      <circle
+      <motion.circle
+        cx="200"
+        cy="200"
+        r="196"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="0.6"
+        opacity="0.45"
+        initial={reduce ? false : { pathLength: 0 }}
+        animate={{ pathLength: 1 }}
+        transition={{ duration: 1.8, delay: 0.35, ease }}
+      />
+      <motion.circle
         cx="200"
         cy="200"
         r="178"
@@ -30,11 +43,14 @@ function OrbitTicks() {
         strokeWidth="0.7"
         strokeDasharray="1 13"
         opacity="0.9"
+        initial={reduce ? false : { opacity: 0 }}
+        animate={{ opacity: 0.9 }}
+        transition={{ duration: 1.2, delay: 0.9 }}
       />
       {Array.from({ length: 12 }).map((_, index) => {
         const angle = (index * 360) / 12;
         return (
-          <line
+          <motion.line
             key={angle}
             x1="200"
             y1="14"
@@ -43,6 +59,9 @@ function OrbitTicks() {
             stroke="currentColor"
             strokeWidth={index % 3 === 0 ? 1.4 : 0.8}
             transform={`rotate(${angle} 200 200)`}
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.8 + index * 0.06 }}
           />
         );
       })}
@@ -72,6 +91,15 @@ export function Hero() {
   const pointerY = useMotionValue(0);
   const rotateX = useSpring(pointerY, { stiffness: 90, damping: 18, mass: 0.5 });
   const rotateY = useSpring(pointerX, { stiffness: 90, damping: 18, mass: 0.5 });
+
+  // Layers share the watch's two springs with different multipliers. Wrappers carry the offsets,
+  // so no element has two owners for x/y (the chips keep their own entrance animation).
+  const glowX = useTransform(rotateY, (v) => v * -3);
+  const glowY = useTransform(rotateX, (v) => v * 3);
+  const ticksX = useTransform(rotateY, (v) => v * 1.5);
+  const ticksY = useTransform(rotateX, (v) => v * -1.5);
+  const chipX = useTransform(rotateY, (v) => v * 4);
+  const chipY = useTransform(rotateX, (v) => v * -4);
 
   function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
     if (reduce || event.pointerType !== "mouse" || !artRef.current) return;
@@ -229,11 +257,15 @@ export function Hero() {
             onPointerLeave={resetTilt}
             className="perspective-1200 relative aspect-square w-full max-w-[520px] lg:max-w-[580px]"
           >
-            <div aria-hidden="true" className="stage-glow absolute inset-[2%] rounded-full" />
+            <motion.div
+              aria-hidden="true"
+              className="stage-glow absolute inset-[2%] rounded-full"
+              style={reduce ? undefined : { x: glowX, y: glowY }}
+            />
             <motion.div
               aria-hidden="true"
               className="absolute inset-0"
-              style={reduce ? undefined : { rotate: ticksRotate }}
+              style={reduce ? undefined : { rotate: ticksRotate, x: ticksX, y: ticksY }}
             >
               <OrbitTicks />
             </motion.div>
@@ -262,6 +294,10 @@ export function Hero() {
             </motion.div>
 
             <motion.div
+              className="pointer-events-none absolute inset-0"
+              style={reduce ? undefined : { x: chipX, y: chipY }}
+            >
+            <motion.div
               initial={reduce ? undefined : { opacity: 0, x: 14 }}
               animate={reduce ? undefined : { opacity: 1, x: 0 }}
               transition={{ delay: 0.9, duration: 0.9, ease }}
@@ -283,6 +319,7 @@ export function Hero() {
               <p className="mt-1 font-display text-[13px] leading-snug tracking-tight text-ink">
                 Made for their next little adventure.
               </p>
+            </motion.div>
             </motion.div>
 
             <p className="absolute inset-x-0 -bottom-2 text-center text-[9px] uppercase tracking-[0.24em] text-deep/50">

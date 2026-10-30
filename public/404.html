@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <title>SafeKid</title>
+  </head>
+  <body>
+    <script>
+      // GitHub Pages serves this file for direct requests to client-side routes.
+      // Return to the app root and let the app restore the route from the hash.
+      const base = "/SafeKid_Web_Demo_Prototype";
+      const prefix = base + "/";
+      const path = window.location.pathname.startsWith(prefix)
+        ? window.location.pathname.slice(base.length)
+        : "/";
+      const destination = prefix + "#" + (path.startsWith("/") ? path : "/" + path)
+        + window.location.search + window.location.hash;
+      window.location.replace(destination);
+    </script>
+    <p>Returning to SafeKid…</p>
+  </body>
+</html>

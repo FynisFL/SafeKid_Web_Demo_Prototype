@@ -12,6 +12,7 @@ import {
 import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
+import { TiltCard } from "@/components/motion/TiltCard";
 
 const CHAPTERS = [
   {
@@ -38,10 +39,10 @@ const CHAPTERS = [
 ];
 
 /* -------------------------------------------------------------------------- */
-/*  One trigger per row                                                       */
-/*  `useChapterProgress` is the only observer on a row. It runs a single      */
-/*  0 → 1 value over 2.2 s the first time the row is in view and never        */
-/*  replays. The row's own fade-up and its illustration both read that value. */
+/*  One observer per row                                                      */
+/*  ChapterRow owns the row's single IntersectionObserver. Two timelines      */
+/*  (the row's entrance, and its illustration) start from that one signal.    */
+/*  The illustration timeline can be replayed on hover; the rest never is.    */
 /* -------------------------------------------------------------------------- */
 
 const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
@@ -52,10 +53,10 @@ function useSeg(p: MotionValue<number>, from: number, to: number) {
   return useTransform(p, (v) => easeOut(clamp01((v - from) / (to - from))));
 }
 
-function useChapterProgress(ref: RefObject<Element | null>) {
+/** A 0 -> 1 timeline that starts when `start` turns true. Shows the finished state if motion is reduced. */
+function useTimeline(start: boolean, duration: number) {
   const reduce = useReducedMotion();
   const p = useMotionValue(reduce ? 1 : 0);
-  const inView = useInView(ref, { once: true, margin: "-12% 0px" });
 
   useEffect(() => {
     // Reduced motion, or no IntersectionObserver: show the finished state, never hide content.
@@ -63,10 +64,10 @@ function useChapterProgress(ref: RefObject<Element | null>) {
       p.set(1);
       return;
     }
-    if (!inView) return;
-    const controls = animate(p, 1, { duration: 2.2, ease: "linear" });
+    if (!start) return;
+    const controls = animate(p, 1, { duration, ease: "linear" });
     return () => controls.stop();
-  }, [inView, reduce, p]);
+  }, [start, reduce, p, duration]);
 
   return p;
 }
@@ -255,10 +256,30 @@ const ILLUSTRATIONS = {
 
 function ChapterRow({ chapter }: { chapter: (typeof CHAPTERS)[number] }) {
   const ref = useRef<HTMLElement>(null);
-  const p = useChapterProgress(ref);
-  const rise = useSeg(p, 0, 0.2);
+  const reduce = useReducedMotion();
+  // The row's only observer. Two timelines hang off it: a short one for the row itself,
+  // and a longer one that plays the illustration (which can also be replayed).
+  const inView = useInView(ref, { once: true, margin: "-12% 0px" });
+  const rowIn = useTimeline(inView, 0.9);
+  const ip = useTimeline(inView, 2.2);
+  const replaying = useRef<ReturnType<typeof animate> | null>(null);
+
+  const rise = useSeg(rowIn, 0, 0.6);
   const y = useTransform(rise, (v) => 26 * (1 - v));
   const Illustration = ILLUSTRATIONS[chapter.illustration];
+
+  useEffect(() => () => replaying.current?.stop(), []);
+
+  // Hover (or a tap) on the tile plays its little scene again, once it has finished the first time.
+  function replay() {
+    if (reduce || ip.get() < 1 || replaying.current) return;
+    ip.set(0);
+    const controls = animate(ip, 1, { duration: 1.8, ease: "linear" });
+    replaying.current = controls;
+    controls.then(() => {
+      if (replaying.current === controls) replaying.current = null;
+    });
+  }
 
   return (
     <motion.article
@@ -283,9 +304,14 @@ function ChapterRow({ chapter }: { chapter: (typeof CHAPTERS)[number] }) {
         </p>
       </div>
 
-      <div className="h-[150px] w-[190px] justify-self-start overflow-hidden rounded-2xl bg-mist/70 p-2 transition-transform duration-700 ease-smooth group-hover:-translate-y-1 sm:justify-self-end">
-        <Illustration p={p} />
-      </div>
+      <TiltCard max={6} className="justify-self-start rounded-2xl sm:justify-self-end">
+        <div
+          onPointerEnter={replay}
+          className="h-[150px] w-[190px] overflow-hidden rounded-2xl bg-mist/70 p-2"
+        >
+          <Illustration p={ip} />
+        </div>
+      </TiltCard>
     </motion.article>
   );
 }

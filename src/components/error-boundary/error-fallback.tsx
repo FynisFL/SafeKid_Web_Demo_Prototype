@@ -27,7 +27,7 @@ export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
         <div className="flex justify-center gap-3">
           <Button onClick={resetErrorBoundary}>Try again</Button>
           <Button variant="outline" asChild>
-            <a href="/">Back to home</a>
+            <a href={import.meta.env.BASE_URL}>Back to home</a>
           </Button>
         </div>
       </div>

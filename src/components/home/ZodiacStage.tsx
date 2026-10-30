@@ -1,6 +1,14 @@
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+  AnimatePresence,
+  animate,
+  motion,
+  useInView,
+  useMotionValue,
+  useReducedMotion,
+  useTransform,
+} from "motion/react";
 import { ArrowLeft, ArrowRight, ArrowUpRight, MoveHorizontal } from "lucide-react";
 import { zodiacProducts } from "@/data/zodiac";
 import { cn } from "@/lib/utils";
@@ -20,6 +28,37 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
   const reduce = useReducedMotion();
   const pillId = useId();
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const stageRef = useRef<HTMLDivElement>(null);
+  // Counts selection changes, so the one-shot ripple never plays on first paint.
+  const [swaps, setSwaps] = useState(0);
+  // The drag layer's x is shared: the big background letter drifts the other way (depth).
+  const dragX = useMotionValue(0);
+  const letterX = useTransform(dragX, (value) => value * -0.35);
+  const hintRef = useRef<ReturnType<typeof animate> | null>(null);
+  const seen = useInView(stageRef, { once: true, amount: 0.5 });
+
+  // A single small nudge when the stage first comes into view says "this can be dragged".
+  useEffect(() => {
+    if (!seen || reduce) return;
+    const timer = window.setTimeout(() => {
+      const hint = animate(dragX, [0, -26, 0], { duration: 1.4, ease: "easeInOut", times: [0, 0.45, 1] });
+      hintRef.current = hint;
+      hint.then(() => {
+        if (hintRef.current === hint) hintRef.current = null;
+      });
+    }, 900);
+    return () => {
+      window.clearTimeout(timer);
+      hintRef.current?.stop();
+    };
+  }, [seen, reduce, dragX]);
+
+  function settleHint() {
+    if (!hintRef.current) return;
+    hintRef.current.stop();
+    hintRef.current = null;
+    animate(dragX, 0, { duration: 0.25 });
+  }
   // Always the latest selection, so rapid inputs never compute from a stale render.
   const indexRef = useRef(0);
   const product = zodiacProducts[index];
@@ -29,8 +68,10 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
   function go(next: number, dir: 1 | -1, steps: number) {
     if (next === indexRef.current) return;
     indexRef.current = next;
+    settleHint();
     setDirection(dir);
     setIndex(next);
+    setSwaps((count) => count + 1);
     setDial((angle) => angle + dir * steps * DEGREES_PER_STEP);
   }
 
@@ -58,15 +99,29 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
 
   // Reduced motion: every swap, pill move and dial turn is immediate.
   const instant = { duration: 0 };
-  const imageTransition = reduce ? instant : { duration: 0.55, ease: [0.22, 1, 0.36, 1] as const };
-  // Settles in about the time the image swap takes (exit + enter), so the marker lands as the new image arrives.
-  const dialTransition = reduce ? instant : { type: "spring" as const, stiffness: 40, damping: 12 };
+  const imageTransition = reduce ? instant : { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const };
+  // The old image leaves while the new one arrives (about 0.6 s). The dial spring settles in a similar time.
+  const dialTransition = reduce ? instant : { type: "spring" as const, stiffness: 70, damping: 16 };
   const pillTransition = reduce ? instant : { type: "spring" as const, stiffness: 420, damping: 36 };
 
+  // Crossfade: the new edition arrives from the direction of travel with a slight turn,
+  // while the old one leaves the other way a little faster.
   const slide = {
-    enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 56 : -56, scale: 0.97 }),
-    center: { opacity: 1, x: 0, scale: 1 },
-    exit: (dir: number) => ({ opacity: 0, x: dir > 0 ? -40 : 40, scale: 0.98 }),
+    enter: (dir: number) => ({ opacity: 0, x: dir > 0 ? 72 : -72, rotate: dir > 0 ? 5 : -5, scale: 0.93 }),
+    center: { opacity: 1, x: 0, rotate: 0, scale: 1 },
+    exit: (dir: number) => ({
+      opacity: 0,
+      x: dir > 0 ? -56 : 56,
+      rotate: dir > 0 ? -4 : 4,
+      scale: 0.95,
+      transition: reduce ? instant : { duration: 0.38, ease: [0.22, 1, 0.36, 1] as const },
+    }),
+  };
+
+  const labelSlide = {
+    enter: (dir: number) => ({ opacity: 0, y: dir > 0 ? 10 : -10 }),
+    center: { opacity: 1, y: 0 },
+    exit: (dir: number) => ({ opacity: 0, y: dir > 0 ? -8 : 8 }),
   };
 
   return (
@@ -149,7 +204,7 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
                       >
                         {String(itemIndex + 1).padStart(2, "0")}
                       </span>
-                      <span className="flex-1 font-display text-[15px] font-medium tracking-[-0.02em]">
+                      <span className="flex-1 font-display text-[15px] font-medium tracking-[-0.02em] transition-transform duration-300 group-hover:translate-x-1">
                         {item.label}
                       </span>
                       <span
@@ -180,7 +235,7 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
           </div>
 
           <div className="order-1 lg:order-2">
-            <div className="relative mx-auto aspect-square w-full max-w-[560px]">
+            <div ref={stageRef} className="relative mx-auto aspect-square w-full max-w-[560px]">
               <div aria-hidden="true" className="stage-glow absolute inset-[3%] rounded-full" />
               <div
                 aria-hidden="true"
@@ -188,7 +243,7 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
               />
               <div
                 aria-hidden="true"
-                className="absolute inset-[17%] rounded-full border border-dashed border-primary/25 animate-sk-spin"
+                className="absolute inset-[17%] rounded-full border border-dashed border-primary/25"
               />
 
               {/* Dial: 12 stations, one per edition, and a marker that turns to the chosen one. */}
@@ -212,31 +267,53 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
                 </motion.div>
               </div>
 
-              <AnimatePresence mode="wait" initial={false}>
+              {/* One ripple per change, travelling out from the dial's centre. */}
+              {swaps > 0 && !reduce && (
                 <motion.span
-                  key={product.animal}
-                  initial={{ opacity: 0, scale: 1.04 }}
-                  animate={{ opacity: 0.5, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={reduce ? instant : { duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  key={swaps}
                   aria-hidden="true"
-                  className="pointer-events-none absolute inset-0 flex select-none items-center justify-center font-display text-[40vw] font-extrabold leading-none text-primary/[0.13] sm:text-[17rem]"
-                >
-                  {product.animal.charAt(0)}
-                </motion.span>
-              </AnimatePresence>
+                  initial={{ scale: 0.7, opacity: 0.55 }}
+                  animate={{ scale: 1.22, opacity: 0 }}
+                  transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+                  className="pointer-events-none absolute inset-[17%] rounded-full border border-primary/45"
+                />
+              )}
+
+              <motion.div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0"
+                style={reduce ? undefined : { x: letterX }}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.span
+                    key={product.animal}
+                    initial={{ opacity: 0, scale: 1.04 }}
+                    animate={{ opacity: 0.5, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={reduce ? instant : { duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                    className="absolute inset-0 flex select-none items-center justify-center font-display text-[40vw] font-extrabold leading-none text-primary/[0.13] sm:text-[17rem]"
+                  >
+                    {product.animal.charAt(0)}
+                  </motion.span>
+                </AnimatePresence>
+              </motion.div>
 
               <motion.div
                 drag={reduce ? false : "x"}
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.08}
+                style={{ x: dragX }}
+                onPointerDown={() => {
+                  hintRef.current?.stop();
+                  hintRef.current = null;
+                }}
                 onDragEnd={(_, info) => {
                   if (info.offset.x < -48 || info.velocity.x < -320) step(1);
                   else if (info.offset.x > 48 || info.velocity.x > 320) step(-1);
                 }}
                 className="absolute inset-0 cursor-grab touch-pan-y active:cursor-grabbing"
               >
-                <AnimatePresence mode="wait" custom={direction} initial={false}>
+                <AnimatePresence custom={direction} initial={false}>
                   <motion.img
                     key={product.id}
                     src={product.image}
@@ -283,12 +360,14 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
                 <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-primary">
                   Vietnamese Zodiac / {product.animal}
                 </p>
-                <AnimatePresence mode="wait" initial={false}>
+                <AnimatePresence mode="wait" initial={false} custom={direction}>
                   <motion.p
                     key={product.id}
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
+                    custom={direction}
+                    variants={labelSlide}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
                     transition={reduce ? instant : { duration: 0.3 }}
                     className="mt-1 font-display text-[22px] font-medium tracking-[-0.04em] text-ink"
                   >

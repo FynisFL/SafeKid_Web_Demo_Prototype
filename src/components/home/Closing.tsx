@@ -1,17 +1,20 @@
-import { useEffect, useRef, type ReactNode, type RefObject } from "react";
+import { useEffect, useRef, type PointerEvent, type ReactNode, type RefObject } from "react";
 import {
   animate,
   motion,
   useInView,
+  useMotionTemplate,
   useMotionValue,
   useReducedMotion,
   useScroll,
+  useSpring,
   useTransform,
   type MotionValue,
 } from "motion/react";
 import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Magnetic } from "@/components/motion/Magnetic";
+import { useCanHover } from "@/hooks/useCanHover";
 import heroWatch from "@/assets/safekid/hero-watch.webp";
 
 /* -------------------------------------------------------------------------- */
@@ -106,6 +109,25 @@ export function Closing() {
   // Depth: the watch drifts a little slower than the page. Moves a wrapper, never the filtered image.
   const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
   const watchY = useTransform(scrollYProgress, [0, 1], [-36, 36]);
+  // It also settles: a slight tilt that levels out as the panel passes the middle of the screen.
+  const watchRotate = useTransform(scrollYProgress, [0, 0.5, 1], [-6, 0, 4]);
+
+  // Light: on a fine pointer, a soft turquoise glow follows the cursor across the dark panel.
+  const canHover = useCanHover();
+  const spotX = useMotionValue(50);
+  const spotY = useMotionValue(50);
+  const sx = useSpring(spotX, { stiffness: 120, damping: 20 });
+  const sy = useSpring(spotY, { stiffness: 120, damping: 20 });
+  const spotOpacity = useSpring(0, { stiffness: 120, damping: 24 });
+  const spotlight = useMotionTemplate`radial-gradient(420px circle at ${sx}% ${sy}%, hsl(var(--primary) / 0.16), transparent 65%)`;
+  const light = canHover && !reduce;
+
+  function onPanelMove(event: PointerEvent<HTMLDivElement>) {
+    if (!light || event.pointerType === "touch") return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    spotX.set(((event.clientX - rect.left) / rect.width) * 100);
+    spotY.set(((event.clientY - rect.top) / rect.height) * 100);
+  }
 
   // The panel's left rule draws once, top to bottom.
   const rule = useSeg(p, 0.15, 0.95);
@@ -114,7 +136,19 @@ export function Closing() {
   return (
     <section ref={sectionRef} className="bg-white pb-20 pt-4 sm:pb-24">
       <div className="shell">
-        <div className="relative overflow-hidden rounded-[32px] bg-night px-6 py-16 sm:px-10 sm:py-20 lg:rounded-[44px] lg:px-16 lg:py-24">
+        <div
+          onPointerMove={onPanelMove}
+          onPointerEnter={() => light && spotOpacity.set(1)}
+          onPointerLeave={() => spotOpacity.set(0)}
+          className="relative overflow-hidden rounded-[32px] bg-night px-6 py-16 sm:px-10 sm:py-20 lg:rounded-[44px] lg:px-16 lg:py-24"
+        >
+          {light && (
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+              style={{ background: spotlight, opacity: spotOpacity }}
+            />
+          )}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -right-24 -top-24 h-[520px] w-[520px] rounded-full bg-primary/12 blur-[100px]"
@@ -128,7 +162,7 @@ export function Closing() {
             aria-hidden="true"
             className="pointer-events-none absolute -right-10 bottom-0 hidden w-[42%] max-w-[440px] lg:block"
           >
-            <motion.div className="relative" style={reduce ? undefined : { y: watchY }}>
+            <motion.div className="relative" style={reduce ? undefined : { y: watchY, rotate: watchRotate }}>
               <div className="absolute inset-[8%] rounded-full bg-primary/15 blur-[60px]" />
               <img
                 src={heroWatch}
