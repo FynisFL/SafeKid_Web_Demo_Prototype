@@ -491,7 +491,7 @@
 
 @media (max-height: 620px) and (min-width: 681px) {
   .little-detour__frame {
-    width: min(1160px, calc((100dvh - 142px) * 1.7777778), 100%);
+    width: min(1160px, calc((100dvh - 160px) * 1.7777778), 100%);
   }
 
   .little-detour__topbar {
