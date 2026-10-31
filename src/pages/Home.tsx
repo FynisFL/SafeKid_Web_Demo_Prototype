@@ -5,6 +5,7 @@ import { StorySequence } from "@/components/home/StorySequence";
 import { ProductChapters } from "@/components/home/ProductChapters";
 import { WatchPassportSection } from "@/components/home/WatchPassportSection";
 import { ZodiacStage } from "@/components/home/ZodiacStage";
+import { SOSIntroduction } from "@/components/home/SOSIntroduction";
 import { Closing } from "@/components/home/Closing";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
@@ -22,6 +23,7 @@ export default function Home() {
       <ProductChapters />
       <WatchPassportSection />
       <ZodiacStage />
+      <SOSIntroduction />
       <Closing />
     </SiteLayout>
   );

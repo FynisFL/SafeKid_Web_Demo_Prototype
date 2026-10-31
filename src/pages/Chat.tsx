@@ -115,6 +115,15 @@ function MessageBubble({
             <ArrowUpRight className="h-3 w-3 text-primary" aria-hidden="true" />
           </button>
         )}
+        {message.action === "sos" && (
+          <Link
+            to="/sos"
+            className="group mt-2 inline-flex min-h-10 items-center gap-2 rounded-full bg-ink px-4 py-2 text-[11.5px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-night focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            {message.actionLabel ?? "Explore SOS Demo"}
+            <ArrowUpRight className="h-3.5 w-3.5 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+          </Link>
+        )}
       </div>
     </div>
   );

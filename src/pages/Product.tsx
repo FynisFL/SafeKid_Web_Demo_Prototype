@@ -246,6 +246,21 @@ export default function Product() {
               ))}
             </ul>
             <p className="mt-5 max-w-[70ch] text-[11px] leading-relaxed text-deep/60">{conceptNote}</p>
+            <div className="mt-6 flex flex-col items-start justify-between gap-4 border-t border-ink/10 pt-5 sm:flex-row sm:items-center">
+              <div>
+                <p className="text-[13px] font-medium text-ink">Explore the one-touch SOS concept.</p>
+                <p className="mt-1 text-[11px] leading-relaxed text-deep/55">
+                  A local interaction preview only. No emergency alert is sent.
+                </p>
+              </div>
+              <Link
+                to="/sos"
+                className="group inline-flex h-11 shrink-0 items-center gap-3 rounded-full bg-ink px-5 text-[12px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-night btn-motion"
+              >
+                Explore SOS
+                <ArrowUpRight className="h-4 w-4 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>

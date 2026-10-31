@@ -9,6 +9,8 @@ export type ChatMessage = {
   steps?: string[];
   working?: boolean;
   offerHandoff?: boolean;
+  action?: "sos";
+  actionLabel?: string;
 };
 
 export type ChatLayer = "assistant" | "handoff" | "agent";
@@ -66,6 +68,8 @@ type Resolution = {
   answer: string;
   offerHandoff?: boolean;
   handoff?: boolean;
+  action?: "sos";
+  actionLabel?: string;
 };
 
 function resolveQuestion(text: string): Resolution {
@@ -91,6 +95,26 @@ function resolveQuestion(text: string): Resolution {
         "That needs case-specific support. I'll show the human handoff flow in this prototype; no live support agent is connected.",
     };
   }
+
+  const asksSos =
+    /\bsos\b/.test(query) ||
+    /\b(emergency|panic)\s+(feature|button|demo|interaction|alert|function)\b/.test(query) ||
+    /\bone[- ]touch\s+(help|alert|button|signal)\b/.test(query) ||
+    /\b(tinh nang khan cap|nut khan cap|tin hieu khan cap|tinh huong khan cap|goi cuu giup)\b/.test(query);
+
+  if (asksSos) {
+    const vietnameseQuestion =
+      /\b(la gi|tinh nang|lam sao|gui|tre|xem thu|nut|khan cap|mo phong|bam giu|cach)\b/.test(query);
+
+    return {
+      action: "sos",
+      actionLabel: vietnameseQuestion ? "Trải nghiệm SOS" : "Explore SOS Demo",
+      answer: vietnameseQuestion
+        ? "SafeKid giới thiệu One-Touch SOS như một tương tác mô phỏng để người xem khám phá cách nhấn giữ nút yêu cầu trợ giúp. M có thể mở bản demo tại trang SOS. Đây chỉ là mô phỏng cục bộ; không gửi cảnh báo, chia sẻ vị trí, gọi điện hay thông báo cho phụ huynh."
+        : "SafeKid's One-Touch SOS is presented as a concept interaction. You can explore a local press-and-hold simulation on the SOS Demo page. It does not send an emergency alert, share location, place a call or notify a parent.",
+    };
+  }
+
   if (/\b(zodiac|collection|edition|editions|animal|animals)\b/.test(query)) {
     return {
       answer:
@@ -157,6 +181,7 @@ export function useLocalChat() {
   const [layer, setLayer] = useState<ChatLayer>("assistant");
   const [isBusy, setIsBusy] = useState(false);
   const timers = useRef<number[]>([]);
+  const sosEntryShown = useRef(false);
 
   const clearTimers = useCallback(() => {
     timers.current.forEach((timer) => window.clearTimeout(timer));
@@ -198,21 +223,25 @@ export function useLocalChat() {
       if (!text || isBusy) return;
 
       append({ role: "user", content: text });
+      const result = resolveQuestion(text);
 
       if (layer === "agent") {
         setIsBusy(true);
         schedule(() => {
           setIsBusy(false);
+          const showSosEntry = result.action === "sos" && !sosEntryShown.current;
+          if (showSosEntry) sosEntryShown.current = true;
           append({
             role: "agent",
-            content:
-              "This demo can show the conversation flow, but it can't check a real account or send your message to the SafeKid team.",
+            content: showSosEntry
+              ? result.answer
+              : "This demo can show the conversation flow, but it can't check a real account or send your message to the SafeKid team.",
+            ...(showSosEntry ? { action: "sos" as const, actionLabel: result.actionLabel } : {}),
           });
         }, 900);
         return;
       }
 
-      const result = resolveQuestion(text);
       const thoughtId = createId();
 
       setIsBusy(true);
@@ -246,7 +275,14 @@ export function useLocalChat() {
           )
         );
         setIsBusy(false);
-        append({ role: "assistant", content: result.answer, offerHandoff: result.offerHandoff });
+        const showSosEntry = result.action === "sos" && !sosEntryShown.current;
+        if (showSosEntry) sosEntryShown.current = true;
+        append({
+          role: "assistant",
+          content: result.answer,
+          offerHandoff: result.offerHandoff,
+          ...(showSosEntry ? { action: "sos", actionLabel: result.actionLabel } : {}),
+        });
 
         if (result.handoff) {
           setLayer("handoff");
@@ -280,6 +316,7 @@ export function useLocalChat() {
     setMessages([greeting()]);
     setLayer("assistant");
     setIsBusy(false);
+    sosEntryShown.current = false;
   }, [clearTimers]);
 
   return { messages, layer, isBusy, send, stop, reset, requestHandoff };
