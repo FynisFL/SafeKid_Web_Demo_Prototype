@@ -9,6 +9,7 @@ const LittleDetourGame = lazy(() =>
 const explore = [
   { label: "Home", to: "/" },
   { label: "Zodiac collection", to: "/zodiac" },
+  { label: "Watch Passport", to: "/watch-passport" },
   { label: "About SafeKid", to: "/about" },
   { label: "S-F AI", to: "/chat" },
 ];

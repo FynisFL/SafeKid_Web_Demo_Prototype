@@ -127,3 +127,10 @@ Whenever a new module (such as a component, hook, or utility) or a new page is a
    <Route path="/profile" element={<Profile />} />
    ```
 5. **If you need a reusable button, add it to `src/components/ui/button.tsx`.**
+
+## Watch Passport (concept feature)
+
+- `src/pages/WatchPassport.tsx` — `/watch-passport` page (hero, interactive passport, lives, circular journey, privacy, closing).
+- `src/components/passport/` — `PassportDemo`, `LivesSection`, `CircularJourney`, `PrivacyTrust`, `useSectionProgress`.
+- `src/components/home/WatchPassportSection.tsx` — homepage teaser between ProductChapters and ZodiacStage.
+- `src/data/watchPassport.ts` — local sample data only. Everything is labelled "Interactive Concept Demo"; no backend and no personal data.

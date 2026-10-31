@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 const NAV = [
   { label: "Home", to: "/" },
   { label: "Zodiac collection", to: "/zodiac" },
+  { label: "Watch Passport", to: "/watch-passport" },
   { label: "About", to: "/about" },
   { label: "Support", to: "/support" },
   { label: "S-F AI", to: "/chat" },

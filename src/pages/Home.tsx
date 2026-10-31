@@ -3,6 +3,7 @@ import { Hero } from "@/components/home/Hero";
 import { Thesis } from "@/components/home/Thesis";
 import { StorySequence } from "@/components/home/StorySequence";
 import { ProductChapters } from "@/components/home/ProductChapters";
+import { WatchPassportSection } from "@/components/home/WatchPassportSection";
 import { ZodiacStage } from "@/components/home/ZodiacStage";
 import { Closing } from "@/components/home/Closing";
 import { usePageTitle } from "@/hooks/usePageTitle";
@@ -19,6 +20,7 @@ export default function Home() {
       <Thesis />
       <StorySequence />
       <ProductChapters />
+      <WatchPassportSection />
       <ZodiacStage />
       <Closing />
     </SiteLayout>
