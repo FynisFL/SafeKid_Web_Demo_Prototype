@@ -153,7 +153,7 @@ export function PassportDemo({ className }: { className?: string }) {
         <div className="relative min-h-[330px] px-5 pb-7 pt-5 sm:px-8" aria-live="polite">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
-              key={\`\${view}-\${life}\`}
+              key={`${view}-${life}`}
               initial={reduce ? false : { opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={reduce ? undefined : { opacity: 0, y: -6 }}
