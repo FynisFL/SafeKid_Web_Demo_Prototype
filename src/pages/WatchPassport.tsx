@@ -40,7 +40,7 @@ export default function WatchPassport() {
             <ChevronDown className="h-4 w-4" aria-hidden="true" />
           </a>
         }
-        meta={DEMO_LABEL + " · No live device or certification system"}
+        meta={`${DEMO_LABEL} · No live device or certification system`}
         art={
           <div className="relative mx-auto aspect-square w-full max-w-[420px]">
             <div aria-hidden="true" className="stage-glow absolute inset-[2%] rounded-full" />

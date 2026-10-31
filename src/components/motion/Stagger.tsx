@@ -1,8 +1,7 @@
 import type { ReactNode } from "react";
 import { motion, useReducedMotion, type Variants } from "motion/react";
 import { cn } from "@/lib/utils";
-
-const ease = [0.22, 1, 0.36, 1] as const;
+import { DISTANCE, DURATION, EASE as ease } from "./tokens";
 
 const container = (gap: number): Variants => ({
   hidden: {},
@@ -10,8 +9,8 @@ const container = (gap: number): Variants => ({
 });
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 20, scale: 0.985 },
-  show: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.7, ease } },
+  hidden: { opacity: 0, y: DISTANCE.md, scale: 0.985 },
+  show: { opacity: 1, y: 0, scale: 1, transition: { duration: DURATION.base, ease } },
 };
 
 /** Reveals its <StaggerItem/> children one after another when scrolled into view. */

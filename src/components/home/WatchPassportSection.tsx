@@ -1,11 +1,20 @@
 import { useRef, useState } from "react";
-import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from "motion/react";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "motion/react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Fingerprint } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { DEMO_LABEL, LIFE_STAGES, SAMPLE_DEVICE_ID, wipeEventsAt } from "@/data/watchPassport";
 import { cn } from "@/lib/utils";
+import { DURATION, EASE, SCROLL_SPRING } from "@/components/motion/tokens";
 
 const PILLARS = ["Core + Skin + Skill", "Trade-in", "Refurbishment", "Watch Passport"];
 const LIVES = LIFE_STAGES.slice(0, 3);
@@ -20,11 +29,15 @@ export function WatchPassportSection() {
   const [active, setActive] = useState(reduce ? 2 : 0);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 75%", "end 55%"] });
-  const fill = useTransform(scrollYProgress, [0, 1], [0.04, 1]);
+  const smooth = useSpring(scrollYProgress, SCROLL_SPRING);
+  // The line reaches its last dot just before the section leaves, and each dot lights as the line passes it.
+  const fill = useTransform(smooth, [0, 0.85], [0.04, 1]);
+  // A gentle depth drift: the passport card travels a little slower than the copy.
+  const cardY = useTransform(smooth, [0, 1], [18, -18]);
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     if (reduce) return;
-    setActive(v < 0.38 ? 0 : v < 0.72 ? 1 : 2);
+    setActive(v < 0.4 ? 0 : v < 0.8 ? 1 : 2);
   });
 
   const shown = reduce ? LIVES.length - 1 : active;
@@ -82,7 +95,10 @@ export function WatchPassportSection() {
         </div>
 
         <Reveal variant="soft">
-          <div className="relative mx-auto w-full max-w-[460px]">
+          <motion.div
+            className="relative mx-auto w-full max-w-[460px]"
+            style={reduce ? undefined : { y: cardY }}
+          >
             <div className="overflow-hidden rounded-[28px] border border-border/80 bg-white shadow-[0_40px_90px_-60px_rgba(16,42,56,0.55)] lg:rounded-[36px]">
               <div className="flex items-center justify-between gap-3 border-b border-border/80 px-6 py-4">
                 <p className="flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-deep/70">
@@ -118,20 +134,30 @@ export function WatchPassportSection() {
                 </div>
 
                 <div className="mt-7 min-h-[92px]" aria-live="polite">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-deep/55">{stage.eyebrow}</p>
-                  <p className="mt-1 font-display text-[1.5rem] font-medium leading-tight tracking-[-0.04em] text-ink">
-                    {stage.title}
-                  </p>
-                  <p className="mt-2 text-[13px] text-deep/65">
-                    {wipeCount} Certified Data Wipe record{wipeCount === 1 ? "" : "s"} · {stage.status.split(" · ")[1]}
-                  </p>
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={stage.id}
+                      initial={reduce ? false : { opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={reduce ? undefined : { opacity: 0, y: -6 }}
+                      transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+                    >
+                      <p className="text-[10px] uppercase tracking-[0.2em] text-deep/55">{stage.eyebrow}</p>
+                      <p className="mt-1 font-display text-[1.5rem] font-medium leading-tight tracking-[-0.04em] text-ink">
+                        {stage.title}
+                      </p>
+                      <p className="mt-2 text-[13px] text-deep/65">
+                        {wipeCount} Certified Data Wipe record{wipeCount === 1 ? "" : "s"} · {stage.status.split(" · ")[1]}
+                      </p>
+                    </motion.div>
+                  </AnimatePresence>
                 </div>
               </div>
             </div>
             <p className="mt-4 text-center text-[11px] text-deep/55">
               Sample information. Not a real connected device.
             </p>
-          </div>
+          </motion.div>
         </Reveal>
       </div>
     </section>

@@ -1,6 +1,7 @@
 import { motion, useReducedMotion, type Variants } from "motion/react";
 import type { PropsWithChildren } from "react";
 import { cn } from "@/lib/utils";
+import { DISTANCE, DURATION, EASE } from "@/components/motion/tokens";
 
 type RevealProps = PropsWithChildren<{
   className?: string;
@@ -8,8 +9,6 @@ type RevealProps = PropsWithChildren<{
   variant?: "up" | "soft" | "clip" | "drift";
   once?: boolean;
 }>;
-
-const easing = [0.22, 1, 0.36, 1] as const;
 
 const variantsFor = (variant: RevealProps["variant"]): Variants => {
   switch (variant) {
@@ -25,12 +24,12 @@ const variantsFor = (variant: RevealProps["variant"]): Variants => {
       };
     case "drift":
       return {
-        hidden: { opacity: 0, y: 34, rotate: -0.6 },
+        hidden: { opacity: 0, y: DISTANCE.lg, rotate: -0.6 },
         show: { opacity: 1, y: 0, rotate: 0 },
       };
     default:
       return {
-        hidden: { opacity: 0, y: 22 },
+        hidden: { opacity: 0, y: DISTANCE.md },
         show: { opacity: 1, y: 0 },
       };
   }
@@ -60,7 +59,7 @@ export function Reveal({
       initial="hidden"
       whileInView="show"
       viewport={{ once, margin: "-10% 0px -8% 0px" }}
-      transition={{ duration: 0.9, delay, ease: easing }}
+      transition={{ duration: DURATION.base, delay, ease: EASE }}
     >
       {children}
     </motion.div>

@@ -12,6 +12,19 @@
   -webkit-backdrop-filter: blur(14px);
   animation: little-detour-enter 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
   color: #314f56;
+  outline: none;
+  overscroll-behavior: contain;
+  /* Allow vertical gestures to reach scrollable dialog panels; the canvas opts out below. */
+  touch-action: pan-y;
+}
+
+.little-detour--closing {
+  animation: little-detour-exit 260ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  pointer-events: none;
+}
+
+.little-detour--closing .little-detour__frame {
+  animation: little-detour-frame-exit 260ms cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 .little-detour,
@@ -29,6 +42,7 @@
   border-radius: 26px;
   background: #fbf5e8;
   box-shadow: 0 36px 110px rgba(5, 22, 27, 0.38);
+  animation: little-detour-frame-enter 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 .little-detour__topbar {
@@ -145,6 +159,32 @@
   -webkit-user-drag: none;
 }
 
+.little-detour__stage-wrap--hit .little-detour__canvas {
+  animation: little-detour-hit 360ms ease-out both;
+}
+
+.little-detour__toast {
+  position: absolute;
+  z-index: 2;
+  top: 52%;
+  left: 24%;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: rgba(255, 249, 235, 0.9);
+  color: #365a5c;
+  box-shadow: 0 6px 18px rgba(62, 73, 54, 0.12);
+  font-size: 11px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  animation: little-detour-toast 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.little-detour__toast--power {
+  background: #31565e;
+  color: #fffaf0;
+}
+
 .little-detour__stage-shade {
   position: absolute;
   inset: 0;
@@ -172,6 +212,8 @@
   box-shadow: 0 22px 70px rgba(74, 68, 48, 0.2);
   backdrop-filter: blur(12px);
   animation: little-detour-panel 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  touch-action: pan-y;
+  overscroll-behavior: contain;
 }
 
 .little-detour__eyebrow {
@@ -379,6 +421,16 @@
   font: inherit;
   font-size: 11px;
   font-weight: 700;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 140ms ease, background 180ms ease;
+}
+
+.little-detour__jump:active {
+  transform: scale(0.96);
+  background: #217c7d;
 }
 
 .little-detour__controls > p {
@@ -398,6 +450,33 @@
 @keyframes little-detour-panel {
   from { opacity: 0; margin-top: 12px; }
   to { opacity: 1; margin-top: 0; }
+}
+
+@keyframes little-detour-exit {
+  to { opacity: 0; }
+}
+
+@keyframes little-detour-frame-enter {
+  from { opacity: 0; transform: translateY(14px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes little-detour-frame-exit {
+  to { opacity: 0; transform: translateY(10px) scale(0.985); }
+}
+
+@keyframes little-detour-hit {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  45% { transform: translateX(5px); }
+  70% { transform: translateX(-3px); }
+}
+
+@keyframes little-detour-toast {
+  0% { opacity: 0; transform: translateY(8px) scale(0.94); }
+  18% { opacity: 1; transform: translateY(0) scale(1); }
+  75% { opacity: 1; transform: translateY(-4px) scale(1); }
+  100% { opacity: 0; transform: translateY(-12px) scale(1); }
 }
 
 @keyframes little-detour-zone-in {
@@ -500,6 +579,13 @@
 
   .little-detour__jump {
     display: inline-flex;
+    min-width: 112px;
+    min-height: 46px;
+    font-size: 12px;
+  }
+
+  .little-detour__controls {
+    padding-bottom: max(9px, env(safe-area-inset-bottom));
   }
 
   .little-detour__controls > p {
@@ -524,9 +610,21 @@
 
 @media (prefers-reduced-motion: reduce) {
   .little-detour,
+  .little-detour--closing,
+  .little-detour--closing .little-detour__frame,
+  .little-detour__frame,
   .little-detour__panel,
-  .little-detour__zone {
+  .little-detour__zone,
+  .little-detour__toast,
+  .little-detour__stage-wrap--hit .little-detour__canvas {
     animation: none;
+  }
+
+  .little-detour__active-powerup-bar,
+  .little-detour__jump,
+  .little-detour__primary,
+  .little-detour__icon-button {
+    transition: none;
   }
 }
 
@@ -573,6 +671,8 @@
 }
 
 .little-detour__active-powerup {
+  position: relative;
+  overflow: hidden;
   display: inline-flex;
   min-height: 27px;
   align-items: center;
@@ -586,6 +686,19 @@
   font-size: 9px;
   font-weight: 700;
   backdrop-filter: blur(8px);
+}
+
+.little-detour__active-powerup-bar {
+  position: absolute;
+  right: 10px;
+  bottom: 0;
+  left: 10px;
+  height: 2px;
+  border-radius: 2px;
+  background: #168f8e;
+  opacity: 0.7;
+  transform-origin: left;
+  transition: transform 140ms linear;
 }
 
 .little-detour__active-powerup b {
@@ -628,6 +741,8 @@
   .little-detour__panel {
     max-height: calc(100% - 12px);
     overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
     padding: 13px 15px;
   }
 

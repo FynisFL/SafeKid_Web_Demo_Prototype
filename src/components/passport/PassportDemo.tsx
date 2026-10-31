@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { BadgeCheck, Eraser, Fingerprint, ShieldCheck, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { DISTANCE, DURATION, EASE } from "@/components/motion/tokens";
 import {
   DEMO_LABEL,
   LIFE_ORDER,
@@ -21,7 +22,7 @@ const VIEWS: { id: View; label: string }[] = [
   { id: "wipe", label: "Data wipe" },
 ];
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const ease = EASE;
 
 export function PassportDemo({ className }: { className?: string }) {
   const reduce = useReducedMotion();
@@ -55,7 +56,7 @@ export function PassportDemo({ className }: { className?: string }) {
                 aria-pressed={active}
                 onClick={() => setLife(item.id)}
                 className={cn(
-                  "group flex shrink-0 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary lg:w-full",
+                  "group flex shrink-0 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-all duration-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary lg:w-full",
                   active
                     ? "border-ink bg-ink text-white"
                     : "border-border bg-white text-ink hover:border-primary/60"
@@ -140,7 +141,7 @@ export function PassportDemo({ className }: { className?: string }) {
                 aria-pressed={view === item.id}
                 onClick={() => setView(item.id)}
                 className={cn(
-                  "rounded-full px-4 py-2 text-[12.5px] transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  "rounded-full px-4 py-2 text-[12.5px] transition-colors duration-300 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                   view === item.id ? "bg-aqua-soft text-ink" : "text-deep/65 hover:text-ink"
                 )}
               >
@@ -154,10 +155,10 @@ export function PassportDemo({ className }: { className?: string }) {
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={`${view}-${life}`}
-              initial={reduce ? false : { opacity: 0, y: 10 }}
+              initial={reduce ? false : { opacity: 0, y: DISTANCE.sm }}
               animate={{ opacity: 1, y: 0 }}
               exit={reduce ? undefined : { opacity: 0, y: -6 }}
-              transition={{ duration: reduce ? 0 : 0.35, ease }}
+              transition={{ duration: reduce ? 0 : DURATION.quick, ease }}
             >
               {view === "overview" && (
                 <div>

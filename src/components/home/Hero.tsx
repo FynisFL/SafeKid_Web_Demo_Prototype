@@ -10,8 +10,9 @@ import {
 } from "motion/react";
 import { ArrowDown, ArrowUpRight, MoveDown } from "lucide-react";
 import heroWatch from "@/assets/safekid/hero-watch.webp";
+import { EASE } from "@/components/motion/tokens";
 
-const ease = [0.16, 1, 0.3, 1] as const;
+const ease = EASE;
 
 function OrbitTicks() {
   const reduce = useReducedMotion();

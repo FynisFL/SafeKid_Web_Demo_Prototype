@@ -816,13 +816,59 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
   const [best, setBest] = useState(safeReadBest);
   const [zone, setZone] = useState<Zone>("alley");
   const [muted, setMuted] = useState(true);
+  const [closing, setClosing] = useState(false);
+  const [toast, setToast] = useState<{ id: number; text: string; tone: "plane" | "power" } | null>(null);
   const mutedRef = useRef(true);
   mutedRef.current = muted;
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const closeTimerRef = useRef<number | null>(null);
+  const toastTimerRef = useRef<number | null>(null);
+  const toastIdRef = useRef(0);
+  const powerSignatureRef = useRef("");
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  // Brief, self-clearing feedback for collecting an item. Rare events only,
+  // so it never adds per-frame React work.
+  const showToast = useCallback((text: string, tone: "plane" | "power") => {
+    toastIdRef.current += 1;
+    setToast({ id: toastIdRef.current, text, tone });
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = window.setTimeout(() => {
+      toastTimerRef.current = null;
+      setToast(null);
+    }, 900);
+  }, []);
+
+  const clearTimers = useCallback(() => {
+    if (closeTimerRef.current !== null) window.clearTimeout(closeTimerRef.current);
+    if (toastTimerRef.current !== null) window.clearTimeout(toastTimerRef.current);
+    closeTimerRef.current = null;
+    toastTimerRef.current = null;
+  }, []);
+
+  // Fade the overlay out, then hand control back. Reduced motion closes at once.
+  const requestClose = useCallback(() => {
+    if (closeTimerRef.current !== null) return;
+    const reduce = typeof window.matchMedia === "function"
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      onCloseRef.current();
+      return;
+    }
+    setClosing(true);
+    closeTimerRef.current = window.setTimeout(() => {
+      closeTimerRef.current = null;
+      onCloseRef.current();
+    }, 260);
+  }, []);
 
   const startRun = useCallback(() => {
     setScore(0);
     setCollected(0);
     setActivePowerUps([]);
+    setToast(null);
+    powerSignatureRef.current = "";
     setZone("alley");
     setRunKey((value) => value + 1);
     setPhase("playing");
@@ -868,18 +914,64 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
 
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     document.body.style.overflow = "hidden";
+    // Move focus into the dialog so keyboard controls and Escape work immediately.
+    rootRef.current?.focus({ preventScroll: true });
     return () => {
       document.body.style.overflow = previousOverflow;
+      clearTimers();
+      if (previousFocus && document.contains(previousFocus)) previousFocus.focus({ preventScroll: true });
     };
-  }, []);
+  }, [clearTimers]);
 
   useEffect(() => {
+    const focusableSelector = [
+      "a[href]",
+      "area[href]",
+      "button:not([disabled])",
+      "input:not([disabled]):not([type=\"hidden\"])",
+      "select:not([disabled])",
+      "textarea:not([disabled])",
+      "iframe",
+      "object",
+      "embed",
+      "[contenteditable=\"true\"]",
+      "[tabindex]:not([tabindex=\"-1\"])",
+    ].join(",");
+
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Tab") {
+        const root = rootRef.current;
+        if (!root) return;
+
+        const focusable = Array.from(root.querySelectorAll<HTMLElement>(focusableSelector))
+          .filter((element) => element.getClientRects().length > 0 && element.getAttribute("aria-hidden") !== "true");
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        const active = document.activeElement;
+
+        if (!first || !last) {
+          event.preventDefault();
+          root.focus({ preventScroll: true });
+          return;
+        }
+
+        // Keep keyboard focus inside the modal, including when focus starts on the dialog root.
+        if (event.shiftKey && (active === first || active === root || !root.contains(active))) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && (active === last || active === root || !root.contains(active))) {
+          event.preventDefault();
+          first.focus();
+        }
+        return;
+      }
+
       if (event.repeat) return;
       if (event.code === "Escape") {
         event.preventDefault();
-        onClose();
+        requestClose();
         return;
       }
 
@@ -895,7 +987,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [jump, onClose, phase, startRun]);
+  }, [jump, phase, requestClose, startRun]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -1163,7 +1255,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           playerBox.left < planeBox.right &&
           playerBox.bottom > planeBox.top &&
           playerBox.top < planeBox.bottom;
-        if (hit) { world.collected += 1; beep(880, .2, "sine"); }
+        if (hit) { world.collected += 1; beep(880, .2, "sine"); showToast("+35", "plane"); }
         return !hit;
       });
       if (before !== world.planes.length) setCollected(world.collected);
@@ -1186,6 +1278,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           powerUpExpiry[powerUp.kind] = world.elapsed + 5;
           world.bonusScore += 50;
           beep(700 + Object.keys(POWER_UP_META).indexOf(powerUp.kind) * 90, 0.24, "sine");
+          showToast(`+50 ${POWER_UP_META[powerUp.kind].item}`, "power");
         }
         return !hit;
       });
@@ -1194,14 +1287,18 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
       if (scoreClock > 0.12) {
         scoreClock = 0;
         setScore(Math.floor(world.distance / 12) + world.collected * 35 + world.bonusScore);
-        setActivePowerUps(
-          (Object.keys(powerUpExpiry) as PowerUpKind[])
-            .filter((kind) => powerUpExpiry[kind] > world.elapsed)
-            .map((kind) => ({
-              kind,
-              secondsLeft: powerUpExpiry[kind] - world.elapsed,
-            })),
-        );
+        const live = (Object.keys(powerUpExpiry) as PowerUpKind[])
+          .filter((kind) => powerUpExpiry[kind] > world.elapsed)
+          .map((kind) => ({
+            kind,
+            secondsLeft: powerUpExpiry[kind] - world.elapsed,
+          }));
+        // Skip the state update while nothing is active, so idle running never re-renders the HUD for this.
+        const signature = live.length === 0 ? "" : "on";
+        if (signature || powerSignatureRef.current) {
+          powerSignatureRef.current = signature;
+          setActivePowerUps(live);
+        }
       }
 
       drawFrame(world.elapsed);
@@ -1224,7 +1321,14 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
     zone === "alley" ? "The Schoolyard" : zone === "school" ? "The Park" : "The Open Park";
 
   return createPortal(
-    <div className="little-detour" role="dialog" aria-modal="true" aria-label="A Little Detour secret game">
+    <div
+      ref={rootRef}
+      tabIndex={-1}
+      className={`little-detour${closing ? " little-detour--closing" : ""}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label="A Little Detour secret game"
+    >
       <div className="little-detour__frame">
         <header className="little-detour__topbar">
           <div className="little-detour__wordmark">
@@ -1237,13 +1341,13 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           <div className="little-detour__top-actions">
             <span className="little-detour__best">BEST <b>{best.toLocaleString()}</b></span>
             <button className="little-detour__icon-button" onClick={toggleMuted} aria-label={muted ? "Enable sound" : "Mute sound"} title={muted ? "Enable sound" : "Mute sound"}>{muted ? <VolumeX size={17} /> : <Volume2 size={17} />}</button>
-            <button className="little-detour__icon-button" onClick={onClose} aria-label="Close secret game">
+            <button className="little-detour__icon-button" onClick={requestClose} aria-label="Close secret game">
               <X size={19} />
             </button>
           </div>
         </header>
 
-        <div className="little-detour__stage-wrap">
+        <div className={`little-detour__stage-wrap${phase === "gameover" ? " little-detour__stage-wrap--hit" : ""}`}>
           <canvas
             ref={canvasRef}
             className="little-detour__canvas"
@@ -1301,6 +1405,15 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
               </span>
               <span className="little-detour__score">{score.toLocaleString()} <small>POINTS</small></span>
               <span className="little-detour__collect">✈ {collected}</span>
+              {toast && (
+                <span
+                  key={toast.id}
+                  className={`little-detour__toast little-detour__toast--${toast.tone}`}
+                  aria-hidden="true"
+                >
+                  {toast.text}
+                </span>
+              )}
               {activePowerUps.length > 0 && (
                 <div className="little-detour__active-powerups" aria-live="polite">
                   {activePowerUps.map((effect) => (
@@ -1308,6 +1421,10 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
                       <b>{POWER_UP_META[effect.kind].symbol}</b>
                       {POWER_UP_META[effect.kind].label}
                       <small>{Math.ceil(effect.secondsLeft)}s</small>
+                      <i
+                        className="little-detour__active-powerup-bar"
+                        style={{ transform: `scaleX(${Math.max(0, Math.min(1, effect.secondsLeft / 5))})` }}
+                      />
                     </span>
                   ))}
                 </div>
@@ -1324,9 +1441,20 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
           </div>
           <button
             className="little-detour__jump"
-            onClick={() => {
-              if (phase === "playing") jump();
-              else if (phase === "intro" || phase === "gameover") startRun();
+            onPointerDown={(event) => {
+              // Jump on touch-down rather than on release, so taps feel immediate.
+              if (phase === "playing") {
+                event.preventDefault();
+                jump();
+              }
+            }}
+            onClick={(event) => {
+              if (phase === "playing") {
+                // Pointer taps already jumped on pointerdown; keyboard activation arrives with detail 0.
+                if (event.detail === 0) jump();
+              } else {
+                startRun();
+              }
             }}
           >
             <ArrowUp size={17} /> {phase === "playing" ? "Jump" : phase === "intro" ? "Start" : "Again"}

@@ -134,3 +134,5 @@ Whenever a new module (such as a component, hook, or utility) or a new page is a
 - `src/components/passport/` — `PassportDemo`, `LivesSection`, `CircularJourney`, `PrivacyTrust`, `useSectionProgress`.
 - `src/components/home/WatchPassportSection.tsx` — homepage teaser between ProductChapters and ZodiacStage.
 - `src/data/watchPassport.ts` — local sample data only. Everything is labelled "Interactive Concept Demo"; no backend and no personal data.
+
+- `src/components/motion/tokens.ts` — shared easing, durations, distances and scroll spring used by Reveal, Stagger, Hero and the Watch Passport components.
