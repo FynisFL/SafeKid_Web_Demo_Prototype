@@ -32,16 +32,6 @@
   <a href="./CodeGuideline.md">Code Guidelines</a>
 </p>
 
----
-
-<p align="center">
-  <img
-    src="src/assets/safekid/hero-watch.webp"
-    width="90%"
-    alt="SafeKid smartwatch concept"
-  />
-</p>
-
 
 # SafeKid — The Space Between Them
 
