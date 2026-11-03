@@ -41,9 +41,10 @@
     alt="SafeKid smartwatch concept"
   />
 </p>
----
+
+
 # SafeKid — The Space Between Them
----
+
 **SafeKid** là dự án sản phẩm công nghệ do đội ngũ **DigiBabi** phát triển, với ý tưởng kết hợp đồng hồ thông minh dành cho trẻ em và trải nghiệm kết nối dành cho phụ huynh.
 
 Dự án hướng đến việc tạo thêm không gian để trẻ tự do khám phá, đồng thời giúp phụ huynh an tâm hơn trong quá trình trưởng thành của con.
@@ -63,6 +64,15 @@ SafeKid được xây dựng xoay quanh 6 nhóm tính năng thiết kế:
 - Safe Zone Alerts — Cảnh báo vùng an toàn.
 - Habit & Reward — Hình thành thói quen và khen thưởng.
 - Battery — Định hướng tối ưu thời lượng sử dụng.
+
+<h2 align="center">Explore the SafeKid Collection</h2>
+
+<p align="center">
+  <img src="src/assets/safekid/editions/rat.webp" width="24%" />
+  <img src="src/assets/safekid/editions/cat.webp" width="24%" />
+  <img src="src/assets/safekid/editions/dragon.webp" width="24%" />
+  <img src="src/assets/safekid/editions/tiger.webp" width="24%" />
+</p>
 
 ### Trải nghiệm trên website
 
