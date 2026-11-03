@@ -1,23 +1,4 @@
 # SafeKid — The Space Between Them
-<p align="center">
-  <img
-    src="src/assets/safekid/logo.webp"
-    alt="SafeKid Logo"
-    height="85"
-  />
-
-  &nbsp;&nbsp;&nbsp;&nbsp;
-
-  <img
-    src="src/assets/digibabi/logo-digibabi.webp"
-    alt="DigiBabi Logo"
-    height="85"
-  />
-</p>
-
-<p align="center">
-  <strong>SafeKid</strong> — A product concept by <strong>DigiBabi</strong>
-</p>
 
 **SafeKid** là dự án sản phẩm công nghệ do đội ngũ **DigiBabi** phát triển, với ý tưởng kết hợp đồng hồ thông minh dành cho trẻ em và trải nghiệm kết nối dành cho phụ huynh.
 
