@@ -1,3 +1,46 @@
+<p align="center">
+  <img
+    src="src/assets/safekid/logo.webp"
+    alt="SafeKid Logo"
+    height="110"
+  />
+</p>
+
+<h1 align="center">SafeKid</h1>
+
+<h3 align="center">The Space Between Them</h3>
+
+<p align="center">
+  A child-focused smartwatch concept by DigiBabi.
+  <br />
+  More room to grow. More ways to stay connected.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Vite-7-646CFF?logo=vite&logoColor=white" />
+  <img src="https://img.shields.io/badge/Motion-12-FFFFFF?logo=framer&logoColor=black" />
+  <img src="https://img.shields.io/badge/Deployment-GitHub%20Pages-222222?logo=github" />
+</p>
+
+<p align="center">
+  <a href="https://digibabi.id.vn">Website</a>
+  ·
+  <a href="https://github.com/FynisFL/SafeKid_Web_Demo_Prototype">Repository</a>
+  ·
+  <a href="./CodeGuideline.md">Code Guidelines</a>
+</p>
+
+---
+
+<p align="center">
+  <img
+    src="src/assets/safekid/hero-watch.webp"
+    width="90%"
+    alt="SafeKid smartwatch concept"
+  />
+</p>
 # SafeKid — The Space Between Them
 
 **SafeKid** là dự án sản phẩm công nghệ do đội ngũ **DigiBabi** phát triển, với ý tưởng kết hợp đồng hồ thông minh dành cho trẻ em và trải nghiệm kết nối dành cho phụ huynh.
