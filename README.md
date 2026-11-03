@@ -41,8 +41,9 @@
     alt="SafeKid smartwatch concept"
   />
 </p>
+---
 # SafeKid — The Space Between Them
-
+---
 **SafeKid** là dự án sản phẩm công nghệ do đội ngũ **DigiBabi** phát triển, với ý tưởng kết hợp đồng hồ thông minh dành cho trẻ em và trải nghiệm kết nối dành cho phụ huynh.
 
 Dự án hướng đến việc tạo thêm không gian để trẻ tự do khám phá, đồng thời giúp phụ huynh an tâm hơn trong quá trình trưởng thành của con.
