@@ -1,6 +1,6 @@
 import { lazy, Suspense, useCallback, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Facebook, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowUpRight, Facebook, Github, Mail, MapPin, Phone } from "lucide-react";
 import { BrandMark } from "./BrandMark";
 const LittleDetourGame = lazy(() =>
   import("../easter-egg/LittleDetourGame").then((module) => ({ default: module.LittleDetourGame })),
@@ -69,7 +69,7 @@ export function SiteFooter() {
               A child-focused watch concept and twelve Vietnamese Zodiac editions, imagined around
               growing independence.
             </p>
-            <div className="mt-6 flex items-center gap-2" aria-label="Social channels">
+            <div className="mt-6 flex items-center gap-2" aria-label="Social channels and source code">
               <a
                 href="https://facebook.com/DigiBabi"
                 target="_blank"
@@ -79,11 +79,23 @@ export function SiteFooter() {
               >
                 <Facebook className="h-[15px] w-[15px]" aria-hidden="true" />
               </a>
-              <span className="ml-1 text-[10px] leading-tight text-white/45">
-                Follow SafeKid
-                <br />
-                on Facebook
-              </span>
+              <a
+                href="https://github.com/FynisFL/SafeKid_Web_Demo_Prototype"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="View the SafeKid open-source repository on GitHub"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+              >
+                <Github className="h-[15px] w-[15px]" aria-hidden="true" />
+              </a>
+              <div className="ml-1 flex flex-col gap-1 text-[10px] leading-tight text-white/45">
+                <a href="https://facebook.com/DigiBabi" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">
+                  Follow SafeKid on Facebook
+                </a>
+                <a href="https://github.com/FynisFL/SafeKid_Web_Demo_Prototype" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">
+                  Explore the open-source code
+                </a>
+              </div>
             </div>
           </div>
 
