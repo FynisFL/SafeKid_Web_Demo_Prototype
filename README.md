@@ -1,4 +1,4 @@
-# SafeKid — The space between them
+# SafeKid
 
 A cinematic React + Vite concept site for the SafeKid children’s smartwatch and its parent experience.
 
