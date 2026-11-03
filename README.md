@@ -11,7 +11,7 @@
   />
 </p>
 
-<h1 align="center">SafeKid</h1>
+<h1 align="center">SafeKid x DigiBabi</h1>
 
 <h3 align="center">The Space Between Them</h3>
 
