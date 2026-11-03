@@ -50,7 +50,7 @@ Dự án hướng đến việc tạo thêm không gian để trẻ tự do khá
 
 <a href="https://www.facebook.com/DigiBabi">
   <img src="https://cdn.simpleicons.org/facebook/0866FF" width="16" height="16" alt="Facebook" />
-  **Facebook:** DigiBabi
+  DigiBabi
 </a>
 
 ---
