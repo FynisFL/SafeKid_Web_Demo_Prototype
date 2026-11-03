@@ -10,7 +10,6 @@ export default defineConfig(({ mode }) => {
   if (mode === 'development') {
     plugins.push(...enterDevPlugin());
   }
-  const isGitHubActions = process.env.GITHUB_ACTIONS === 'true';
 
   return {
     server: {
@@ -23,9 +22,9 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
-    // GitHub Pages serves this repository as a project site under /<repo>/.
-    // Keep local development at the root for a simpler localhost URL.
-    base: isGitHubActions ? '/SafeKid_Web_Demo_Prototype/' : '/',
+    // SafeKid is published on the custom domain digibabi.id.vn.
+    // Custom domains serve the site from the origin root, not /<repo>/.
+    base: '/',
     build: {
       outDir: 'dist',
       rollupOptions: {
