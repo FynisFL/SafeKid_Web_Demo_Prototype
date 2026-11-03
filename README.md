@@ -4,6 +4,11 @@
     alt="SafeKid Logo"
     height="110"
   />
+  <img
+    src="src/assets/digibabi/logo-digibabi.webp"
+    alt="SafeKid Logo"
+    height="110"
+  />
 </p>
 
 <h1 align="center">SafeKid</h1>
