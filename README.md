@@ -38,14 +38,19 @@
 </p>
 
 
-# SafeKid — The Space Between Them
+# SafeKid - The Space Between Them
 
 **SafeKid** là dự án sản phẩm công nghệ do đội ngũ **DigiBabi** phát triển, với ý tưởng kết hợp đồng hồ thông minh dành cho trẻ em và trải nghiệm kết nối dành cho phụ huynh.
 
 Dự án hướng đến việc tạo thêm không gian để trẻ tự do khám phá, đồng thời giúp phụ huynh an tâm hơn trong quá trình trưởng thành của con.
 
 🌐 **Website:** https://digibabi.id.vn  
+
 💻 **Repository:** https://github.com/FynisFL/SafeKid_Web_Demo_Prototype
+<a href="https://www.facebook.com/DigiBabi">
+  <img src="https://cdn.simpleicons.org/facebook/0866FF" width="16" height="16" alt="Facebook" />
+  **Facebook:** DigiBabi
+</a>
 
 ---
 
@@ -133,4 +138,4 @@ SafeKid không chỉ hướng đến một thiết bị công nghệ, mà còn k
 ---
 
 📘 **Tài liệu kỹ thuật:** Xem [CodeGuideline.md](./CodeGuideline.md) để tìm hiểu cấu trúc source code, quy chuẩn lập trình và hướng dẫn phát triển dự án.
-**About Fynis/FynisFL:** xem [LinkBout/Fynis](https://www.linkbout.com/fynis) để tìm hiểu thông tin liên hệ
+**About Fynis/FynisFL:** [LinkBout/Fynis](https://www.linkbout.com/fynis) - thông tin liên hệ
