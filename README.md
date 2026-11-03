@@ -44,13 +44,13 @@
 
 Dự án hướng đến việc tạo thêm không gian để trẻ tự do khám phá, đồng thời giúp phụ huynh an tâm hơn trong quá trình trưởng thành của con.
 
-🌐 **Website:** https://digibabi.id.vn  
+🌐 [**Website**](https://digibabi.id.vn)
 
-💻 **Repository:** https://github.com/FynisFL/SafeKid_Web_Demo_Prototype
+💻 [**Repository**](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype)
 
 <a href="https://www.facebook.com/DigiBabi">
   <img src="https://cdn.simpleicons.org/facebook/0866FF" width="16" height="16" alt="Facebook" />
-  Facebook: DigiBabi
+  **Facebook**
 </a>
 
 ---
