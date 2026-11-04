@@ -138,4 +138,5 @@ SafeKid không chỉ hướng đến một thiết bị công nghệ, mà còn k
 ---
 
 📘 **Tài liệu kỹ thuật:** Xem [CodeGuideline.md](./CodeGuideline.md) để tìm hiểu cấu trúc source code, quy chuẩn lập trình và hướng dẫn phát triển dự án.
+
 **About Fynis/FynisFL:** [LinkBout/Fynis](https://www.linkbout.com/fynis) - thông tin liên hệ
