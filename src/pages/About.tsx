@@ -17,7 +17,7 @@ import { Stagger } from "@/components/motion/Stagger";
 import { TeamStory } from "@/components/about/TeamStory";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
+import heroWatch from "@/assets/digibabi/logo-digibabi.webp";
 import duy from "@/assets/digibabi/duy.webp";
 import linh from "@/assets/digibabi/linh.webp";
 import nhan from "@/assets/digibabi/nhan.webp";
