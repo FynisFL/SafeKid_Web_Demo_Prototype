@@ -385,7 +385,7 @@ export default function About() {
             <img
               src={digibabi}
               alt="SafeKid Mouse edition smartwatch concept"
-              className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_40px_70px_rgba(16,42,56,0.15)]"
+              className="absolute inset-0 h-[75%] w-[75%] object-contain drop-shadow-[0_40px_70px_rgba(16,42,56,0.15)]"
             />
             <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/80 bg-white/80 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-deep/65 backdrop-blur">
               SafeKid / Vietnamese Zodiac
