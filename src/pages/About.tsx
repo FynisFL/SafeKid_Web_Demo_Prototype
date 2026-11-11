@@ -17,7 +17,8 @@ import { Stagger } from "@/components/motion/Stagger";
 import { TeamStory } from "@/components/about/TeamStory";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import heroWatch from "@/assets/digibabi/logo-digibabi.webp";
+import digibabi from "@/assets/digibabi/logo-digibabi.webp";
+import heroWatch from "@/assets/safekid/hero-watch.webp";
 import duy from "@/assets/digibabi/duy.webp";
 import linh from "@/assets/digibabi/linh.webp";
 import nhan from "@/assets/digibabi/nhan.webp";
@@ -382,7 +383,7 @@ export default function About() {
             <div aria-hidden="true" className="stage-glow absolute inset-[3%] rounded-full" />
             <div aria-hidden="true" className="absolute inset-[13%] rounded-full border border-primary/20" />
             <img
-              src={heroWatch}
+              src={digibabi}
               alt="SafeKid Mouse edition smartwatch concept"
               className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_40px_70px_rgba(16,42,56,0.15)]"
             />
