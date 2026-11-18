@@ -125,7 +125,8 @@ export default function Sos() {
             </div>
 
             <div className="flex justify-center">
-              <div className="relative flex aspect-square w-full max-w-[420px] items-center justify-center">
+              <div className="w-full max-w-[420px]">
+                <div className="relative flex aspect-square items-center justify-center">
                 <span
                   aria-hidden="true"
                   className="absolute inset-[6%] rounded-full border border-white/10"
@@ -208,7 +209,8 @@ export default function Sos() {
                   </button>
                 </div>
 
-                <div className="absolute bottom-0 left-0 right-0 text-center">
+                </div>
+                <div className="min-h-32 pt-2 text-center">
                   <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-white/55">
                     <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
                     Local demo only

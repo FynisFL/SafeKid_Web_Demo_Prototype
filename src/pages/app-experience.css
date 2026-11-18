@@ -395,3 +395,13 @@
   .sk-app__card:hover { translate: none; }
   .sk-app__card:is(:hover, :focus-within) > svg { transform: none; }
 }
+
+@media (min-width: 640px) and (max-width: 960px) and (max-height: 600px) {
+  .sk-app__hero {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    grid-template-areas: "intro stage" "scenes scenes";
+    align-items: center;
+    column-gap: 1.25rem;
+  }
+  .sk-app__hero h1 { font-size: clamp(2.3rem, 5vw, 3.2rem); }
+}

@@ -131,9 +131,10 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
   return (
     <section
       className={cn(
-        "relative overflow-hidden bg-white",
+        "relative overflow-hidden motion-safe:transition-colors motion-safe:duration-500",
         variant === "page" ? "py-16 sm:py-20" : "py-20 sm:py-24 lg:py-28"
       )}
+      style={{ backgroundColor: product.tint }}
       aria-labelledby="collection-heading"
     >
       <div

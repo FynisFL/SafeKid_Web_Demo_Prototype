@@ -46,7 +46,8 @@ export function ParentAppSection() {
             replay={play ? interaction.replay + 1 : 0}
             reduce={reduce || !play}
             loading="lazy"
-            onReplay={() => playScene(interaction.index)}
+            onStep={(direction) => playScene((interaction.index + direction + scenes.length) % scenes.length)}
+              onReplay={() => playScene(interaction.index)}
           />
         </div>
 
@@ -80,8 +81,8 @@ export function ParentAppSection() {
           <div className="home-parent-app__event" aria-live="polite" aria-atomic="true">
             <motion.div
               key={scene.id}
-              initial={reduce || !interaction.replay ? false : { opacity: 0.66 }}
-              animate={{ opacity: 1 }}
+              initial={reduce || !interaction.replay ? false : { opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: reduce ? 0 : signalArrival(false), duration: reduce ? 0 : DURATION.quick, ease: EASE }}
             >
               <p className="text-sm font-semibold text-white">{scene.title}</p>

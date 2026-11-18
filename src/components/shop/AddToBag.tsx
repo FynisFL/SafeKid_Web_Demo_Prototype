@@ -31,7 +31,9 @@ export function AddToBag({ editionId, image }: { editionId: string; image: strin
   function handleAdd(event: MouseEvent<HTMLButtonElement>) {
     const bagIcon = document.querySelector("#site-shopping-bag svg");
     if (!reduce && bagIcon) {
-      const start = center(event.currentTarget);
+      const artwork = document.querySelector(`[data-edition-art="${editionId}"]`);
+      const origin = artwork && center(artwork);
+      const start = origin && origin.y >= 80 && origin.y < window.innerHeight ? origin : center(event.currentTarget);
       const end = center(bagIcon);
       const id = ++sequence.current;
       setFlights((current) => [...current.slice(-2), { id, start, end }]);

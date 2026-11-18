@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useViewTransitionState } from "react-router-dom";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { animate, AnimatePresence, motion, useMotionValue, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Maximize2 } from "lucide-react";
 import { AddToBag } from "@/components/shop/AddToBag";
 import { SiteLayout } from "@/components/site/SiteLayout";
@@ -46,6 +46,7 @@ export default function Product() {
   const product = index >= 0 ? zodiacProducts[index] : null;
   const previousIndex = useRef(index);
   const recentSwipe = useRef(0);
+  const panX = useMotionValue(0);
   const [zoomed, setZoomed] = useState(false);
   const total = zodiacProducts.length;
   const forward = (index - previousIndex.current + total) % total;
@@ -69,7 +70,7 @@ export default function Product() {
 
   return (
     <SiteLayout>
-      <section className="relative overflow-hidden bg-mist pb-16 pt-[104px] sm:pb-20 lg:pt-[124px]">
+      <section style={{ backgroundColor: product.tint }} className="relative overflow-hidden motion-safe:transition-colors motion-safe:duration-500 pb-16 pt-[94px] sm:pb-20 sm:pt-[104px] lg:pt-[124px]">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -right-[16%] -top-[22%] h-[760px] w-[760px] rounded-full bg-white/80 blur-[90px]"
@@ -83,8 +84,27 @@ export default function Product() {
             Zodiac collection
           </Link>
 
-          <div className="mt-8 grid items-center gap-10 lg:grid-cols-[1.04fr_0.96fr] lg:gap-14">
-            <div className="relative order-2 lg:order-1">
+          <div className="mt-4 grid items-center gap-y-3 sm:mt-6 lg:mt-8 lg:grid-cols-[minmax(0,1.04fr)_minmax(0,0.96fr)] lg:gap-x-14">
+            <div className="min-w-0 lg:col-start-2 lg:row-start-1 lg:self-end">
+              <p className="eyebrow">
+                <span className="eyebrow-line" />
+                SafeKid / Zodiac edition {product.animal}
+              </p>
+              <h1 className="display display-lg mt-3 sm:mt-5">
+                <motion.span
+                  key={product.id}
+                  className="inline-block"
+                  initial={reduce ? false : { opacity: 0.6, x: direction * 8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+                >
+                  {product.label}
+                </motion.span>
+                <br />
+                <span className="text-primary">little explorer.</span>
+              </h1>
+            </div>
+            <div className="relative lg:col-start-1 lg:row-start-1 lg:row-span-2">
               <div className="relative mx-auto aspect-square w-full max-w-[540px]">
                 <div aria-hidden="true" className="stage-glow absolute inset-[2%] rounded-full" />
                 <div aria-hidden="true" className="absolute inset-[10%] rounded-full border border-primary/20" />
@@ -105,7 +125,13 @@ export default function Product() {
                       type="button"
                       aria-label={`Enlarge ${product.label} edition image`}
                       className="absolute inset-0 h-full w-full cursor-zoom-in rounded-[32px] touch-pan-y touch-pinch-zoom focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      onPan={(_, { offset }) => {
+                        if (!reduce && Math.abs(offset.x) > 1.4 * Math.abs(offset.y)) {
+                          panX.set(Math.max(-64, Math.min(64, offset.x * 0.55)));
+                        }
+                      }}
                       onPanEnd={(_, { offset }) => {
+                        if (!reduce) animate(panX, 0, { type: "spring", stiffness: 360, damping: 32 });
                         if (Math.abs(offset.x) < 48 || Math.abs(offset.x) < 1.4 * Math.abs(offset.y)) return;
                         recentSwipe.current = performance.now();
                         navigate(`/product/${offset.x < 0 ? next.id : previous.id}`, { state: { keepProductScroll: true } });
@@ -116,22 +142,25 @@ export default function Product() {
                         }
                       }}
                     >
-                      <AnimatePresence mode="wait" initial={false} custom={direction}>
-                        <motion.img
-                          key={product.id}
-                          custom={direction}
-                          src={product.image}
-                          alt={`SafeKid smartwatch concept in the ${product.label} edition`}
-                          draggable={false}
-                          style={sharedFromCollection ? { viewTransitionName: `edition-${product.id}` } : undefined}
-                          variants={artwork}
-                          initial={reduce || sharedFromCollection ? false : "incoming"}
-                          animate="active"
-                          exit={reduce || sharedFromCollection ? undefined : "outgoing"}
-                          transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
-                          className="pointer-events-none absolute inset-0 h-full w-full object-contain drop-shadow-[0_44px_70px_rgba(16,42,56,0.16)]"
-                        />
-                      </AnimatePresence>
+                      <motion.div className="pointer-events-none absolute inset-0" style={{ x: panX }}>
+                        <AnimatePresence mode="wait" initial={false} custom={direction}>
+                          <motion.img
+                            key={product.id}
+                            custom={direction}
+                            src={product.image}
+                            alt={`SafeKid smartwatch concept in the ${product.label} edition`}
+                            data-edition-art={product.id}
+                            draggable={false}
+                            style={sharedFromCollection ? { viewTransitionName: `edition-${product.id}` } : undefined}
+                            variants={artwork}
+                            initial={reduce || sharedFromCollection ? false : "incoming"}
+                            animate="active"
+                            exit={reduce || sharedFromCollection ? undefined : "outgoing"}
+                            transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+                            className="pointer-events-none absolute inset-0 h-full w-full object-contain drop-shadow-[0_44px_70px_rgba(16,42,56,0.16)]"
+                          />
+                        </AnimatePresence>
+                      </motion.div>
                       <span className="absolute right-2 top-2 inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-white text-deep shadow-sm sm:right-4 sm:top-4" aria-hidden="true">
                         <Maximize2 className="h-4 w-4" />
                       </span>
@@ -153,9 +182,15 @@ export default function Product() {
                   >
                     <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                   </Link>
-                  <span className="rounded-full border border-white/70 bg-white/70 px-3 py-1.5 text-[9px] uppercase tracking-[0.18em] text-deep/50 backdrop-blur">
-                    {String(index + 1).padStart(2, "0")} / 12
-                  </span>
+                  <motion.span
+                    key={product.id}
+                    initial={reduce ? false : { opacity: 0.6, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+                    className="rounded-full border border-white/70 bg-white/70 px-3 py-1.5 text-[9px] uppercase tracking-[0.18em] text-deep/75 backdrop-blur"
+                  >
+                    {String(index + 1).padStart(2, "0")} / {total}
+                  </motion.span>
                   <Link
                     to={`/product/${next.id}`}
                     state={{ keepProductScroll: true }}
@@ -168,21 +203,12 @@ export default function Product() {
               </div>
             </div>
 
-            <div className="order-1 lg:order-2">
-              <p className="eyebrow">
-                <span className="eyebrow-line" />
-                SafeKid / Zodiac edition {product.animal}
-              </p>
-              <h1 className="display display-lg mt-6">
-                {product.label}
-                <br />
-                <span className="text-primary">little explorer.</span>
-              </h1>
+            <div className="min-w-0 lg:col-start-2 lg:row-start-2 lg:self-start">
+              <AddToBag key={product.id} editionId={product.id} image={product.image} />
               <p className="lede mt-6 max-w-[42ch]">
                 Meet the {product.label} edition — a Vietnamese Zodiac-inspired character in the
                 SafeKid watch concept, made for the little person who is always a few steps ahead.
               </p>
-              <AddToBag key={product.id} editionId={product.id} image={product.image} />
               <a href="#idea" className="group mt-3 inline-flex min-h-11 items-center gap-2 text-[13.5px] font-medium text-ink">
                 Discover the idea
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />

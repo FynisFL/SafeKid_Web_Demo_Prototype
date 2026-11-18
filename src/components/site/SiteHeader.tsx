@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "motion/react";
+import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ArrowUpRight, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useShoppingBag } from "@/components/shop/shoppingBag";
 import { BrandMark } from "./BrandMark";
@@ -52,25 +54,13 @@ export function SiteHeader() {
     setSearchOpen(false);
   }, [location.pathname]);
 
+  const desktop = useMediaQuery("(min-width: 1024px)");
   useEffect(() => {
-    if (!menuOpen) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
-    };
-    document.addEventListener("keydown", onKeyDown);
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const timer = window.setTimeout(() => closeRef.current?.focus(), 60);
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = previous;
-      window.clearTimeout(timer);
-    };
-  }, [menuOpen]);
+    if (desktop) setMenuOpen(false);
+  }, [desktop]);
 
   return (
-    <>
+    <Dialog.Root open={menuOpen && !desktop} onOpenChange={setMenuOpen}>
       <header
         className={cn(
           "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-500",
@@ -156,110 +146,101 @@ export function SiteHeader() {
               Talk to the team
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />
             </Link>
-            <button
-              type="button"
-              onClick={() => setMenuOpen(true)}
-              aria-label="Open menu"
-              aria-expanded={menuOpen}
-              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/12 text-ink transition-colors hover:bg-mist lg:hidden"
-            >
-              <Menu className="h-[18px] w-[18px]" aria-hidden="true" />
-            </button>
+            <Dialog.Trigger asChild>
+              <button
+                type="button"
+                aria-label="Open menu"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/12 text-ink transition-colors hover:bg-mist lg:hidden"
+              >
+                <Menu className="h-[18px] w-[18px]" aria-hidden="true" />
+              </button>
+            </Dialog.Trigger>
           </div>
         </div>
       </header>
 
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
-            className="fixed inset-0 z-[70] lg:hidden"
-            initial={reduce ? undefined : { opacity: 0 }}
-            animate={reduce ? undefined : { opacity: 1 }}
-            exit={reduce ? undefined : { opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <motion.div
-              className="absolute inset-0 bg-mist"
-              initial={reduce ? undefined : { clipPath: "inset(0 0 100% 0)" }}
-              animate={reduce ? undefined : { clipPath: "inset(0 0 0% 0)" }}
-              exit={reduce ? undefined : { clipPath: "inset(0 0 100% 0)" }}
-              transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
-            >
-              <div className="flex h-full flex-col overflow-y-auto">
-                <div className="shell flex h-[78px] shrink-0 items-center justify-between">
-                  <BrandMark compact />
-                  <button
-                    ref={closeRef}
-                    type="button"
-                    onClick={() => setMenuOpen(false)}
-                    aria-label="Close menu"
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/12 bg-white/70 text-ink"
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-[69] bg-mist/75" />
+        <Dialog.Content aria-describedby={undefined} onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          closeRef.current?.focus();
+        }} onCloseAutoFocus={(event) => {
+          if (searchOpen || desktop) event.preventDefault();
+        }} className="fixed inset-0 z-[70] bg-mist motion-safe:data-[state=open]:animate-in motion-safe:data-[state=open]:slide-in-from-top-4 motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fade-out-0 duration-200">
+          <Dialog.Title className="sr-only">Site navigation</Dialog.Title>
+          <div className="flex h-full flex-col overflow-y-auto">
+            <div className="shell flex h-[78px] shrink-0 items-center justify-between">
+              <BrandMark compact />
+              <button
+                ref={closeRef}
+                type="button"
+                onClick={() => setMenuOpen(false)}
+                aria-label="Close menu"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/12 bg-white/70 text-ink"
+              >
+                <X className="h-[18px] w-[18px]" aria-hidden="true" />
+              </button>
+            </div>
+
+            <nav onClick={(event) => { if ((event.target as Element).closest("a")) setMenuOpen(false); }} aria-label="Mobile" className="shell flex-1 pt-6">
+              <ul>
+                {NAV.map((item, index) => (
+                  <motion.li
+                    key={item.to}
+                    initial={reduce ? undefined : { opacity: 0, y: 20 }}
+                    animate={reduce ? undefined : { opacity: 1, y: 0 }}
+                    transition={{ delay: 0.12 + index * 0.05, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className="border-b border-ink/10"
                   >
-                    <X className="h-[18px] w-[18px]" aria-hidden="true" />
-                  </button>
-                </div>
-
-                <nav aria-label="Mobile" className="shell flex-1 pt-6">
-                  <ul>
-                    {NAV.map((item, index) => (
-                      <motion.li
-                        key={item.to}
-                        initial={reduce ? undefined : { opacity: 0, y: 20 }}
-                        animate={reduce ? undefined : { opacity: 1, y: 0 }}
-                        transition={{ delay: 0.12 + index * 0.05, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                        className="border-b border-ink/10"
-                      >
-                        <Link
-                          to={item.to}
-                          className="flex items-baseline justify-between gap-4 py-4"
-                        >
-                          <span className="font-display text-[clamp(1.9rem,8vw,2.6rem)] font-medium tracking-[-0.045em] text-ink">
-                            {item.label}
-                          </span>
-                          <span className="font-mono text-[10px] tracking-[0.2em] text-deep/60">
-                            {String(index + 1).padStart(2, "0")}
-                          </span>
-                        </Link>
-                      </motion.li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-8 flex flex-wrap gap-2">
-                    {SECONDARY.map((item) => (
-                      <Link
-                        key={item.to}
-                        to={item.to}
-                        className="rounded-full border border-ink/15 bg-white/60 px-4 py-2 text-[13px] text-deep"
-                      >
+                    <Link
+                      to={item.to}
+                      className="flex items-baseline justify-between gap-4 py-4"
+                    >
+                      <span className="font-display text-[clamp(1.9rem,8vw,2.6rem)] font-medium tracking-[-0.045em] text-ink">
                         {item.label}
-                      </Link>
-                    ))}
-                  </div>
+                      </span>
+                      <span className="font-mono text-[10px] tracking-[0.2em] text-deep/60">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                    </Link>
+                  </motion.li>
+                ))}
+              </ul>
 
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMenuOpen(false);
-                      setSearchOpen(true);
-                    }}
-                    className="mt-6 inline-flex items-center gap-2 text-sm text-deep/70"
+              <div className="mt-8 flex flex-wrap gap-2">
+                {SECONDARY.map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className="rounded-full border border-ink/15 bg-white/60 px-4 py-2 text-[13px] text-deep"
                   >
-                    <Search className="h-4 w-4" aria-hidden="true" />
-                    Search the 12 editions
-                  </button>
-                </nav>
-
-                <div className="shell shrink-0 border-t border-ink/10 py-6 text-xs text-deep/55">
-                  <p>Store preview · Parent App testing · Watch orders closed.</p>
-                  <p className="mt-1">Developed by DigiBabi.</p>
-                </div>
+                    {item.label}
+                  </Link>
+                ))}
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  setSearchOpen(true);
+                }}
+                className="mt-6 inline-flex items-center gap-2 text-sm text-deep/70"
+              >
+                <Search className="h-4 w-4" aria-hidden="true" />
+                Search the 12 editions
+              </button>
+            </nav>
+
+            <div className="shell shrink-0 border-t border-ink/10 py-6 text-xs text-deep/55">
+              <p>Store preview · Parent App testing · Watch orders closed.</p>
+              <p className="mt-1">Developed by DigiBabi.</p>
+            </div>
+          </div>
+        </Dialog.Content>
+      </Dialog.Portal>
 
       <EditionSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
-    </>
+    </Dialog.Root>
   );
 }

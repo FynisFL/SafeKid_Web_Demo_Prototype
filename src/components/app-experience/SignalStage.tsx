@@ -134,12 +134,13 @@ function SignalBurst({ scene, delay }: { scene: Scene; delay: number }) {
 }
 
 export function SignalStage({
-  scene, replay, reduce, onReplay, loading = "eager",
+  scene, replay, reduce, onReplay, onStep, loading = "eager",
 }: {
   scene: Scene;
   replay: number;
   reduce: boolean;
   onReplay: () => void;
+  onStep: (direction: 1 | -1) => void;
   loading?: "eager" | "lazy";
 }) {
   const intro = replay === 0;
@@ -189,7 +190,12 @@ export function SignalStage({
           <RotateCcw size={17} aria-hidden="true" />
         </button>
       </div>
-      <div className="sk-stage__viewport" data-scene={scene.id}
+      <motion.div className="sk-stage__viewport" data-scene={scene.id}
+        style={{ touchAction: "pan-y pinch-zoom" }}
+        onPanEnd={(event, { offset }) => {
+          if ((event.target as Element | null)?.closest?.("button")) return;
+          if (Math.abs(offset.x) > 56 && Math.abs(offset.x) > Math.abs(offset.y) * 1.5) onStep(offset.x < 0 ? 1 : -1);
+        }}
         onPointerMove={(event) => { if (!reduce && event.pointerType === "mouse") aimSpotlight(event); }}
         onPointerDown={(event) => { if (!reduce && event.isPrimary) aimSpotlight(event); }}
         onPointerUp={(event) => { if (event.pointerType !== "mouse") resetSpotlight(event); }}
@@ -246,7 +252,7 @@ export function SignalStage({
           </div>
         </div>
         {!reduce && <canvas ref={canvasRef} className="sk-stage__sparks" aria-hidden="true" />}
-      </div>
+      </motion.div>
       <figcaption className="sk-stage__caption">
         <span aria-hidden="true">SafeKid Watch</span>
         <span aria-hidden="true">Parent App</span>

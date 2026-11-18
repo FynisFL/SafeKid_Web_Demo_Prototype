@@ -733,7 +733,7 @@ function OutroContent({
         style={{ opacity: merge }}
       />
       <motion.p
-        className="absolute left-1/2 top-[88%] ml-5 whitespace-nowrap text-[11px] uppercase tracking-[0.2em] text-deep/75"
+        className="absolute left-1/2 right-0 top-[88%] pl-2 sm:pl-5 text-[11px] uppercase tracking-[0.2em] text-deep/75"
         style={{ opacity: label }}
       >
         Next · Our journey
@@ -1011,7 +1011,7 @@ function FlowOutro({ members }: { members: TeamMember[] }) {
 
 function FlowTeam({ members }: { members: TeamMember[] }) {
   return (
-    <div className="space-y-20 py-20 sm:space-y-28 sm:py-24">
+    <div className="overflow-x-clip space-y-20 py-20 sm:space-y-28 sm:py-24">
       <FlowIntro />
       <div className="shell space-y-24 sm:space-y-28">
         {members.map((member, i) => (

@@ -17,6 +17,7 @@ export type ZodiacProduct = {
   label: string;
   detailTitle: string;
   image: string;
+  tint: string;
 };
 
 /**
@@ -24,18 +25,18 @@ export type ZodiacProduct = {
  * fourth edition is "Kitty" rather than a rabbit. Labels follow the source design.
  */
 export const zodiacProducts: ZodiacProduct[] = [
-  { id: "rat", animal: "Tý", label: "Mouse", detailTitle: "Mouse Edition", image: rat },
-  { id: "buffalo", animal: "Sửu", label: "Buffalo", detailTitle: "Buffalo Edition", image: buffalo },
-  { id: "tiger", animal: "Dần", label: "Tiger", detailTitle: "Tiger Edition", image: tiger },
-  { id: "cat", animal: "Mão", label: "Kitty", detailTitle: "Kitty Edition", image: cat },
-  { id: "dragon", animal: "Thìn", label: "Dragon", detailTitle: "Dragon Edition", image: dragon },
-  { id: "snake", animal: "Tỵ", label: "Snake", detailTitle: "Snake Edition", image: snake },
-  { id: "horse", animal: "Ngọ", label: "Pony", detailTitle: "Pony Edition", image: horse },
-  { id: "sheep", animal: "Mùi", label: "Sheep", detailTitle: "Sheep Edition", image: sheep },
-  { id: "monkey", animal: "Thân", label: "Monkey", detailTitle: "Monkey Edition", image: monkey },
-  { id: "rooster", animal: "Dậu", label: "Chick", detailTitle: "Chick Edition", image: rooster },
-  { id: "dog", animal: "Tuất", label: "Puppy", detailTitle: "Puppy Edition", image: dog },
-  { id: "pig", animal: "Hợi", label: "Piggy", detailTitle: "Piggy Edition", image: pig },
+  { id: "rat", animal: "Tý", label: "Mouse", detailTitle: "Mouse Edition", image: rat, tint: "#f3eee4" },
+  { id: "buffalo", animal: "Sửu", label: "Buffalo", detailTitle: "Buffalo Edition", image: buffalo, tint: "#e9efef" },
+  { id: "tiger", animal: "Dần", label: "Tiger", detailTitle: "Tiger Edition", image: tiger, tint: "#fbecdd" },
+  { id: "cat", animal: "Mão", label: "Kitty", detailTitle: "Kitty Edition", image: cat, tint: "#f7e9e9" },
+  { id: "dragon", animal: "Thìn", label: "Dragon", detailTitle: "Dragon Edition", image: dragon, tint: "#e3f1e9" },
+  { id: "snake", animal: "Tỵ", label: "Snake", detailTitle: "Snake Edition", image: snake, tint: "#e7f2ed" },
+  { id: "horse", animal: "Ngọ", label: "Pony", detailTitle: "Pony Edition", image: horse, tint: "#f6eee4" },
+  { id: "sheep", animal: "Mùi", label: "Sheep", detailTitle: "Sheep Edition", image: sheep, tint: "#f3ece5" },
+  { id: "monkey", animal: "Thân", label: "Monkey", detailTitle: "Monkey Edition", image: monkey, tint: "#f5ebe2" },
+  { id: "rooster", animal: "Dậu", label: "Chick", detailTitle: "Chick Edition", image: rooster, tint: "#fbf2da" },
+  { id: "dog", animal: "Tuất", label: "Puppy", detailTitle: "Puppy Edition", image: dog, tint: "#ecebf3" },
+  { id: "pig", animal: "Hợi", label: "Piggy", detailTitle: "Piggy Edition", image: pig, tint: "#f9e7ec" },
 ];
 
 /** Concept capabilities from the source design. None of these are live services. */

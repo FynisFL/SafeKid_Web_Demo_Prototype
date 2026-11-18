@@ -124,6 +124,7 @@ export default function AppExperience() {
 
           <motion.div ref={stageRef} className="sk-app__stage-placement" style={reduce ? undefined : { y: stageY, scale: stageScale }}>
             <SignalStage scene={scene} replay={interaction.replay} reduce={reduce || !playing}
+              onStep={(direction) => playScene((interaction.index + direction + scenes.length) % scenes.length)}
               onReplay={() => playScene(interaction.index)} />
           </motion.div>
 
@@ -157,8 +158,8 @@ export default function AppExperience() {
               <motion.span
                 key={scene.id}
                 className="block"
-                initial={reduce ? false : { opacity: 0.65 }}
-                animate={{ opacity: 1 }}
+                initial={reduce || !interaction.replay ? false : { opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: reduce ? 0 : signalArrival(false), duration: reduce ? 0 : DURATION.quick, ease: EASE }}
               >
                 <span className="sr-only">{scene.title}. </span>{scene.description}

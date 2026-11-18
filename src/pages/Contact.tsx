@@ -111,8 +111,8 @@ export default function Contact() {
       />
 
       <section className="bg-white py-16 sm:py-20">
-        <div className="shell grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
-          <Reveal variant="soft">
+        <div className="shell grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
+          <Reveal variant="soft" className="min-w-0">
             <form onSubmit={openEmailDraft} onChange={() => setDraftOpened(false)} className="rounded-[28px] border border-ink/10 bg-mist/40 p-6 sm:p-8">
               <div className="flex items-end justify-between gap-4 border-b border-ink/10 pb-5">
                 <div>
@@ -240,7 +240,7 @@ export default function Contact() {
                         <span className="block text-[9px] uppercase tracking-[0.18em] text-deep/55">
                           {detail.label}
                         </span>
-                        <span className="mt-0.5 block truncate text-[13px] font-medium text-ink">
+                        <span className="mt-0.5 block [overflow-wrap:anywhere] text-[13px] font-medium text-ink">
                           {detail.value}
                         </span>
                       </span>
