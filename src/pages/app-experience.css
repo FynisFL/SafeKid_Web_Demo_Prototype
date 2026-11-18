@@ -12,38 +12,50 @@
   min-height: 100vh;
   overflow: clip;
   color: var(--sk-ink);
-  background:
-    radial-gradient(ellipse at 85% 12%, #d6efef 0%, transparent 43rem),
-    linear-gradient(180deg, #f8fcfc, var(--sk-white) 60%);
+  background: linear-gradient(180deg, #f1f9fa, #fff 54%, #f0f8f9);
 }
 
 .sk-app__backdrop {
   position: absolute;
   z-index: -1;
-  inset: -7rem 0 0;
+  inset: 0;
   overflow: clip;
   pointer-events: none;
 }
 
-.sk-app__backdrop i {
+.sk-app__backdrop span {
   position: absolute;
-  width: clamp(25rem, 70vw, 72rem);
-  aspect-ratio: 1.2;
+  width: clamp(28rem, 76vw, 69rem);
+  aspect-ratio: 1.35;
   border-radius: 50%;
-  background: radial-gradient(ellipse, #00c7ca38, #00c7ca0d 54%, transparent 71%);
-  animation: sk-app-wash 4.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: sk-app-drift 22s ease-in-out infinite alternate;
 }
 
-.sk-app__backdrop i:first-child { inset: 1rem -15% auto auto; }
-.sk-app__backdrop i:last-child {
-  inset: 43% auto auto -20%;
-  background: radial-gradient(ellipse, #89c7dd43, #00c7ca14 50%, transparent 71%);
-  animation-direction: reverse;
+.sk-app__backdrop span:nth-child(1) {
+  top: -13rem;
+  right: -11%;
+  background: radial-gradient(ellipse, #00c7ca52, #00c7ca16 48%, transparent 71%);
 }
 
-@keyframes sk-app-wash {
-  from { transform: translate3d(-15%, -10%, 0) scale(0.83); opacity: 0.48; }
-  to { transform: translate3d(10%, 8%, 0) scale(1.08); opacity: 0.9; }
+.sk-app__backdrop span:nth-child(2) {
+  top: 32%;
+  left: -19%;
+  background: radial-gradient(ellipse, #7dbbdb56, #7dbbdb1c 52%, transparent 71%);
+  animation-duration: 29s;
+  animation-delay: -12s;
+}
+
+.sk-app__backdrop span:nth-child(3) {
+  right: -12%;
+  bottom: -14rem;
+  background: radial-gradient(ellipse, #00b7ad4d, #00c7ca13 49%, transparent 71%);
+  animation-duration: 25s;
+  animation-delay: -6s;
+}
+
+@keyframes sk-app-drift {
+  from { transform: translate3d(-12%, -8%, 0) scale(0.94); }
+  to { transform: translate3d(13%, 11%, 0) scale(1.09); }
 }
 
 .sk-app__shell {
@@ -289,7 +301,6 @@
   position: relative;
   isolation: isolate;
   overflow: clip;
-  perspective: 950px;
   aspect-ratio: 3 / 2;
   background-image:
     linear-gradient(#2d556811 1px, transparent 1px),
@@ -299,34 +310,17 @@
   container-type: inline-size;
 }
 
-/* React Bits SpotlightCard adapted to the SafeKid stage. */
-.sk-stage__viewport::before {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-  pointer-events: none;
-  content: "";
-  opacity: 0;
-  background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), #00c7ca40, transparent 58%);
-  transition: opacity 450ms ease;
-}
-
-.sk-stage__viewport[data-spotlight="active"]::before { opacity: 1; }
-
 .sk-stage__art,
-.sk-stage__rig,
 .sk-stage__devices,
-.sk-stage__signal,
-.sk-stage__sparks {
+.sk-stage__signal {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 
-/* Keep the background glow below product artwork and the hotspot above the signal. */
+/* Keep the signal above the devices and allow interaction only on the hotspot. */
 .sk-stage__art { z-index: 1; pointer-events: none; }
-.sk-stage__sparks { z-index: 2; pointer-events: none; }
 .sk-stage__devices { z-index: 2; }
 .sk-stage__signal { z-index: 3; }
 
@@ -367,7 +361,6 @@
   width: 100%;
   height: auto;
   filter: drop-shadow(0 1.05rem 0.9rem #2d556850);
-  transform-origin: 61% 53%;
 }
 
 .sk-stage__phone {
@@ -387,7 +380,6 @@
   border-radius: 4.3cqw;
   background: linear-gradient(145deg, #f2ffff, #81a4ad 35%, #426675 70%, #adced4);
   box-shadow: 0 1.2rem 2rem #2d556855, inset 0 0 0 1px #fff8;
-  transform-origin: 29% 54%;
 }
 
 .sk-stage__phone-screen {
@@ -492,19 +484,6 @@
   background: white;
   font-weight: 650;
   line-height: 1.15;
-}
-
-.sk-stage__signal,
-.sk-stage__sweep { pointer-events: none; }
-
-.sk-stage__sweep {
-  position: absolute;
-  z-index: 1;
-  inset: 0 -20%;
-  background: linear-gradient(110deg, transparent 41%, #fff9 49%, #fff5 52%, transparent 61%);
-  background: linear-gradient(110deg, transparent 39%,
-    color-mix(in srgb, var(--scene-color) 25%, transparent) 48%,
-    #fffe 50%, transparent 57%);
 }
 
 .sk-stage__trigger {
@@ -681,7 +660,6 @@
 
   .sk-app__stage-placement {
     width: min(100%, 43rem);
-    transform: none !important;
   }
 }
 
@@ -698,8 +676,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sk-stage__viewport::before { display: none; }
-  .sk-app__backdrop i,
+  .sk-app__backdrop span,
   .sk-download[data-state],
   .sk-download__spinner { animation: none !important; }
   .sk-app__card:hover { translate: none; }

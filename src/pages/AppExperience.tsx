@@ -1,5 +1,5 @@
 import { ArrowLeft, ArrowUpRight, Download, Globe2, Smartphone } from "lucide-react";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { MouseEvent } from "react";
 import { Link } from "react-router-dom";
@@ -35,16 +35,10 @@ export default function AppExperience() {
   usePageTitle("Try the SafeKid Parent App | DigiBabi");
 
   const reduce = Boolean(useReducedMotion());
-  const hero = useRef<HTMLElement>(null);
   const [interaction, setInteraction] = useState({ index: 0, replay: 0 });
   const scene = scenes[interaction.index];
   const [downloadOpen, setDownloadOpen] = useState(false);
   const downloadTrigger = useRef<HTMLButtonElement>(null);
-  const { scrollYProgress } = useScroll({ target: hero, offset: ["start start", "end start"] });
-  const stageY = useTransform(scrollYProgress, [0, 0.65, 1], [0, 70, 20]);
-  const stageScale = useTransform(scrollYProgress, [0, 0.45, 1], [1, 1.065, 0.94]);
-
-  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, 144]);
 
   useEffect(() => {
     if (window.location.hash === "#android") {
@@ -66,9 +60,9 @@ export default function AppExperience() {
 
   return (
     <div className="sk-app">
-      <motion.div className="sk-app__backdrop" aria-hidden="true" style={reduce ? undefined : { y: backgroundY }}>
-        <i /><i />
-      </motion.div>
+      <div className="sk-app__backdrop" aria-hidden="true">
+        <span /><span /><span />
+      </div>
       <motion.header className="sk-app__header sk-app__shell"
         initial={reduce ? false : { opacity: 0.78, y: -12 }} animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reduce ? 0 : 0.65, ease: EASE }}>
@@ -77,7 +71,7 @@ export default function AppExperience() {
       </motion.header>
 
       <main>
-        <section className="sk-app__hero sk-app__shell" ref={hero}>
+        <section className="sk-app__hero sk-app__shell">
           <div className="sk-app__intro">
             <motion.p className="sk-app__kicker"
               initial={reduce ? false : { opacity: 0, x: -26 }}
@@ -115,10 +109,10 @@ export default function AppExperience() {
             </div>
           </div>
 
-          <motion.div className="sk-app__stage-placement" style={reduce ? undefined : { y: stageY, scale: stageScale }}>
+          <div className="sk-app__stage-placement">
             <SignalStage scene={scene} replay={interaction.replay} reduce={reduce}
               onReplay={() => playScene(interaction.index)} />
-          </motion.div>
+          </div>
 
           <div className="sk-app__scenes">
             <h2>Try a scenario</h2>
