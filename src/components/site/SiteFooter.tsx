@@ -11,6 +11,7 @@ const explore = [
   { label: "Zodiac collection", to: "/zodiac" },
   { label: "Watch Passport", to: "/watch-passport" },
   { label: "About SafeKid", to: "/about" },
+  { label: "SafeKid Parent App", to: "/app" },
   { label: "S-F AI", to: "/chat" },
 ];
 
