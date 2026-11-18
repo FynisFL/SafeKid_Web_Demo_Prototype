@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useLayoutEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
-import { ArrowUpRight, Check, RotateCcw, Send, ShieldAlert, Sparkles, UserRound } from "lucide-react";
+import { ArrowDown, ArrowUpRight, Check, RotateCcw, Send, ShieldAlert, Sparkles, UserRound } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import {
@@ -139,18 +139,43 @@ export default function Chat() {
   const { messages, layer, isBusy, send, stop, reset, requestHandoff } = useLocalChat();
   const [draft, setDraft] = useState("");
   const listRef = useRef<HTMLDivElement>(null);
+  const followLatest = useRef(true);
+  const lastBottom = useRef(0);
+  const jumpToLatest = useRef(false);
+  const [hasNewMessage, setHasNewMessage] = useState(false);
   const reduce = useReducedMotion();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const list = listRef.current;
     if (!list) return;
-    list.scrollTo({ top: list.scrollHeight, behavior: reduce ? "instant" : "smooth" });
-  }, [messages, isBusy, reduce]);
+    const wasNearBottom = lastBottom.current - list.scrollTop < 56;
+    lastBottom.current = list.scrollHeight - list.clientHeight;
+    if (jumpToLatest.current || (followLatest.current && wasNearBottom)) {
+      list.scrollTo({ top: list.scrollHeight, behavior: "instant" });
+      jumpToLatest.current = false;
+    } else if (messages[messages.length - 1]?.role !== "thought") {
+      setHasNewMessage(true);
+    }
+  }, [messages]);
+
+  function goToLatest() {
+    const list = listRef.current;
+    if (!list) return;
+    followLatest.current = true;
+    setHasNewMessage(false);
+    list.scrollTo({ top: list.scrollHeight, behavior: "instant" });
+  }
+
+  function sendMessage(message: string) {
+    goToLatest();
+    jumpToLatest.current = true;
+    send(message);
+  }
 
   function submit(event: FormEvent) {
     event.preventDefault();
     if (isBusy || !draft.trim()) return;
-    send(draft);
+    sendMessage(draft);
     setDraft("");
   }
 
@@ -158,7 +183,7 @@ export default function Chat() {
     if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
       event.preventDefault();
       if (isBusy || !draft.trim()) return;
-      send(draft);
+      sendMessage(draft);
       setDraft("");
     }
   }
@@ -182,7 +207,7 @@ export default function Chat() {
             <h1 className="display mt-6 text-[clamp(2.3rem,4.2vw,3.6rem)]">
               A little help,
               <br />
-              <span className="text-primary">close at hand.</span>
+              <span className="text-[var(--accent-ink)]">close at hand.</span>
             </h1>
             <p className="lede mt-5 max-w-[40ch]">
               A local, scripted preview of how a SafeKid support conversation could feel. It answers
@@ -231,6 +256,8 @@ export default function Chat() {
               <button
                 type="button"
                 onClick={() => {
+                  goToLatest();
+                  jumpToLatest.current = true;
                   reset();
                   setDraft("");
                 }}
@@ -241,31 +268,55 @@ export default function Chat() {
               </button>
             </div>
 
-            <motion.div
-              ref={listRef}
-              layoutScroll
-              className="h-[clamp(280px,38vh,400px)] space-y-4 overflow-y-auto bg-white px-4 py-5 sm:px-5"
-              role="log"
-              aria-live="polite"
-              aria-label="Conversation"
-            >
-              {messages.map((message) => (
-                <motion.div
-                  key={message.id}
-                  layout={reduce ? false : "position"}
-                  initial={reduce ? false : { opacity: 0, y: 10, x: message.role === "user" ? 8 : -8 }}
-                  animate={{ opacity: 1, y: 0, x: 0 }}
-                  transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
-                  style={{ transformOrigin: message.role === "user" ? "bottom right" : "bottom left" }}
+            <div className="relative">
+              <motion.div
+                ref={listRef}
+                tabIndex={0}
+                onScroll={(event) => {
+                  const list = event.currentTarget;
+                  followLatest.current = list.scrollHeight - list.scrollTop - list.clientHeight < 56;
+                  if (followLatest.current) setHasNewMessage(false);
+                }}
+                layoutScroll
+                className="h-[clamp(280px,38vh,400px)] space-y-4 overflow-y-auto bg-white px-4 py-5 [overflow-anchor:none] sm:px-5"
+                role="log"
+                aria-live="polite"
+                aria-label="Conversation"
+              >
+                {messages.map((message) => (
+                  <motion.div
+                    key={message.id}
+                    layout={reduce ? false : "position"}
+                    initial={reduce ? false : { opacity: 0, y: 10, x: message.role === "user" ? 8 : -8 }}
+                    animate={{ opacity: 1, y: 0, x: 0 }}
+                    transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+                    style={{ transformOrigin: message.role === "user" ? "bottom right" : "bottom left" }}
+                  >
+                    <MessageBubble
+                      message={message}
+                      onHandoff={() => {
+                      goToLatest();
+                      jumpToLatest.current = true;
+                      requestHandoff();
+                    }}
+                      busy={isBusy}
+                    />
+                  </motion.div>
+                ))}
+              </motion.div>
+              {hasNewMessage && (
+                <motion.button
+                  type="button"
+                  initial={reduce ? false : { opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: reduce ? 0 : 0.2, ease: EASE }}
+                  onClick={() => { goToLatest(); listRef.current?.focus({ preventScroll: true }); }}
+                  className="absolute bottom-3 right-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-ink/15 bg-white px-4 text-xs font-semibold text-ink shadow-md hover:bg-mist"
                 >
-                  <MessageBubble
-                    message={message}
-                    onHandoff={requestHandoff}
-                    busy={isBusy}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
+                  New message <ArrowDown className="size-3.5" aria-hidden="true" />
+                </motion.button>
+              )}
+            </div>
 
             <div className="border-t border-ink/10 bg-mist/40 px-4 py-3 sm:px-5">
               {fresh && (
@@ -274,7 +325,7 @@ export default function Chat() {
                     <button
                       key={prompt}
                       type="button"
-                      onClick={() => send(prompt)}
+                      onClick={() => sendMessage(prompt)}
                       className="press shrink-0 rounded-full border border-ink/12 bg-white px-3 py-1.5 text-[11px] text-deep/70 transition-colors hover:border-primary/40 hover:text-ink"
                     >
                       {prompt}
@@ -325,7 +376,7 @@ export default function Chat() {
                     <button
                       key={question}
                       type="button"
-                      onClick={() => send(question)}
+                      onClick={() => sendMessage(question)}
                       disabled={isBusy}
                       className="press rounded-full border border-ink/10 bg-white px-2.5 py-1 text-[10.5px] text-deep/60 transition-colors hover:border-primary/40 disabled:opacity-50"
                     >

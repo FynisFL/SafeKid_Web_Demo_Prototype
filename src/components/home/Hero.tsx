@@ -186,7 +186,7 @@ export function Hero() {
             </span>
             <span className="block overflow-hidden pb-[0.04em]">
               <motion.span variants={reduce ? undefined : line} className="block">
-                explore <span className="text-primary">the world.</span>
+                explore <span className="text-[var(--accent-ink)]">the world.</span>
               </motion.span>
             </span>
           </h1>

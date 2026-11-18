@@ -22,6 +22,13 @@ export function ParentAppSection() {
     setInteraction((current) => ({ index, replay: current.replay + 1 }));
   }
 
+  function stepScene(direction: 1 | -1) {
+    setInteraction((current) => ({
+      index: (current.index + direction + scenes.length) % scenes.length,
+      replay: current.replay + 1,
+    }));
+  }
+
   return (
     <section
       aria-labelledby="home-parent-app"
@@ -46,8 +53,8 @@ export function ParentAppSection() {
             replay={play ? interaction.replay + 1 : 0}
             reduce={reduce || !play}
             loading="lazy"
-            onStep={(direction) => playScene((interaction.index + direction + scenes.length) % scenes.length)}
-              onReplay={() => playScene(interaction.index)}
+            onStep={stepScene}
+            onReplay={() => playScene(interaction.index)}
           />
         </div>
 

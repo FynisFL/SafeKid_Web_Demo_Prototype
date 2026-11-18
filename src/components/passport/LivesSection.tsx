@@ -41,7 +41,7 @@ export function LivesSection() {
             Three controlled lives
           </p>
           <h2 className="display display-lg mt-6 max-w-[16ch] text-white">
-            A Core is made to <span className="text-primary">last, on purpose.</span>
+            A Core is made to <span className="text-[var(--accent-ink)]">last, on purpose.</span>
           </h2>
           <p className="mt-6 max-w-[52ch] text-[15px] leading-[1.75] text-white/60">
             Each chapter is deliberate: a new device, two certified refurbished lives, then a responsible
