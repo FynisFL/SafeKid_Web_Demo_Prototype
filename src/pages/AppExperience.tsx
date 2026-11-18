@@ -44,7 +44,8 @@ export default function AppExperience() {
   const scene = scenes[interaction.index];
   const { androidRelease } = appLinks;
   const { scrollYProgress } = useScroll({ target: hero, offset: ["start start", "end start"] });
-  const stageY = useTransform(scrollYProgress, [0, 1], [0, 36]);
+  const stageY = useTransform(scrollYProgress, [0, 0.65, 1], [0, 70, 20]);
+  const stageScale = useTransform(scrollYProgress, [0, 0.45, 1], [1, 1.065, 0.94]);
 
   useEffect(() => {
     const previousLanguage = document.documentElement.lang;
@@ -67,29 +68,44 @@ export default function AppExperience() {
   return (
     <div className="sk-app" lang="vi">
       <header className="sk-app__header sk-app__shell">
-        <BrandMark tone="light" compact />
+        <BrandMark compact />
         <Link className="sk-app__tap sk-app__back" to="/"><ArrowLeft size={16} aria-hidden="true" /> Quay về website</Link>
       </header>
 
       <main>
         <section className="sk-app__hero sk-app__shell" ref={hero}>
           <div className="sk-app__intro">
-            <motion.div
-              initial={reduce ? false : { opacity: 0.55, y: 14 }}
+            <motion.p className="sk-app__kicker"
+              initial={reduce ? false : { opacity: 0, x: -26 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: reduce ? 0 : 0.58, ease: EASE }}>
+              SafeKid Parent App
+            </motion.p>
+            <h1>
+              <span className="sk-app__title-mask">
+                <motion.span initial={reduce ? false : { y: "112%", rotate: 7 }}
+                  animate={{ y: "0%", rotate: 0 }}
+                  transition={{ duration: reduce ? 0 : 0.85, ease: EASE }}>An tâm trong</motion.span>
+              </span>{" "}
+              <span className="sk-app__title-mask sk-app__title-accent">
+                <motion.span initial={reduce ? false : { y: "112%", rotate: 7 }}
+                  animate={{ y: "0%", rotate: 0 }}
+                  transition={{ duration: reduce ? 0 : 0.92, delay: reduce ? 0 : 0.11, ease: EASE }}>từng kết nối.</motion.span>
+              </span>
+            </h1>
+            <motion.p className="sk-app__lede"
+              initial={reduce ? false : { opacity: 0, y: 27 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: reduce ? 0 : 0.65, ease: EASE }}
-            >
-              <p className="sk-app__kicker">SafeKid Parent App</p>
-              <h1>An tâm trong<br /> <span>từng kết nối.</span></h1>
-              <p className="sk-app__lede">Khám phá ứng dụng dành cho phụ huynh, từ vùng an toàn đến những thói quen nhỏ mỗi ngày.</p>
-            </motion.div>
+              transition={{ duration: reduce ? 0 : 0.74, delay: reduce ? 0 : 0.24, ease: EASE }}>
+              Khám phá ứng dụng dành cho phụ huynh, từ vùng an toàn đến những thói quen nhỏ mỗi ngày.
+            </motion.p>
             <div className="sk-app__actions">
               <WebAppLink />
               <AndroidLink release={androidRelease} />
             </div>
           </div>
 
-          <motion.div className="sk-app__stage-placement" style={reduce ? undefined : { y: stageY }}>
+          <motion.div className="sk-app__stage-placement" style={reduce ? undefined : { y: stageY, scale: stageScale }}>
             <SignalStage scene={scene} replay={interaction.replay} reduce={reduce}
               onReplay={() => playScene(interaction.index)} />
           </motion.div>
@@ -98,15 +114,17 @@ export default function AppExperience() {
             <h2>Thử một tình huống</h2>
             <div className="sk-app__scene-options" role="group" aria-label="Tình huống mô phỏng">
               {scenes.map(({ id, label, icon: Icon }, index) => (
-                <button
+                <motion.button
                   type="button"
                   key={id}
                   className="sk-app__tap sk-app__scene"
                   aria-pressed={index === interaction.index}
+                  whileHover={reduce ? undefined : { y: -3 }}
+                  whileTap={reduce ? undefined : { scale: 0.91 }}
                   onClick={() => playScene(index)}
                 >
                   <Icon size={16} aria-hidden="true" /> {label}
-                </button>
+                </motion.button>
               ))}
             </div>
             <p className="sk-app__scene-description" aria-live="polite" aria-atomic="true">
@@ -117,10 +135,10 @@ export default function AppExperience() {
 
         <section className="sk-app__access sk-app__shell" aria-labelledby="sk-app-access-title">
           <motion.div
-            initial={reduce ? false : { opacity: 0.72, y: 14 }}
+            initial={reduce ? false : { opacity: 0.65, y: 46 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: reduce ? 0 : 0.5, ease: EASE }}
+            transition={{ duration: reduce ? 0 : 0.75, ease: EASE }}
           >
             <h2 id="sk-app-access-title">Chọn cách trải nghiệm</h2>
             <div className="sk-app__cards">

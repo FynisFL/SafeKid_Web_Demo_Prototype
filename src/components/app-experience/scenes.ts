@@ -7,7 +7,7 @@ export const scenes = [
     icon: MapPin,
     title: "Đã đến trường",
     description: "Xem cách app hiển thị một sự kiện khi vị trí đi vào vùng đã thiết lập.",
-    accent: "#62f2dd",
+    accent: "#008789",
   },
   {
     id: "sos",
@@ -15,7 +15,7 @@ export const scenes = [
     icon: BellRing,
     title: "Đã ghi nhận SOS",
     description: "Xem minh họa thẻ sự kiện SOS. Bản test ghi nhận sự kiện cục bộ.",
-    accent: "#ffac98",
+    accent: "#dc5748",
   },
   {
     id: "habits",
@@ -23,7 +23,7 @@ export const scenes = [
     icon: Activity,
     title: "Đã hoàn thành nhiệm vụ",
     description: "Xem cách app đánh dấu nhiệm vụ hoàn thành và cộng điểm thưởng.",
-    accent: "#fae199",
+    accent: "#a16b00",
   },
 ] as const;
 
