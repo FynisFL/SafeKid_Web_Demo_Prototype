@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
@@ -6,7 +6,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { DURATION, EASE } from "@/components/motion/tokens";
 import { ScrollProgress } from "@/components/motion/ScrollProgress";
 
-export function SiteLayout({ children, restoreScroll }: { children: ReactNode; restoreScroll?: number }) {
+export function SiteLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
   const navigationType = useNavigationType();
@@ -20,16 +20,11 @@ export function SiteLayout({ children, restoreScroll }: { children: ReactNode; r
     }
   }, [location.hash, navigate]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const { hash, pathname, state } = location;
     const movedBetweenEditions = previousPath.current.startsWith("/product/") &&
       pathname.startsWith("/product/") && previousPath.current !== pathname;
     previousPath.current = pathname;
-
-    if (restoreScroll !== undefined) {
-      window.scrollTo({ top: restoreScroll, left: 0, behavior: "instant" });
-      return;
-    }
 
     if (hash && !hash.startsWith("#/")) {
       const target = document.getElementById(hash.slice(1));
@@ -43,7 +38,7 @@ export function SiteLayout({ children, restoreScroll }: { children: ReactNode; r
 
     if (movedBetweenEditions && (state?.keepProductScroll || navigationType === "POP")) return;
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-  }, [location, navigationType, reduce, restoreScroll]);
+  }, [location, navigationType, reduce]);
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">

@@ -1,33 +1,26 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { useReducedMotion } from "motion/react";
-import { Link, NavLink, useLocation, useNavigationType } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { formatVnd, WATCH_PRICE_VND } from "@/components/shop/shoppingBag";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { PageHero } from "@/components/site/PageHero";
 import { ZodiacStage } from "@/components/home/ZodiacStage";
 import { Reveal } from "@/components/site/Reveal";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { zodiacProducts } from "@/data/zodiac";
-import { collectionPosition, rememberCollection } from "@/components/zodiac/collectionReturn";
 import heroWatch from "@/assets/safekid/hero-watch.webp";
 
-function CollectionRail({ stageOwnsTransition, onEditionClick, setApi, initialSnap, entry }: {
-  stageOwnsTransition: boolean;
-  onEditionClick: (id: string) => void;
-  setApi: (api: CarouselApi) => void;
-  initialSnap: number;
-  entry: string;
-}) {
+function CollectionRail({ stageOwnsTransition, onEditionClick }: { stageOwnsTransition: boolean; onEditionClick: () => void }) {
   const reduce = useReducedMotion();
   const control = "static h-11 w-11 translate-y-0 border-ink/12 bg-white text-deep transition-colors hover:border-primary/40 hover:text-ink";
 
   return (
     <section className="overflow-hidden bg-mist py-20 sm:py-24">
-      <Carousel aria-label="All twelve editions" setApi={setApi} opts={{ align: "start", startIndex: initialSnap }}>
+      <Carousel aria-label="All twelve editions" opts={{ align: "start" }}>
         <div className="shell flex flex-wrap items-end justify-between gap-5">
           <div>
             <p className="eyebrow">
@@ -52,11 +45,7 @@ function CollectionRail({ stageOwnsTransition, onEditionClick, setApi, initialSn
                 <NavLink
                   to={`/product/${product.id}`}
                   viewTransition={!reduce}
-                  state={{ zodiacEntry: entry }}
-                  data-collection-source={`rail-${product.id}`}
-                  onClick={(event) => {
-                    if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey) onEditionClick(product.id);
-                  }}
+                  onClick={onEditionClick}
                   className="group block h-full rounded-[24px] border border-ink/[0.07] bg-white p-3 transition-colors duration-500 hover:border-primary/25"
                 >
                   {({ isTransitioning }) => (
@@ -81,7 +70,7 @@ function CollectionRail({ stageOwnsTransition, onEditionClick, setApi, initialSn
                       </span>
                       <span className="flex items-end justify-between gap-3 px-2 pb-1 pt-3.5">
                         <span>
-                          <span className="block text-[9px] uppercase tracking-[0.18em] text-[var(--accent-ink)]">
+                          <span className="block text-[9px] uppercase tracking-[0.18em] text-primary">
                             {product.animal}
                           </span>
                           <span className="mt-1 block font-display text-[16px] font-medium tracking-[-0.02em] text-ink">
@@ -121,7 +110,7 @@ function Closing() {
             <h2 className="display display-lg mt-6 max-w-[16ch]">
               Which one feels
               <br />
-              <span className="text-[var(--accent-ink)]">like them?</span>
+              <span className="text-primary">like them?</span>
             </h2>
           </Reveal>
           <Reveal variant="soft" delay={0.1}>
@@ -156,42 +145,21 @@ function Closing() {
 }
 
 export default function Zodiac() {
-  const { key, state } = useLocation();
-  const navigationType = useNavigationType();
-  const [restored] = useState(() => collectionPosition(state?.restoreZodiac ?? (navigationType === "POP" ? key : undefined)));
-  const [stageOwnsTransition, setStageOwnsTransition] = useState(restored?.source === "stage");
-  const stageIndex = useRef(restored?.stageIndex ?? 0);
-  const [rail, setRail] = useState<CarouselApi>();
-
-  useLayoutEffect(() => {
-    if (!restored) return;
-    document.querySelector<HTMLElement>(`[data-collection-source="${restored.source}-${restored.edition}"]`)?.focus({ preventScroll: true });
-  }, [restored]);
-
-  function remember(edition: string, source: "stage" | "rail", selected = stageIndex.current) {
-    setStageOwnsTransition(source === "stage");
-    rememberCollection(key, {
-      scrollY: window.scrollY,
-      stageIndex: selected,
-      railSnap: rail?.selectedScrollSnap() ?? 0,
-      source,
-      edition,
-    });
-  }
+  const [stageOwnsTransition, setStageOwnsTransition] = useState(false);
   usePageTitle(
     "Zodiac Collection | SafeKid",
     "Twelve SafeKid smartwatch concepts inspired by the Vietnamese Zodiac. Explore every edition."
   );
 
   return (
-    <SiteLayout restoreScroll={restored?.scrollY}>
+    <SiteLayout>
       <PageHero
         eyebrow="Inspired by the Vietnamese Zodiac"
         title={
           <>
             Twelve little
             <br />
-            <span className="text-[var(--accent-ink)]">explorers.</span>
+            <span className="text-primary">explorers.</span>
           </>
         }
         intro="Meet the SafeKid collection: playful Zodiac-inspired designs imagined for the curious little people finding their way in the world."
@@ -229,21 +197,8 @@ export default function Zodiac() {
       />
 
       <div id="collection" />
-      <ZodiacStage
-        variant="page"
-        initialIndex={restored?.stageIndex}
-        editionState={{ zodiacEntry: key }}
-        onSelection={(selected) => { stageIndex.current = selected; }}
-        ownsEditionTransition={stageOwnsTransition}
-        onEditionClick={(selected) => remember(zodiacProducts[selected].id, "stage", selected)}
-      />
-      <CollectionRail
-        entry={key}
-        initialSnap={restored?.railSnap ?? 0}
-        setApi={setRail}
-        stageOwnsTransition={stageOwnsTransition}
-        onEditionClick={(edition) => remember(edition, "rail")}
-      />
+      <ZodiacStage variant="page" ownsEditionTransition={stageOwnsTransition} onEditionClick={() => setStageOwnsTransition(true)} />
+      <CollectionRail stageOwnsTransition={stageOwnsTransition} onEditionClick={() => setStageOwnsTransition(false)} />
       <Closing />
     </SiteLayout>
   );

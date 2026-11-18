@@ -75,7 +75,7 @@ export default function WatchPassport() {
           <>
             Every Core
             <br />
-            has a <span className="text-[var(--accent-ink)]">story.</span>
+            has a <span className="text-primary">story.</span>
           </>
         }
         intro="Watch Passport is SafeKid's Digital Life Passport concept: a lifecycle record for each physical Core, so a device can have a meaningful life beyond its first user."
@@ -100,7 +100,7 @@ export default function WatchPassport() {
               Digital passport
             </p>
             <h2 className="display display-lg mt-6 max-w-[16ch]">
-              One record. <span className="text-[var(--accent-ink)]">Every chapter.</span>
+              One record. <span className="text-primary">Every chapter.</span>
             </h2>
             <p className="lede mt-6 max-w-[54ch]">
               Pick a chapter to see how a sample passport changes: Device ID, condition, service history,

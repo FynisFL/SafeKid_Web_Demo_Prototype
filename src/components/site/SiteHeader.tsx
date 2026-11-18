@@ -37,9 +37,6 @@ export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const searchRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLButtonElement>(null);
-  const searchFromMenu = useRef(false);
   const closeRef = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll();
@@ -136,11 +133,7 @@ export function SiteHeader() {
             </Link>
             <button
               type="button"
-              ref={searchRef}
-              onClick={() => {
-                searchFromMenu.current = false;
-                setSearchOpen(true);
-              }}
+              onClick={() => setSearchOpen(true)}
               aria-label="Search the 12 editions"
               className="hidden h-10 w-10 items-center justify-center rounded-full text-deep/70 transition-colors hover:bg-mist hover:text-ink sm:inline-flex"
             >
@@ -156,7 +149,6 @@ export function SiteHeader() {
             <Dialog.Trigger asChild>
               <button
                 type="button"
-                ref={menuRef}
                 aria-label="Open menu"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/12 text-ink transition-colors hover:bg-mist lg:hidden"
               >
@@ -230,7 +222,6 @@ export function SiteHeader() {
               <button
                 type="button"
                 onClick={() => {
-                  searchFromMenu.current = true;
                   setMenuOpen(false);
                   setSearchOpen(true);
                 }}
@@ -249,14 +240,7 @@ export function SiteHeader() {
         </Dialog.Content>
       </Dialog.Portal>
 
-      <EditionSearch
-        open={searchOpen}
-        onClose={() => setSearchOpen(false)}
-        restoreFocus={() => {
-          const targets = searchFromMenu.current ? [menuRef, searchRef] : [searchRef, menuRef];
-          targets.find(({ current }) => current?.getClientRects().length)?.current?.focus({ preventScroll: true });
-        }}
-      />
+      <EditionSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </Dialog.Root>
   );
 }

@@ -71,13 +71,6 @@ export default function AppExperience() {
     setInteraction((current) => ({ index, replay: current.replay + 1 }));
   }
 
-  function stepScene(direction: 1 | -1) {
-    setInteraction((current) => ({
-      index: (current.index + direction + scenes.length) % scenes.length,
-      replay: current.replay + 1,
-    }));
-  }
-
   return (
     <div className="sk-app">
       <div className="sk-app__backdrop" aria-hidden="true">
@@ -131,7 +124,7 @@ export default function AppExperience() {
 
           <motion.div ref={stageRef} className="sk-app__stage-placement" style={reduce ? undefined : { y: stageY, scale: stageScale }}>
             <SignalStage scene={scene} replay={interaction.replay} reduce={reduce || !playing}
-              onStep={stepScene}
+              onStep={(direction) => playScene((interaction.index + direction + scenes.length) % scenes.length)}
               onReplay={() => playScene(interaction.index)} />
           </motion.div>
 

@@ -12,7 +12,7 @@ export function PrivacyTrust() {
             Privacy &amp; trust
           </p>
           <h2 className="display display-lg mt-6 max-w-[18ch]">
-            It follows the device. <span className="text-[var(--accent-ink)]">Never the child.</span>
+            It follows the device. <span className="text-primary">Never the child.</span>
           </h2>
           <p className="lede mt-6 max-w-[56ch]">
             Watch Passport is a record of the Core itself. A Certified Data Wipe is logged as a fact about the

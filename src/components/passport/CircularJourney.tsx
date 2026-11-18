@@ -34,7 +34,7 @@ export function CircularJourney() {
             Circular journey
           </p>
           <h2 className="display display-lg mt-6 max-w-[16ch]">
-            Not an ending. <span className="text-[var(--accent-ink)]">A loop.</span>
+            Not an ending. <span className="text-primary">A loop.</span>
           </h2>
           <p className="lede mt-6 max-w-[52ch]">
             When a family is ready to move on, the Core follows six steps and returns to use. The passport

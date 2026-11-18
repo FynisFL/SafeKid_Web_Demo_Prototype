@@ -1,7 +1,7 @@
 import { ArrowLeft, ArrowRight, CreditCard, LockKeyhole, Minus, Plus, ShoppingBag as BagIcon, Trash2 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { createPortal } from "react-dom";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 import "@/components/shop/shop-controls.css";
@@ -135,7 +135,7 @@ function BagSummary({ checkout, method, subtotal, total }: {
   const reduce = useReducedMotion();
 
   return (
-    <section id="bag-summary" tabIndex={-1} className="min-w-0 scroll-mt-24 rounded-[24px] bg-night p-5 text-white shadow-[0_16px_40px_-30px_rgba(16,42,56,0.6)] sm:p-6 lg:sticky lg:top-28" aria-labelledby="bag-summary-title">
+    <section id="bag-summary" className="min-w-0 scroll-mt-24 rounded-[24px] bg-night p-5 text-white shadow-[0_16px_40px_-30px_rgba(16,42,56,0.6)] sm:p-6 lg:sticky lg:top-28" aria-labelledby="bag-summary-title">
       <h2 id="bag-summary-title" className="shop-card-title text-white">Bag summary</h2>
       <dl className="mt-4">
         <div className="flex justify-between gap-3 text-sm">
@@ -180,28 +180,11 @@ function BagSummary({ checkout, method, subtotal, total }: {
 export default function ShoppingBag({ checkout = false }: { checkout?: boolean }) {
   const { count } = useShoppingBag();
   const reduce = useReducedMotion();
-  const totalBar = useRef<HTMLElement>(null);
   const [method, setMethod] = useState<PaymentMethod>(paymentMethods[0]);
   const subtotal = count * WATCH_PRICE_VND;
   const total = subtotal + previewFees.reduce((sum, fee) => sum + fee.amount, 0);
   const title = checkout ? "Checkout" : "Shopping bag";
   usePageTitle(`${title} | SafeKid`);
-
-  function reviewTotal() {
-    const summary = document.getElementById("bag-summary");
-    const bar = totalBar.current;
-    if (!summary || !bar) return;
-
-    const headingTop = summary.getBoundingClientRect().top;
-    const actionBottom = summary.querySelector("button")?.getBoundingClientRect().bottom ?? headingTop;
-    const visibleBottom = document.documentElement.clientHeight - bar.offsetHeight - 12;
-    const revealAction = actionBottom - visibleBottom;
-    summary.focus({ preventScroll: true });
-    window.scrollTo({
-      top: window.scrollY + Math.max(headingTop - 88, revealAction),
-      behavior: reduce ? "instant" : "smooth",
-    });
-  }
 
   return (
     <SiteLayout>
@@ -247,7 +230,6 @@ export default function ShoppingBag({ checkout = false }: { checkout?: boolean }
       {count > 0 && <div className="h-[calc(5rem+env(safe-area-inset-bottom))] lg:hidden" aria-hidden="true" />}
       {count > 0 && createPortal(
         <motion.aside
-          ref={totalBar}
           aria-label="Quick bag total"
           className="fixed inset-x-0 bottom-0 z-[60] border-t border-border bg-white px-5 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-6px_24px_#172b350d] lg:hidden"
           initial={reduce ? false : { y: 20, opacity: 0 }}
@@ -261,7 +243,7 @@ export default function ShoppingBag({ checkout = false }: { checkout?: boolean }
             </div>
             <Button asChild variant="outline" className="shop-flow-btn shrink-0">
               {checkout ? (
-                <button type="button" onClick={reviewTotal}>Review total <ArrowRight aria-hidden="true" /></button>
+                <a href="#bag-summary">Review total <ArrowRight aria-hidden="true" /></a>
               ) : (
                 <Link to="/checkout">Checkout <ArrowRight aria-hidden="true" /></Link>
               )}

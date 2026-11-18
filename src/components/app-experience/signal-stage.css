@@ -56,11 +56,6 @@
   box-shadow: 0 0 0 3px #00c7ca28;
 }
 
-.sk-stage__controls {
-  display: flex;
-  gap: 0.25rem;
-}
-
 .sk-stage__replay {
   display: grid;
   flex: none;
@@ -90,29 +85,6 @@
     radial-gradient(ellipse at 77% 46%, #fff, transparent 48%),
     linear-gradient(155deg, #f3fbfb, #e7f2f3);
   container-type: inline-size;
-}
-
-.sk-stage__scene-light {
-  position: absolute;
-  inset: 0;
-  mask-image: radial-gradient(ellipse at 35% 55%, #000 0%, transparent 68%);
-  opacity: 0.14;
-  pointer-events: none;
-}
-
-.sk-stage__timing {
-  position: absolute;
-  z-index: 3;
-  inset: auto 0 0;
-  height: 2px;
-  background: #172b3512;
-  pointer-events: none;
-}
-
-.sk-stage__timing > div {
-  height: 100%;
-  background: var(--scene-color);
-  transform-origin: left;
 }
 
 /* React Bits SpotlightCard adapted to the SafeKid stage. */

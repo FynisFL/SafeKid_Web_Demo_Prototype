@@ -91,20 +91,6 @@
   .home-parent-app__controls { align-self: start; }
 }
 
-@media (min-width: 568px) and (max-height: 600px) {
-  .home-parent-app__layout {
-    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
-    grid-template-areas: "intro stage" "controls controls";
-    gap: 1.25rem;
-  }
-
-  .home-parent-app__stage {
-    width: min(100%, calc((100svh - 10.75rem) * 1.5));
-  }
-
-  .home-parent-app__controls { width: 100%; }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .home-parent-app__glow { animation: none; }
 }

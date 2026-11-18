@@ -24,7 +24,7 @@ const VIEWS: { id: View; label: string }[] = [
 
 const ease = EASE;
 const panel = {
-  incoming: (direction: number) => ({ opacity: 0.55, x: direction * DISTANCE.md }),
+  incoming: (direction: number) => ({ opacity: 0.65, x: direction * DISTANCE.sm }),
   active: { opacity: 1, x: 0 },
 };
 
@@ -41,13 +41,8 @@ export function PassportDemo({ className }: { className?: string }) {
   const wipeEvents = useMemo(() => wipeEventsAt(life), [life]);
   const wipeCount = wipeEvents.length;
 
-  function selectChapter(index: number) {
-    setDirection(index < lifeIndex ? -1 : 1);
-    setLife(LIFE_ORDER[index]);
-  }
-
   return (
-    <div className={cn("grid grid-cols-1 gap-6 md:grid-cols-[minmax(0,0.76fr)_minmax(0,1.24fr)] md:gap-5 lg:grid-cols-[minmax(0,0.62fr)_minmax(0,1.38fr)] lg:gap-10", className)}>
+    <div className={cn("grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.62fr)_minmax(0,1.38fr)] lg:gap-10", className)}>
       {/* Stage selector */}
       <div className="min-w-0">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-deep/65">
@@ -56,16 +51,8 @@ export function PassportDemo({ className }: { className?: string }) {
         <div
           role="group"
           aria-label="Lifecycle chapter"
-          className="relative mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-1 md:pl-6"
+          className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-1"
         >
-          <div className="absolute bottom-6 left-2 top-6 hidden w-px bg-border md:block" aria-hidden="true">
-            <motion.div
-              className="h-full origin-top bg-[#17646a]"
-              initial={false}
-              animate={{ scaleY: lifeIndex / (LIFE_ORDER.length - 1) }}
-              transition={{ duration: reduce ? 0 : DURATION.quick, ease }}
-            />
-          </div>
           {LIFE_STAGES.map((item, index) => {
             const active = item.id === life;
             return (
@@ -73,18 +60,17 @@ export function PassportDemo({ className }: { className?: string }) {
                 key={item.id}
                 type="button"
                 aria-pressed={active}
-                onClick={() => selectChapter(index)}
+                onClick={() => {
+                  setDirection(index < lifeIndex ? -1 : 1);
+                  setLife(item.id);
+                }}
                 className={cn(
-                  "group relative flex min-h-12 min-w-0 items-center gap-2 rounded-2xl border p-2.5 text-left transition duration-300 motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:gap-3 sm:px-3 lg:px-4 lg:py-3",
+                  "group flex min-h-12 min-w-0 items-center gap-2 rounded-2xl border p-2.5 text-left transition duration-300 motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:gap-3 sm:px-3 lg:px-4 lg:py-3",
                   active
                     ? "border-ink bg-ink text-white"
                     : "border-border bg-white text-ink hover:border-primary/60"
                 )}
               >
-                <span aria-hidden="true" className={cn(
-                  "absolute -left-5 top-1/2 hidden size-2 -translate-y-1/2 rounded-full border bg-white md:block",
-                  index <= lifeIndex ? "border-[#17646a] bg-[#17646a]" : "border-ink/25"
-                )} />
                 <span
                   className="relative isolate flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-mist font-mono text-[11px] text-deep"
                 >
@@ -97,7 +83,7 @@ export function PassportDemo({ className }: { className?: string }) {
                   <span className="block text-[13.5px] font-medium leading-snug">{item.tab}</span>
                   <span
                     className={cn(
-                      "hidden text-[11.5px] md:block",
+                      "hidden text-[11.5px] lg:block",
                       active ? "text-white/65" : "text-deep/60"
                     )}
                   >
@@ -108,17 +94,7 @@ export function PassportDemo({ className }: { className?: string }) {
             );
           })}
         </div>
-        <motion.p
-          key={life}
-          custom={direction}
-          variants={panel}
-          initial={reduce ? false : "incoming"}
-          animate="active"
-          transition={{ duration: reduce ? 0 : DURATION.quick, ease }}
-          className="mt-5 max-w-[32ch] text-[13px] leading-relaxed text-deep/75"
-        >
-          {stage.summary}
-        </motion.p>
+        <p className="mt-5 max-w-[32ch] text-[13px] leading-relaxed text-deep/65">{stage.summary}</p>
       </div>
 
       {/* Passport */}
@@ -144,16 +120,10 @@ export function PassportDemo({ className }: { className?: string }) {
                 {SAMPLE_DEVICE_ID}
               </p>
             </div>
-            <motion.p
-              key={life}
-              initial={reduce ? false : { opacity: 0.65, y: 5 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: reduce ? 0 : DURATION.quick, ease }}
-              className="inline-flex items-center gap-2 rounded-full bg-ink px-3.5 py-1.5 text-[12px] text-white"
-            >
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+            <p className="inline-flex items-center gap-2 rounded-full bg-ink px-3.5 py-1.5 text-[12px] text-white">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
               {stage.status}
-            </motion.p>
+            </p>
           </div>
 
           {/* Lifecycle bar */}

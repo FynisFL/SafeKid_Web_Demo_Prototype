@@ -10,29 +10,23 @@ import {
   useTransform,
 } from "motion/react";
 import { ArrowLeft, ArrowRight, ArrowUpRight, MoveHorizontal } from "lucide-react";
-import { EditionThumbnails } from "@/components/zodiac/EditionThumbnails";
 import { zodiacProducts } from "@/data/zodiac";
 import { cn } from "@/lib/utils";
 
 type ZodiacStageProps = {
   variant?: "home" | "page";
   ownsEditionTransition?: boolean;
-  onEditionClick?: (index: number) => void;
-  onSelection?: (index: number) => void;
-  initialIndex?: number;
-  editionState?: { zodiacEntry: string };
+  onEditionClick?: () => void;
 };
 
 const COUNT = zodiacProducts.length;
 const DEGREES_PER_STEP = 360 / COUNT;
 
-export function ZodiacStage({
-  variant = "home", ownsEditionTransition = false, onEditionClick, onSelection, initialIndex = 0, editionState,
-}: ZodiacStageProps) {
-  const [index, setIndex] = useState(initialIndex);
+export function ZodiacStage({ variant = "home", ownsEditionTransition = false, onEditionClick }: ZodiacStageProps) {
+  const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   // Cumulative dial angle in degrees. Invariant: dial is congruent to index * 30 (mod 360).
-  const [dial, setDial] = useState(initialIndex * DEGREES_PER_STEP);
+  const [dial, setDial] = useState(0);
   const reduce = useReducedMotion();
   const pillId = useId();
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -68,7 +62,7 @@ export function ZodiacStage({
     animate(dragX, 0, { duration: 0.25 });
   }
   // Always the latest selection, so rapid inputs never compute from a stale render.
-  const indexRef = useRef(initialIndex);
+  const indexRef = useRef(0);
   const product = zodiacProducts[index];
   const editionPath = `/product/${product.id}`;
   const transitioning = useViewTransitionState(editionPath);
@@ -81,7 +75,6 @@ export function ZodiacStage({
     settleHint();
     setDirection(dir);
     setIndex(next);
-    onSelection?.(next);
     setSwaps((count) => count + 1);
     setDial((angle) => angle + dir * steps * DEGREES_PER_STEP);
   }
@@ -110,7 +103,7 @@ export function ZodiacStage({
 
   // Reduced motion: every swap, pill move and dial turn is immediate.
   const instant = { duration: 0 };
-  const imageTransition = reduce ? instant : { duration: 0.44, ease: [0.22, 1, 0.36, 1] as const };
+  const imageTransition = reduce ? instant : { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const };
   // The old image leaves while the new one arrives (about 0.6 s). The dial spring settles in a similar time.
   const dialTransition = reduce ? instant : { type: "spring" as const, stiffness: 70, damping: 16 };
   const pillTransition = reduce ? instant : { type: "spring" as const, stiffness: 420, damping: 36 };
@@ -168,7 +161,7 @@ export function ZodiacStage({
         </div>
 
         <div className="mt-12 grid gap-10 lg:mt-16 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">
-          <div className="order-2 hidden lg:order-1 lg:block">
+          <div className="order-2 lg:order-1">
             <div className="flex items-center justify-between border-b border-ink/10 pb-3">
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-deep/50">
                 Choose a character
@@ -211,7 +204,7 @@ export function ZodiacStage({
                       <span
                         className={cn(
                           "text-[9px] tabular-nums tracking-[0.12em] transition-colors",
-                          selected ? "text-[var(--accent-ink)]" : "text-deep/70"
+                          selected ? "text-primary" : "text-deep/45"
                         )}
                       >
                         {String(itemIndex + 1).padStart(2, "0")}
@@ -222,7 +215,7 @@ export function ZodiacStage({
                       <span
                         className={cn(
                           "text-[11px] transition-colors",
-                          selected ? "text-[var(--accent-ink)]" : "text-deep/70"
+                          selected ? "text-primary" : "text-deep/45"
                         )}
                       >
                         {item.animal}
@@ -310,10 +303,10 @@ export function ZodiacStage({
               </motion.div>
 
               <motion.div
-                drag="x"
+                drag={reduce ? false : "x"}
                 dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.35}
-                style={reduce ? undefined : { x: dragX }}
+                dragElastic={0.08}
+                style={{ x: dragX }}
                 onPointerDown={() => {
                   hintRef.current?.stop();
                   hintRef.current = null;
@@ -369,34 +362,28 @@ export function ZodiacStage({
 
             <div className="mt-4 flex flex-col gap-4 rounded-[24px] border border-ink/[0.08] bg-white/70 p-4 backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:p-5">
               <div className="min-w-0">
-                <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-[var(--accent-ink)]">
+                <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-primary">
                   Vietnamese Zodiac / {product.animal}
                 </p>
-                <div className="grid">
-                  <AnimatePresence initial={false} custom={direction}>
-                    <motion.p
-                      key={product.id}
-                      custom={direction}
-                      variants={labelSlide}
-                      initial="enter"
-                      animate="center"
-                      exit="exit"
-                      transition={reduce ? instant : { duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-                      className="col-start-1 row-start-1 mt-1 font-display text-[22px] font-medium tracking-[-0.04em] text-ink"
-                    >
-                      {product.label} edition
-                    </motion.p>
-                  </AnimatePresence>
-                </div>
+                <AnimatePresence mode="wait" initial={false} custom={direction}>
+                  <motion.p
+                    key={product.id}
+                    custom={direction}
+                    variants={labelSlide}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={reduce ? instant : { duration: 0.3 }}
+                    className="mt-1 font-display text-[22px] font-medium tracking-[-0.04em] text-ink"
+                  >
+                    {product.label} edition
+                  </motion.p>
+                </AnimatePresence>
               </div>
               <Link
                 to={editionPath}
-                state={editionState}
-                data-collection-source={`stage-${product.id}`}
                 viewTransition={variant === "page" && !reduce}
-                onClick={(event) => {
-                  if (event.button === 0 && !event.metaKey && !event.ctrlKey && !event.altKey && !event.shiftKey) onEditionClick?.(index);
-                }}
+                onClick={onEditionClick}
                 className="group inline-flex h-11 shrink-0 items-center gap-2 self-start rounded-full bg-ink px-5 text-[13px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-night btn-motion sm:self-auto"
               >
                 Explore this edition
@@ -406,7 +393,6 @@ export function ZodiacStage({
                 />
               </Link>
             </div>
-            <EditionThumbnails className="mx-auto mt-3 max-w-xl lg:hidden" index={index} onPick={pick} />
           </div>
         </div>
       </div>

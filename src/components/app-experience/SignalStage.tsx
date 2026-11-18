@@ -1,4 +1,4 @@
-import { BellRing, Check, ChevronLeft, ChevronRight, RotateCcw, ShieldCheck, Signal, Zap } from "lucide-react";
+import { BellRing, Check, RotateCcw, ShieldCheck, Signal, Zap } from "lucide-react";
 import { motion, useAnimate } from "motion/react";
 import { Fragment, useEffect } from "react";
 import type { CSSProperties, PointerEvent } from "react";
@@ -186,17 +186,9 @@ export function SignalStage({
     <figure className="sk-stage" style={{ "--scene-color": scene.accent } as CSSProperties} aria-label="SafeKid connection demo">
       <div className="sk-stage__top">
         <span><i /> Interactive demo</span>
-        <div className="sk-stage__controls">
-          <button type="button" className="sk-app__tap sk-stage__replay" onClick={() => onStep(-1)} aria-label="Previous scenario">
-            <ChevronLeft size={18} aria-hidden="true" />
-          </button>
-          <button type="button" className="sk-app__tap sk-stage__replay" onClick={onReplay} aria-label="Replay demo" title="Replay demo">
-            <RotateCcw size={16} aria-hidden="true" />
-          </button>
-          <button type="button" className="sk-app__tap sk-stage__replay" onClick={() => onStep(1)} aria-label="Next scenario">
-            <ChevronRight size={18} aria-hidden="true" />
-          </button>
-        </div>
+        <button type="button" className="sk-app__tap sk-stage__replay" onClick={onReplay} aria-label="Replay demo" title="Replay demo">
+          <RotateCcw size={17} aria-hidden="true" />
+        </button>
       </div>
       <motion.div className="sk-stage__viewport" data-scene={scene.id}
         style={{ touchAction: "pan-y pinch-zoom" }}
@@ -210,13 +202,6 @@ export function SignalStage({
         onPointerLeave={resetSpotlight}
         onPointerCancel={resetSpotlight}
         onClick={spark}>
-        <motion.div
-          aria-hidden="true"
-          className="sk-stage__scene-light"
-          initial={false}
-          animate={{ backgroundColor: scene.accent }}
-          transition={{ duration: reduce ? 0 : 0.42, ease: EASE }}
-        />
         <div className="sk-stage__art">
           <div ref={rig} className="sk-stage__rig">
             <Fragment key={replay}>
@@ -267,14 +252,6 @@ export function SignalStage({
           </div>
         </div>
         {!reduce && <canvas ref={canvasRef} className="sk-stage__sparks" aria-hidden="true" />}
-        <div className="sk-stage__timing" aria-hidden="true">
-          <motion.div
-            key={replay}
-            initial={reduce ? false : { scaleX: 0 }}
-            animate={{ scaleX: 1 }}
-            transition={{ duration: reduce ? 0 : arrival + 0.12, ease: "linear" }}
-          />
-        </div>
       </motion.div>
       <figcaption className="sk-stage__caption">
         <span aria-hidden="true">SafeKid Watch</span>

@@ -1,9 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useLocation, useNavigate, useParams, useViewTransitionState } from "react-router-dom";
+import { Link, useNavigate, useParams, useViewTransitionState } from "react-router-dom";
 import { animate, AnimatePresence, motion, useMotionValue, useReducedMotion } from "motion/react";
 import { ArrowLeft, ArrowRight, ArrowUpRight, Maximize2 } from "lucide-react";
-import { EditionThumbnails } from "@/components/zodiac/EditionThumbnails";
-import { collectionPosition } from "@/components/zodiac/collectionReturn";
 import { AddToBag } from "@/components/shop/AddToBag";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Reveal } from "@/components/site/Reveal";
@@ -42,10 +40,6 @@ const artwork = {
 export default function Product() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const zodiacEntry = state?.zodiacEntry as string | undefined;
-  const returnPosition = collectionPosition(zodiacEntry);
-  const editionState = { keepProductScroll: true, zodiacEntry };
   const reduce = useReducedMotion();
   const sharedFromCollection = useViewTransitionState("/zodiac");
   const index = zodiacProducts.findIndex((item) => item.id === id);
@@ -84,8 +78,6 @@ export default function Product() {
         <div className="shell relative">
           <Link
             to="/zodiac"
-            state={{ restoreZodiac: zodiacEntry }}
-            viewTransition={!reduce && returnPosition?.edition === product.id}
             className="group inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-deep/50 transition-colors hover:text-ink"
           >
             <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-0.5" aria-hidden="true" />
@@ -109,11 +101,11 @@ export default function Product() {
                   {product.label}
                 </motion.span>
                 <br />
-                <span className="text-[var(--accent-ink)]">little explorer.</span>
+                <span className="text-primary">little explorer.</span>
               </h1>
             </div>
             <div className="relative lg:col-start-1 lg:row-start-1 lg:row-span-2">
-              <div className="relative mx-auto aspect-square w-full max-w-[min(540px,65svh)] lg:max-w-[540px]">
+              <div className="relative mx-auto aspect-square w-full max-w-[540px]">
                 <div aria-hidden="true" className="stage-glow absolute inset-[2%] rounded-full" />
                 <div aria-hidden="true" className="absolute inset-[10%] rounded-full border border-primary/20" />
                 <div
@@ -133,17 +125,16 @@ export default function Product() {
                       type="button"
                       aria-label={`Enlarge ${product.label} edition image`}
                       className="absolute inset-0 h-full w-full cursor-zoom-in rounded-[32px] touch-pan-y touch-pinch-zoom focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                      onPanStart={() => panX.stop()}
                       onPan={(_, { offset }) => {
                         if (!reduce && Math.abs(offset.x) > 1.4 * Math.abs(offset.y)) {
-                          panX.set(Math.max(-86, Math.min(86, offset.x * 0.72)));
+                          panX.set(Math.max(-64, Math.min(64, offset.x * 0.55)));
                         }
                       }}
                       onPanEnd={(_, { offset }) => {
                         if (!reduce) animate(panX, 0, { type: "spring", stiffness: 360, damping: 32 });
                         if (Math.abs(offset.x) < 48 || Math.abs(offset.x) < 1.4 * Math.abs(offset.y)) return;
                         recentSwipe.current = performance.now();
-                        navigate(`/product/${offset.x < 0 ? next.id : previous.id}`, { state: editionState });
+                        navigate(`/product/${offset.x < 0 ? next.id : previous.id}`, { state: { keepProductScroll: true } });
                       }}
                       onClick={(event) => {
                         if (event.detail > 0 && performance.now() - recentSwipe.current < 400 && recentSwipe.current > 0) {
@@ -152,7 +143,7 @@ export default function Product() {
                       }}
                     >
                       <motion.div className="pointer-events-none absolute inset-0" style={{ x: panX }}>
-                        <AnimatePresence initial={false} custom={direction}>
+                        <AnimatePresence mode="wait" initial={false} custom={direction}>
                           <motion.img
                             key={product.id}
                             custom={direction}
@@ -185,7 +176,7 @@ export default function Product() {
                 <div className="absolute bottom-1 left-1/2 flex -translate-x-1/2 items-center gap-2">
                   <Link
                     to={`/product/${previous.id}`}
-                    state={editionState}
+                    state={{ keepProductScroll: true }}
                     aria-label={`Previous edition: ${previous.label}`}
                     className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-white/80 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
                   >
@@ -202,7 +193,7 @@ export default function Product() {
                   </motion.span>
                   <Link
                     to={`/product/${next.id}`}
-                    state={editionState}
+                    state={{ keepProductScroll: true }}
                     aria-label={`Next edition: ${next.label}`}
                     className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-white/80 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
                   >
@@ -214,13 +205,6 @@ export default function Product() {
 
             <div className="min-w-0 lg:col-start-2 lg:row-start-2 lg:self-start">
               <AddToBag key={product.id} editionId={product.id} image={product.image} />
-              <EditionThumbnails
-                className="mt-4 max-w-[31rem]"
-                index={index}
-                onPick={(selected) => {
-                  if (selected !== index) navigate(`/product/${zodiacProducts[selected].id}`, { state: editionState });
-                }}
-              />
               <p className="lede mt-6 max-w-[42ch]">
                 Meet the {product.label} edition — a Vietnamese Zodiac-inspired character in the
                 SafeKid watch concept, made for the little person who is always a few steps ahead.
@@ -389,7 +373,6 @@ export default function Product() {
                     <TiltCard className="h-full rounded-[24px]">
                       <Link
                         to={`/product/${item.id}`}
-                        state={{ zodiacEntry }}
                         className="group flex h-full flex-col rounded-[24px] border border-ink/[0.07] bg-white p-3 transition-colors duration-500 hover:border-primary/25"
                       >
                         <span className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[18px] bg-mist">
@@ -404,7 +387,7 @@ export default function Product() {
                         </span>
                         <span className="flex items-end justify-between gap-2 px-2 pb-1 pt-3.5">
                           <span>
-                            <span className="block text-[9px] uppercase tracking-[0.18em] text-[var(--accent-ink)]">
+                            <span className="block text-[9px] uppercase tracking-[0.18em] text-primary">
                               {item.animal}
                             </span>
                             <span className="mt-1 block font-display text-[15px] font-medium text-ink">
