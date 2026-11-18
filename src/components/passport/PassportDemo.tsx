@@ -36,16 +36,16 @@ export function PassportDemo({ className }: { className?: string }) {
   const wipeCount = wipeEvents.length;
 
   return (
-    <div className={cn("grid gap-6 lg:grid-cols-[0.62fr_1.38fr] lg:gap-10", className)}>
+    <div className={cn("grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.62fr)_minmax(0,1.38fr)] lg:gap-10", className)}>
       {/* Stage selector */}
-      <div>
+      <div className="min-w-0">
         <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-deep/65">
           Choose a chapter
         </p>
         <div
           role="group"
           aria-label="Lifecycle chapter"
-          className="mt-4 flex gap-2 overflow-x-auto pb-1 no-scrollbar lg:flex-col lg:overflow-visible"
+          className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-1"
         >
           {LIFE_STAGES.map((item) => {
             const active = item.id === life;
@@ -56,7 +56,7 @@ export function PassportDemo({ className }: { className?: string }) {
                 aria-pressed={active}
                 onClick={() => setLife(item.id)}
                 className={cn(
-                  "group flex shrink-0 items-center gap-3 rounded-2xl border px-4 py-3 text-left transition-all duration-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary lg:w-full",
+                  "group flex min-h-12 min-w-0 items-center gap-2 rounded-2xl border p-2.5 text-left transition duration-300 motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:gap-3 sm:px-3 lg:px-4 lg:py-3",
                   active
                     ? "border-ink bg-ink text-white"
                     : "border-border bg-white text-ink hover:border-primary/60"
@@ -71,10 +71,10 @@ export function PassportDemo({ className }: { className?: string }) {
                   {item.index}
                 </span>
                 <span className="min-w-0">
-                  <span className="block whitespace-nowrap text-[13.5px] font-medium">{item.tab}</span>
+                  <span className="block text-[13.5px] font-medium leading-snug">{item.tab}</span>
                   <span
                     className={cn(
-                      "hidden whitespace-nowrap text-[11.5px] lg:block",
+                      "hidden text-[11.5px] lg:block",
                       active ? "text-white/65" : "text-deep/60"
                     )}
                   >
@@ -89,7 +89,7 @@ export function PassportDemo({ className }: { className?: string }) {
       </div>
 
       {/* Passport */}
-      <div className="relative overflow-hidden rounded-[28px] border border-border/80 bg-white shadow-[0_40px_90px_-60px_rgba(16,42,56,0.55)] lg:rounded-[36px]">
+      <div className="relative min-w-0 overflow-hidden rounded-[28px] border border-border/80 bg-white shadow-[0_40px_90px_-60px_rgba(16,42,56,0.55)] lg:rounded-[36px]">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -right-20 -top-24 h-[320px] w-[320px] rounded-full bg-primary/10 blur-[80px]"
@@ -141,7 +141,7 @@ export function PassportDemo({ className }: { className?: string }) {
                 aria-pressed={view === item.id}
                 onClick={() => setView(item.id)}
                 className={cn(
-                  "rounded-full px-4 py-2 text-[12.5px] transition-colors duration-300 active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                  "min-h-11 rounded-full px-3 text-[12.5px] transition duration-300 motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:px-4",
                   view === item.id ? "bg-aqua-soft text-ink" : "text-deep/65 hover:text-ink"
                 )}
               >
@@ -215,8 +215,8 @@ export function PassportDemo({ className }: { className?: string }) {
 
               {view === "wipe" && (
                 <div>
-                  <div className="flex items-center gap-4 rounded-2xl bg-mist px-5 py-5">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-primary">
+                  <div className="flex items-center gap-3 rounded-2xl bg-mist p-4 sm:gap-4 sm:p-5">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-primary">
                       <Eraser className="h-5 w-5" aria-hidden="true" />
                     </span>
                     <div>

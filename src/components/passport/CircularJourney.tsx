@@ -1,7 +1,8 @@
 import { useRef, useState } from "react";
-import { motion, useMotionValueEvent, useReducedMotion, useTransform } from "motion/react";
+import { motion, useMotionValueEvent, useReducedMotion } from "motion/react";
 import { RefreshCw } from "lucide-react";
 import { Reveal } from "@/components/site/Reveal";
+import { DURATION, EASE } from "@/components/motion/tokens";
 import { JOURNEY } from "@/data/watchPassport";
 import { cn } from "@/lib/utils";
 import { useSectionProgress } from "./useSectionProgress";
@@ -13,7 +14,7 @@ import { useSectionProgress } from "./useSectionProgress";
 export function CircularJourney() {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  const progress = useSectionProgress(ref, ["start 70%", "end 55%"]);
+  const progress = useSectionProgress(ref, ["start 90%", "end 56%"]);
   const [reached, setReached] = useState(reduce ? JOURNEY.length - 1 : 0);
   const [picked, setPicked] = useState<number | null>(null);
 
@@ -21,7 +22,6 @@ export function CircularJourney() {
     setReached(Math.min(JOURNEY.length - 1, Math.max(0, Math.floor(v * JOURNEY.length))));
   });
 
-  const ring = useTransform(progress, [0, 1], [0, 1]);
   const settled = reduce ? JOURNEY.length - 1 : reached;
   const current = picked ?? settled;
 
@@ -42,9 +42,9 @@ export function CircularJourney() {
           </p>
         </Reveal>
 
-        <div ref={ref} className="mt-14 grid gap-10 lg:mt-20 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
+        <div className="mt-14 grid grid-cols-1 gap-10 lg:mt-20 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] lg:items-center">
           {/* Ring */}
-          <div className="relative mx-auto aspect-square w-full max-w-[380px]">
+          <div ref={ref} className="relative mx-auto aspect-square w-full max-w-[min(380px,70svh)]">
             <svg viewBox="0 0 200 200" className="h-full w-full -rotate-90" aria-hidden="true" fill="none">
               <circle cx="100" cy="100" r="82" stroke="hsl(var(--border))" strokeWidth="1.5" />
               <motion.circle
@@ -54,7 +54,7 @@ export function CircularJourney() {
                 stroke="hsl(var(--primary))"
                 strokeWidth="2"
                 strokeLinecap="round"
-                style={{ pathLength: reduce ? 1 : ring }}
+                style={{ pathLength: reduce ? 1 : progress }}
               />
               {JOURNEY.map((step, i) => {
                 const angle = (i / JOURNEY.length) * Math.PI * 2;
@@ -75,14 +75,20 @@ export function CircularJourney() {
                 );
               })}
             </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-12 text-center">
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-[18%] text-center">
               <RefreshCw className="h-5 w-5 text-primary" aria-hidden="true" />
               <p className="mt-3 font-mono text-[11px] tracking-[0.2em] text-deep/55">
                 STEP {String(current + 1).padStart(2, "0")} / {String(JOURNEY.length).padStart(2, "0")}
               </p>
-              <p className="mt-2 font-display text-[1.35rem] font-medium leading-tight tracking-[-0.04em] text-ink">
+              <motion.p
+                key={current}
+                className="mt-2 font-display text-[clamp(1.05rem,4vw,1.35rem)] font-medium leading-tight tracking-[-0.04em] text-ink"
+                initial={reduce ? false : { opacity: 0.65, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+              >
                 {JOURNEY[current].title}
-              </p>
+              </motion.p>
             </div>
           </div>
 
@@ -98,7 +104,7 @@ export function CircularJourney() {
                     aria-current={active ? "step" : undefined}
                     onClick={() => setPicked(i === picked ? null : i)}
                     className={cn(
-                      "flex w-full items-start gap-4 rounded-2xl border px-4 py-3.5 text-left transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:px-5",
+                      "flex w-full items-start gap-3 rounded-2xl border px-4 py-3.5 text-left transition duration-300 motion-safe:active:scale-[0.985] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:gap-4 sm:px-5",
                       active ? "border-primary/50 bg-aqua-soft/60" : "border-transparent hover:bg-mist"
                     )}
                   >

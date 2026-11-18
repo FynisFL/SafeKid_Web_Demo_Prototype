@@ -1,17 +1,65 @@
+import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronDown, Fingerprint } from "lucide-react";
+import { motion, useReducedMotion, useTransform } from "motion/react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { TiltCard } from "@/components/motion/TiltCard";
+import { DURATION, EASE } from "@/components/motion/tokens";
 import { PassportDemo } from "@/components/passport/PassportDemo";
 import { LivesSection } from "@/components/passport/LivesSection";
 import { CircularJourney } from "@/components/passport/CircularJourney";
 import { PrivacyTrust } from "@/components/passport/PrivacyTrust";
+import { useSectionProgress } from "@/components/passport/useSectionProgress";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { DEMO_LABEL, SAMPLE_DEVICE_ID } from "@/data/watchPassport";
 import heroWatch from "@/assets/safekid/hero-watch.webp";
+
+function PassportHeroArt() {
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const progress = useSectionProgress(ref, ["start 95%", "end 20%"]);
+  const watchY = useTransform(progress, [0, 1], [10, -14]);
+
+  return (
+    <div ref={ref} className="relative mx-auto aspect-square w-full max-w-[min(420px,75svh)]">
+      <div aria-hidden="true" className="stage-glow absolute inset-[2%] rounded-full" />
+      <motion.div
+        aria-hidden="true"
+        className="absolute inset-[12%] rounded-full border border-primary/25"
+        initial={reduce ? false : { opacity: 0, scale: 0.82 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0.35 }}
+        transition={{ duration: reduce ? 0 : DURATION.slow, ease: EASE }}
+      />
+      <motion.div
+        className="absolute inset-0 flex items-center justify-center"
+        style={reduce ? undefined : { y: watchY }}
+      >
+        <img
+          src={heroWatch}
+          alt="The SafeKid Core"
+          width={620}
+          height={620}
+          className="w-[58%] object-contain drop-shadow-[0_40px_60px_rgba(16,42,56,0.3)]"
+        />
+      </motion.div>
+      <Reveal variant="soft" className="absolute inset-x-[7%] bottom-[4%]">
+        <TiltCard className="rounded-2xl" max={5} spotlight={false}>
+          <div className="rounded-2xl border border-white/80 bg-white/90 px-4 py-3 backdrop-blur">
+            <p className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.2em] text-deep/65">
+              <Fingerprint className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
+              Device ID · sample
+            </p>
+            <p className="mt-1 break-words font-mono text-[13px] tracking-[0.06em] text-ink">{SAMPLE_DEVICE_ID}</p>
+          </div>
+        </TiltCard>
+      </Reveal>
+    </div>
+  );
+}
 
 export default function WatchPassport() {
   usePageTitle(
@@ -34,33 +82,14 @@ export default function WatchPassport() {
         actions={
           <a
             href="#passport"
-            className="group inline-flex h-12 items-center gap-2 rounded-full bg-ink px-6 text-[13.5px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-night btn-motion"
+            className="group inline-flex min-h-12 items-center gap-2 rounded-full bg-ink px-5 py-2 text-[13.5px] font-medium text-white transition-all duration-300 motion-safe:hover:-translate-y-0.5 hover:bg-night btn-motion sm:px-6"
           >
             Open the sample passport
-            <ChevronDown className="h-4 w-4" aria-hidden="true" />
+            <ChevronDown className="h-4 w-4 shrink-0" aria-hidden="true" />
           </a>
         }
         meta={`${DEMO_LABEL} · No live device or certification system`}
-        art={
-          <div className="relative mx-auto aspect-square w-full max-w-[420px]">
-            <div aria-hidden="true" className="stage-glow absolute inset-[2%] rounded-full" />
-            <div aria-hidden="true" className="absolute inset-[12%] rounded-full border border-primary/25" />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <img src={heroWatch} alt="The SafeKid Core" className="relative w-[58%] object-contain drop-shadow-[0_40px_60px_rgba(16,42,56,0.3)]" />
-            </div>
-            <div className="absolute inset-x-[7%] bottom-[4%]">
-              <TiltCard className="rounded-2xl" max={5} spotlight={false}>
-                <div className="rounded-2xl border border-white/80 bg-white/90 px-4 py-3 backdrop-blur">
-                <p className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.2em] text-deep/65">
-                  <Fingerprint className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
-                  Device ID · sample
-                </p>
-                  <p className="mt-1 font-mono text-[13px] tracking-[0.06em] text-ink">{SAMPLE_DEVICE_ID}</p>
-                </div>
-              </TiltCard>
-            </div>
-          </div>
-        }
+        art={<PassportHeroArt />}
       />
 
       <section id="passport" className="scroll-mt-24 bg-white py-20 sm:py-28">

@@ -3,17 +3,19 @@ import { enterDevPlugin, enterProdPlugin } from 'vite-plugin-enter-dev';
 import path from "path";
 import { mkdir, writeFile } from "node:fs/promises";
 
-const appEntry: PluginOption = {
-  name: "safekid-app-entry",
+const pageEntries: PluginOption = {
+  name: "safekid-page-entries",
   apply: "build",
   async writeBundle({ dir }, bundle) {
     // GitHub Pages can serve directory indexes without a SPA rewrite.
     const index = bundle["index.html"];
     if (!dir || index?.type !== "asset") return;
 
-    const appDirectory = path.join(dir, "app");
-    await mkdir(appDirectory, { recursive: true });
-    await writeFile(path.join(appDirectory, "index.html"), index.source);
+    for (const route of ["app", "watch-passport"]) {
+      const pageDirectory = path.join(dir, route);
+      await mkdir(pageDirectory, { recursive: true });
+      await writeFile(path.join(pageDirectory, "index.html"), index.source);
+    }
   },
 };
 
@@ -21,7 +23,7 @@ const appEntry: PluginOption = {
 export default defineConfig(({ mode }) => {
   const plugins = [
     ...enterProdPlugin(),
-    appEntry,
+    pageEntries,
   ];
   if (mode === 'development') {
     plugins.push(...enterDevPlugin());

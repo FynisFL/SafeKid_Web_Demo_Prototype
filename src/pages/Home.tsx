@@ -3,6 +3,7 @@ import { Hero } from "@/components/home/Hero";
 import { Thesis } from "@/components/home/Thesis";
 import { StorySequence } from "@/components/home/StorySequence";
 import { ProductChapters } from "@/components/home/ProductChapters";
+import { ParentAppSection } from "@/components/home/ParentAppSection";
 import { WatchPassportSection } from "@/components/home/WatchPassportSection";
 import { ZodiacStage } from "@/components/home/ZodiacStage";
 import { SOSIntroduction } from "@/components/home/SOSIntroduction";
@@ -21,6 +22,7 @@ export default function Home() {
       <Thesis />
       <StorySequence />
       <ProductChapters />
+      <ParentAppSection />
       <WatchPassportSection />
       <ZodiacStage />
       <SOSIntroduction />

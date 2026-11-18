@@ -447,7 +447,6 @@ export function ProductChapters() {
         <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-ink/10 pt-6 sm:flex-row sm:items-center">
           <p className="max-w-[54ch] text-[11px] leading-relaxed text-deep/60">
             Product capabilities shown are part of a concept and are not connected to a live service.
-            No watch, account or app is available.
           </p>
           <Link
             to="/about"
