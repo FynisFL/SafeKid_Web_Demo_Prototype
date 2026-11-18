@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { Check, ShoppingBag } from "lucide-react";
 import { animate, AnimatePresence, motion, useReducedMotion } from "motion/react";
 
+import "./shop-controls.css";
+
 import { EASE } from "@/components/motion/tokens";
 import { Button } from "@/components/ui/button";
 import { formatVnd, MAX_QUANTITY, useShoppingBag, WATCH_PRICE_VND } from "./shoppingBag";
@@ -51,7 +53,7 @@ export function AddToBag({ editionId, image }: { editionId: string; image: strin
       <p className="font-display text-3xl font-semibold tracking-tight text-ink tabular-nums">{formatVnd(WATCH_PRICE_VND)}</p>
       <p className="mt-2 text-sm text-deep/70">Per watch · Not available to order yet</p>
       <div className="mt-5 flex flex-wrap items-center gap-2.5">
-        <Button type="button" size="lg" variant="brand" disabled={full} onClick={handleAdd}>
+        <Button type="button" variant="outline" className="shop-flow-btn" disabled={full} onClick={handleAdd}>
           <AnimatePresence initial={false} mode="wait">
             <motion.span
               key={added && quantity > 0 ? "added" : "bag"}
@@ -74,7 +76,7 @@ export function AddToBag({ editionId, image }: { editionId: string; image: strin
               exit={reduce ? undefined : { opacity: 0 }}
               transition={{ duration: reduce ? 0 : 0.25, ease: EASE }}
             >
-              <Button asChild size="lg" variant="outline"><Link to="/cart">View bag</Link></Button>
+              <Button asChild variant="outline" className="shop-flow-btn"><Link to="/cart">View bag</Link></Button>
             </motion.div>
           )}
         </AnimatePresence>

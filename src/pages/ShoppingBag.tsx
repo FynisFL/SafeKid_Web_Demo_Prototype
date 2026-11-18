@@ -1,7 +1,10 @@
 import { ArrowLeft, ArrowRight, CreditCard, LockKeyhole, Minus, Plus, ShoppingBag as BagIcon, Trash2 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { createPortal } from "react-dom";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+
+import "@/components/shop/shop-controls.css";
 
 import { DISTANCE, DURATION, EASE } from "@/components/motion/tokens";
 import { CheckoutConfirm, PaymentPreview } from "@/components/shop/PaymentPreview";
@@ -53,7 +56,7 @@ function BagItems({ checkout }: { checkout: boolean }) {
 
   return (
     <section className="min-w-0 rounded-[28px] border border-border bg-white p-4 sm:p-7" aria-labelledby="bag-items-title">
-      <h2 id="bag-items-title" className="display display-md">{checkout ? "Your items" : "In your bag"}</h2>
+      <h2 id="bag-items-title" className="shop-card-title">{checkout ? "Your items" : "In your bag"}</h2>
       <ul className="mt-4 divide-y divide-border">
         <AnimatePresence initial={false}>
           {lines.map(({ id, quantity }) => {
@@ -132,9 +135,9 @@ function BagSummary({ checkout, method, subtotal, total }: {
   const reduce = useReducedMotion();
 
   return (
-    <section className="min-w-0 rounded-[28px] bg-night p-5 text-white shadow-[0_22px_54px_-36px_rgba(16,42,56,0.9)] sm:p-7 lg:sticky lg:top-28" aria-labelledby="bag-summary-title">
-      <h2 id="bag-summary-title" className="display display-md text-white">Bag summary</h2>
-      <dl className="mt-6">
+    <section id="bag-summary" className="min-w-0 scroll-mt-24 rounded-[24px] bg-night p-5 text-white shadow-[0_16px_40px_-30px_rgba(16,42,56,0.6)] sm:p-6 lg:sticky lg:top-28" aria-labelledby="bag-summary-title">
+      <h2 id="bag-summary-title" className="shop-card-title text-white">Bag summary</h2>
+      <dl className="mt-4">
         <div className="flex justify-between gap-3 text-sm">
           <dt>Subtotal <span className="whitespace-nowrap text-white/65">· {count} {count === 1 ? "watch" : "watches"}</span></dt>
           <dd className="shrink-0 font-semibold tabular-nums">{formatVnd(subtotal)}</dd>
@@ -145,7 +148,7 @@ function BagSummary({ checkout, method, subtotal, total }: {
             <dd className="shrink-0 font-medium text-aqua-soft">{amount === 0 ? "Free" : formatVnd(amount)}</dd>
           </div>
         ))}
-        <div className="mt-6 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-t border-white/20 pt-5">
+        <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-t border-white/20 pt-4">
           <dt className="font-semibold">Preview total</dt>
           <motion.dd
             key={total}
@@ -153,20 +156,20 @@ function BagSummary({ checkout, method, subtotal, total }: {
             initial={reduce ? false : { opacity: 0.45, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
-            className="font-display text-2xl font-semibold tracking-tight text-aqua-soft tabular-nums sm:text-3xl"
+            className="font-display text-2xl font-semibold tracking-tight text-white tabular-nums"
           >
             {formatVnd(total)}
           </motion.dd>
         </div>
       </dl>
       <p className="mt-3 text-xs leading-relaxed text-white/70">Fees shown apply to this preview. Launch rates may differ.</p>
-      <div className="mb-5 mt-5 flex items-center gap-2 text-sm text-white/85">
+      <div className="mb-4 mt-4 flex items-start gap-2 text-xs leading-relaxed text-white/85">
         <LockKeyhole size={16} className="shrink-0 text-aqua-soft" aria-hidden="true" /> SafeKid isn’t available to order yet.
       </div>
       {checkout ? (
         <CheckoutConfirm method={method} />
       ) : (
-        <Button asChild className="w-full" variant="brand" size="lg">
+        <Button asChild className="shop-flow-btn w-full" variant="outline">
           <Link to="/checkout">Preview checkout <ArrowRight aria-hidden="true" /></Link>
         </Button>
       )}
@@ -201,17 +204,11 @@ export default function ShoppingBag({ checkout = false }: { checkout?: boolean }
             <p className="lede mt-4 max-w-[48ch]">
               {checkout ? "Review your total and choose a payment method to preview." : "Review your chosen editions before previewing checkout."}
             </p>
-            {count > 0 && (
-              <p className="mt-5 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-2xl border border-border bg-white px-4 py-3 text-sm lg:hidden">
-                <span className="font-medium text-deep">Preview total</span>
-                <strong className="text-base font-semibold tabular-nums text-ink">{formatVnd(total)}</strong>
-              </p>
-            )}
             {count === 0 ? (
               <div className="mt-8 rounded-[28px] border border-border bg-white px-5 py-12 text-center">
                 <BagIcon className="mx-auto mb-4 h-7 w-7 text-deep" aria-hidden="true" />
                 <h2 className="display display-md">Your bag is empty</h2>
-                <Button asChild variant="brand" className="mt-6"><Link to="/zodiac">Explore the collection</Link></Button>
+                <Button asChild variant="outline" className="shop-flow-btn mt-6"><Link to="/zodiac">Explore the collection</Link></Button>
               </div>
             ) : (
               <div className="mt-8 grid items-start gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
@@ -228,6 +225,31 @@ export default function ShoppingBag({ checkout = false }: { checkout?: boolean }
           </div>
         </motion.section>
       </AnimatePresence>
+      {count > 0 && <div className="h-[calc(5rem+env(safe-area-inset-bottom))] lg:hidden" aria-hidden="true" />}
+      {count > 0 && createPortal(
+        <motion.aside
+          aria-label="Quick bag total"
+          className="fixed inset-x-0 bottom-0 z-[60] border-t border-border bg-white px-5 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-6px_24px_#172b350d] lg:hidden"
+          initial={reduce ? false : { y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+        >
+          <div className="mx-auto flex max-w-[60rem] items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="text-[11px] text-deep/75">Preview total · {count} {count === 1 ? "watch" : "watches"}</p>
+              <p className="text-sm font-semibold tabular-nums text-ink">{formatVnd(total)}</p>
+            </div>
+            <Button asChild variant="outline" className="shop-flow-btn shrink-0">
+              {checkout ? (
+                <a href="#bag-summary">Review total <ArrowRight aria-hidden="true" /></a>
+              ) : (
+                <Link to="/checkout">Checkout <ArrowRight aria-hidden="true" /></Link>
+              )}
+            </Button>
+          </div>
+        </motion.aside>,
+        document.body
+      )}
     </SiteLayout>
   );
 }
