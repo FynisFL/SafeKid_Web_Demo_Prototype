@@ -10,9 +10,9 @@ import type { Scene } from "./scenes";
 import { useClickSpark } from "./useClickSpark";
 
 const stageSize = { width: 720, height: 480 };
-const emitter = { x: 262, y: 266 };
+const emitter = { x: 337, y: 237 };
 const receiver = { x: 497, y: 259 };
-const signalPath = `M ${emitter.x} ${emitter.y} C 329 266 308 355 386 355 S 421 259 ${receiver.x} ${receiver.y}`;
+const signalPath = `M ${emitter.x} ${emitter.y} C 383 237 365 324 415 324 S 457 259 ${receiver.x} ${receiver.y}`;
 const travelDuration = 0.94;
 const impactParticles = Array.from({ length: 12 }, (_, index) => {
   const angle = index * (Math.PI / 6);
@@ -52,13 +52,13 @@ function DemoScreen({ scene, arrival, reduce }: { scene: Scene; arrival: number;
           </motion.div>
         ) : (
           <div className="sk-stage__habit">
-            <span><Check /> Đọc sách</span>
+            <span><Check /> Read a book</span>
             <div><motion.i initial={reduce ? false : { scaleX: 0 }}
               animate={{ scaleX: 1 }} transition={{ duration: reduce ? 0 : 0.72, delay: reduce ? 0 : arrival, ease: EASE }} /></div>
             <motion.strong initial={reduce ? false : { scale: 0.7, opacity: 0.3 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ type: "spring", stiffness: 220, damping: 11, delay: reduce ? 0 : arrival + 0.32 }}>
-              +10 điểm
+              +10 points
             </motion.strong>
           </div>
         )}
@@ -189,10 +189,10 @@ export function SignalStage({
   }
 
   return (
-    <figure className="sk-stage" style={{ "--scene-color": scene.accent } as CSSProperties} aria-label="Mô phỏng kết nối SafeKid">
+    <figure className="sk-stage" style={{ "--scene-color": scene.accent } as CSSProperties} aria-label="SafeKid connection demo">
       <div className="sk-stage__top">
-        <span><i /> Mô phỏng tương tác</span>
-        <button type="button" className="sk-app__tap sk-stage__replay" onClick={onReplay} aria-label="Phát lại mô phỏng" title="Phát lại mô phỏng">
+        <span><i /> Interactive demo</span>
+        <button type="button" className="sk-app__tap sk-stage__replay" onClick={onReplay} aria-label="Replay demo" title="Replay demo">
           <RotateCcw size={17} aria-hidden="true" />
         </button>
       </div>
@@ -247,17 +247,20 @@ export function SignalStage({
               )}
             </Fragment>
             <motion.button className="sk-app__tap sk-stage__trigger" type="button" onClick={onReplay}
-              aria-label="Phát tín hiệu từ đồng hồ" title="Phát tín hiệu từ đồng hồ"
+              aria-label="Send signal from the watch" title="Send signal from the watch"
               style={{ left: `${(emitter.x / stageSize.width) * 100}%`, top: `${(emitter.y / stageSize.height) * 100}%` }}
               whileHover={reduce ? undefined : { scale: 1.12 }} whileTap={reduce ? undefined : { scale: 0.87 }}>
               <Zap size={18} aria-hidden="true" />
             </motion.button>
           </div>
-          <div className="sk-stage__caption" aria-hidden="true"><span>SafeKid Watch</span><span>Parent App</span></div>
         </motion.div>
         {!reduce && <canvas ref={canvasRef} className="sk-stage__sparks" aria-hidden="true" />}
       </div>
-      <figcaption className="sr-only">{scene.title}. {scene.description}</figcaption>
+      <figcaption className="sk-stage__caption">
+        <span aria-hidden="true">SafeKid Watch</span>
+        <span aria-hidden="true">Parent App</span>
+        <span className="sr-only">{scene.title}. {scene.description}</span>
+      </figcaption>
     </figure>
   );
 }

@@ -7,12 +7,43 @@
   --sk-accent-ink: #00787b;
   --sk-muted: #466674;
   --sk-line: #cbdfe2;
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
   overflow: clip;
   color: var(--sk-ink);
   background:
     radial-gradient(ellipse at 85% 12%, #d6efef 0%, transparent 43rem),
     linear-gradient(180deg, #f8fcfc, var(--sk-white) 60%);
+}
+
+.sk-app__backdrop {
+  position: absolute;
+  z-index: -1;
+  inset: -7rem 0 0;
+  overflow: clip;
+  pointer-events: none;
+}
+
+.sk-app__backdrop i {
+  position: absolute;
+  width: clamp(25rem, 70vw, 72rem);
+  aspect-ratio: 1.2;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, #00c7ca38, #00c7ca0d 54%, transparent 71%);
+  animation: sk-app-wash 4.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.sk-app__backdrop i:first-child { inset: 1rem -15% auto auto; }
+.sk-app__backdrop i:last-child {
+  inset: 43% auto auto -20%;
+  background: radial-gradient(ellipse, #89c7dd43, #00c7ca14 50%, transparent 71%);
+  animation-direction: reverse;
+}
+
+@keyframes sk-app-wash {
+  from { transform: translate3d(-15%, -10%, 0) scale(0.83); opacity: 0.48; }
+  to { transform: translate3d(10%, 8%, 0) scale(1.08); opacity: 0.9; }
 }
 
 .sk-app__shell {
@@ -97,7 +128,7 @@
   line-height: 1.02;
 }
 
-/* Leave room below the mask for Vietnamese diacritics and descenders. */
+/* Leave room below the mask for descenders. */
 .sk-app__title-mask {
   display: block;
   overflow: clip;
@@ -206,14 +237,14 @@
 }
 
 .sk-stage__top {
-  position: absolute;
-  z-index: 2;
-  inset: 0.6rem 0.65rem auto;
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-inline-start: 0.5rem;
-  pointer-events: none;
+  gap: 0.5rem;
+  padding: 0.4rem 0.7rem 0.4rem 1rem;
+  border-bottom: 1px solid #2d556820;
 }
 
 .sk-stage__top > span {
@@ -237,6 +268,7 @@
 
 .sk-stage__replay {
   display: grid;
+  flex: none;
   width: 2.75rem;
   height: 2.75rem;
   place-items: center;
@@ -257,7 +289,6 @@
   position: relative;
   isolation: isolate;
   overflow: clip;
-  border-radius: inherit;
   perspective: 950px;
   aspect-ratio: 3 / 2;
   background-image:
@@ -326,9 +357,9 @@
 
 .sk-stage__watch {
   position: absolute;
-  left: 4%;
-  top: 13%;
-  width: 53%;
+  left: -0.75%;
+  top: 9%;
+  width: 50%;
   transform: rotate(-11deg);
 }
 
@@ -341,9 +372,9 @@
 
 .sk-stage__phone {
   position: absolute;
-  top: 16%;
+  top: 13%;
   left: 62%;
-  width: 24.5%;
+  width: 26%;
   height: 70%;
   transform: rotate(9deg);
 }
@@ -366,7 +397,7 @@
   border: 1px solid #c5dfe3;
   border-radius: 3.45cqw;
   background: linear-gradient(156deg, white, #ecf8f8 77%);
-  font-size: 1.5cqw;
+  font-size: max(5px, 1.55cqw);
 }
 
 .sk-stage__phone-top {
@@ -497,13 +528,14 @@
 .sk-stage__pulse { filter: drop-shadow(0 0 5px var(--scene-color)); }
 
 .sk-stage__caption {
-  position: absolute;
-  z-index: 1;
-  inset: auto 12% 5%;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  justify-items: center;
+  padding: 0.62rem 0.45rem;
+  border-top: 1px solid #2d556820;
   color: var(--sk-deep);
   font-size: 0.68rem;
+  font-weight: 600;
 }
 
 .sk-app__access {
@@ -529,16 +561,115 @@
   padding: clamp(1.1rem, 3vw, 2rem);
   border: 1px solid var(--sk-line);
   border-radius: 1.1rem;
+  position: relative;
+  isolation: isolate;
+  overflow: clip;
   background: var(--sk-white);
   box-shadow: 0 0.65rem 2.5rem #2d55680c;
+  transition: border-color 320ms, box-shadow 320ms, translate 320ms;
 }
+
+.sk-app__card::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  background: radial-gradient(ellipse at 18% 0%, #00c7ca35 0%, transparent 65%);
+  opacity: 0;
+  transform: translate(-24%, -18%) scale(0.76);
+  transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1), opacity 320ms;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .sk-app__card:hover { translate: 0 -0.45rem; }
+}
+
+.sk-app__card:is(:hover, :focus-within) {
+  border-color: #8fc8cb;
+  box-shadow: 0 1.1rem 2.5rem #2d556822;
+}
+
+.sk-app__card:is(:hover, :focus-within)::before {
+  opacity: 1;
+  transform: none;
+}
+
+.sk-app__card > svg { transition: transform 440ms cubic-bezier(0.22, 1, 0.36, 1); }
+.sk-app__card:is(:hover, :focus-within) > svg { transform: translateY(-2px) rotate(-9deg) scale(1.12); }
 
 .sk-app__card > svg { color: var(--sk-accent-ink); }
 .sk-app__card h3 { margin-top: 0.75rem; font-size: 1.35rem; font-weight: 700; }
 .sk-app__card p { margin-block: 0.35rem 1rem; color: var(--sk-muted); }
-.sk-app__card .sk-app__availability { display: inline-flex; align-items: center; gap: 0.45rem; margin-bottom: 0; }
 .sk-app__card:target { border-color: var(--sk-accent-ink); }
 .sk-app__footnote { margin-top: 1.15rem; max-width: 68ch; color: var(--sk-muted); font-size: 0.875rem; }
+
+.sk-download {
+  width: min(100% - 2rem, 32rem);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  padding: clamp(1.2rem, 5vw, 2rem);
+  border-color: #cbdfe2;
+  border-radius: 1.25rem;
+  background: linear-gradient(150deg, #eaf4f5, #fff 46%);
+  box-shadow: 0 1.5rem 5rem #172b3540;
+}
+
+.sk-download[data-state="open"] { animation: sk-download-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.sk-download[data-state="closed"] { animation: sk-download-out 200ms ease both; }
+
+@keyframes sk-download-in {
+  from { opacity: 0; scale: 0.88; translate: 0 1rem; }
+  to { opacity: 1; scale: 1; translate: 0 0; }
+}
+
+@keyframes sk-download-out { to { opacity: 0; scale: 0.95; translate: 0 0.4rem; } }
+
+.sk-download__icon {
+  display: grid;
+  width: 2.85rem;
+  aspect-ratio: 1;
+  place-items: center;
+  border-radius: 0.85rem;
+  background: #d4f1f1;
+  color: #00787b;
+}
+
+.sk-download__status {
+  display: grid;
+  gap: 0.7rem;
+  min-height: 3rem;
+  padding: 0.85rem;
+  border: 1px solid #cbdfe2;
+  border-radius: 0.8rem;
+  background: #fff;
+  font-size: 0.875rem;
+}
+
+.sk-download__status:has(.sk-download__spinner) {
+  display: flex;
+  align-items: center;
+}
+
+.sk-download__spinner {
+  flex: none;
+  color: #00787b;
+  animation: sk-download-spin 900ms linear infinite;
+}
+
+@keyframes sk-download-spin { to { transform: rotate(1turn); } }
+
+.sk-download__actions { display: flex; gap: 0.55rem; flex-wrap: wrap; }
+
+.sk-download__file {
+  justify-content: flex-start;
+  min-height: 2.75rem;
+  height: auto;
+  padding-block: 0.6rem;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.sk-download__size { flex: none; margin-left: auto; font-size: 0.75rem; }
 
 @media (max-width: 960px) {
   .sk-app__hero {
@@ -560,6 +691,7 @@
   .sk-app h1 { font-size: clamp(2.65rem, 10vw, 3.25rem); }
   .sk-app__lede { margin-top: 0.8rem; }
   .sk-app__actions { flex-direction: column; margin-top: 1.15rem; }
+  .sk-app__actions :is(a, button) { width: 100%; }
   .sk-stage { border-radius: 1rem; }
   .sk-stage__caption { font-size: 0.6rem; }
   .sk-app__cards { grid-template-columns: minmax(0, 1fr); }
@@ -567,4 +699,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .sk-stage__viewport::before { display: none; }
+  .sk-app__backdrop i,
+  .sk-download[data-state],
+  .sk-download__spinner { animation: none !important; }
+  .sk-app__card:hover { translate: none; }
+  .sk-app__card:is(:hover, :focus-within) > svg { transform: none; }
 }
