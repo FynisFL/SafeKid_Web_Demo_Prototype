@@ -301,6 +301,7 @@
   position: relative;
   isolation: isolate;
   overflow: clip;
+  perspective: 950px;
   aspect-ratio: 3 / 2;
   background-image:
     linear-gradient(#2d556811 1px, transparent 1px),
@@ -310,17 +311,34 @@
   container-type: inline-size;
 }
 
+/* React Bits SpotlightCard adapted to the SafeKid stage. */
+.sk-stage__viewport::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  content: "";
+  opacity: 0;
+  background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), #00c7ca40, transparent 58%);
+  transition: opacity 450ms ease;
+}
+
+.sk-stage__viewport[data-spotlight="active"]::before { opacity: 1; }
+
 .sk-stage__art,
+.sk-stage__rig,
 .sk-stage__devices,
-.sk-stage__signal {
+.sk-stage__signal,
+.sk-stage__sparks {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
 
-/* Keep the signal above the devices and allow interaction only on the hotspot. */
+/* Keep the background glow below product artwork and the hotspot above the signal. */
 .sk-stage__art { z-index: 1; pointer-events: none; }
+.sk-stage__sparks { z-index: 2; pointer-events: none; }
 .sk-stage__devices { z-index: 2; }
 .sk-stage__signal { z-index: 3; }
 
@@ -361,6 +379,7 @@
   width: 100%;
   height: auto;
   filter: drop-shadow(0 1.05rem 0.9rem #2d556850);
+  transform-origin: 61% 53%;
 }
 
 .sk-stage__phone {
@@ -380,6 +399,7 @@
   border-radius: 4.3cqw;
   background: linear-gradient(145deg, #f2ffff, #81a4ad 35%, #426675 70%, #adced4);
   box-shadow: 0 1.2rem 2rem #2d556855, inset 0 0 0 1px #fff8;
+  transform-origin: 29% 54%;
 }
 
 .sk-stage__phone-screen {
@@ -484,6 +504,19 @@
   background: white;
   font-weight: 650;
   line-height: 1.15;
+}
+
+.sk-stage__signal,
+.sk-stage__sweep { pointer-events: none; }
+
+.sk-stage__sweep {
+  position: absolute;
+  z-index: 1;
+  inset: 0 -20%;
+  background: linear-gradient(110deg, transparent 41%, #fff9 49%, #fff5 52%, transparent 61%);
+  background: linear-gradient(110deg, transparent 39%,
+    color-mix(in srgb, var(--scene-color) 25%, transparent) 48%,
+    #fffe 50%, transparent 57%);
 }
 
 .sk-stage__trigger {
@@ -660,6 +693,7 @@
 
   .sk-app__stage-placement {
     width: min(100%, 43rem);
+    transform: none !important;
   }
 }
 
@@ -676,6 +710,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .sk-stage__viewport::before { display: none; }
   .sk-app__backdrop span,
   .sk-download[data-state],
   .sk-download__spinner { animation: none !important; }
