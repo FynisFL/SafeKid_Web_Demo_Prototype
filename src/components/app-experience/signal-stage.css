@@ -22,10 +22,8 @@
   border: 1px solid var(--sk-line);
   color: var(--sk-ink);
   border-radius: 1.5rem;
-  background:
-    radial-gradient(ellipse at 48% 48%, #fff 0%, #fff0 68%),
-    linear-gradient(134deg, #d2edef, #f8fdfd 49%, #dceff0 100%);
-  box-shadow: 0 1.65rem 4rem #2d556822, 0 0.25rem 1rem #2d556812, inset 0 0 0 1px white;
+  background: #f7fbfb;
+  box-shadow: 0 1.25rem 3rem #2d556820, inset 0 0 0 1px white;
 }
 
 .sk-stage__top {
@@ -81,13 +79,11 @@
   position: relative;
   isolation: isolate;
   overflow: clip;
-  perspective: 950px;
   aspect-ratio: 3 / 2;
-  background-image:
-    linear-gradient(#2d556811 1px, transparent 1px),
-    linear-gradient(90deg, #2d556811 1px, transparent 1px);
-  background-position: center;
-  background-size: 2.3rem 2.3rem;
+  background:
+    radial-gradient(ellipse at 24% 63%, #c5e8e9, transparent 49%),
+    radial-gradient(ellipse at 77% 46%, #fff, transparent 48%),
+    linear-gradient(155deg, #f3fbfb, #e7f2f3);
   container-type: inline-size;
 }
 
@@ -99,7 +95,7 @@
   pointer-events: none;
   content: "";
   opacity: 0;
-  background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), #00c7ca40, transparent 58%);
+  background: radial-gradient(circle at var(--spotlight-x, 50%) var(--spotlight-y, 50%), #00c7ca24, transparent 55%);
   transition: opacity 450ms ease;
 }
 
@@ -116,43 +112,18 @@
   height: 100%;
 }
 
-/* Keep the background glow below product artwork and the hotspot above the signal. */
-.sk-stage__art { z-index: 1; pointer-events: none; }
-.sk-stage__sparks { z-index: 2; pointer-events: none; }
-.sk-stage__devices { z-index: 2; }
-.sk-stage__signal { z-index: 3; }
-
-.sk-stage__halo {
-  position: absolute;
-  z-index: 0;
-  inset: 18% 12%;
-  border: 1px solid #69b7bf8a;
-  background: radial-gradient(ellipse, #00c7ca15, #fff0 68%);
-  border-radius: 50%;
-  transform: rotate(-14deg);
-  box-shadow: 0 0 35px #00c7ca22, inset 0 0 30px #00c7ca1a;
-  box-shadow: 0 0 3rem color-mix(in srgb, var(--scene-color) 16%, transparent),
-    inset 0 0 2.2rem color-mix(in srgb, var(--scene-color) 10%, transparent);
-  transition: box-shadow 350ms;
-}
-
-.sk-stage__halo::before,
-.sk-stage__halo::after {
-  position: absolute;
-  content: "";
-  border: 1px dashed #69b7bf92;
-  border-radius: inherit;
-}
-
-.sk-stage__halo::before { inset: 8%; }
-.sk-stage__halo::after { inset: -10%; }
+/* Confine the signal to the center lane and keep the device surfaces above it. */
+.sk-stage__art { z-index: 2; pointer-events: none; }
+.sk-stage__sparks { z-index: 1; pointer-events: none; }
+.sk-stage__signal { z-index: 2; clip-path: inset(0 37% 0 39%); }
+.sk-stage__devices { z-index: 3; }
 
 .sk-stage__watch {
   position: absolute;
-  left: -0.75%;
-  top: 9%;
-  width: 50%;
-  transform: rotate(-11deg);
+  left: 3%;
+  top: 16%;
+  width: 45%;
+  transform: rotate(-7deg);
 }
 
 .sk-stage__watch img {
@@ -164,11 +135,10 @@
 
 .sk-stage__phone {
   position: absolute;
-  top: 13%;
-  left: 62%;
-  width: 26%;
-  height: 70%;
-  transform: rotate(9deg);
+  top: 14%;
+  left: 64%;
+  width: 25%;
+  height: 72%;
 }
 
 .sk-stage__phone-shell {
@@ -179,13 +149,12 @@
   border-radius: 4.3cqw;
   background: linear-gradient(145deg, #f2ffff, #81a4ad 35%, #426675 70%, #adced4);
   box-shadow: 0 1.2rem 2rem #2d556855, inset 0 0 0 1px #fff8;
-  transform-origin: 29% 54%;
 }
 
 .sk-stage__phone-screen {
   height: 100%;
   overflow: hidden;
-  padding: 2.2cqw 1.15cqw 1.25cqw;
+  padding: 2.4cqw 1.35cqw 1.25cqw;
   border: 1px solid #c5dfe3;
   border-radius: 3.45cqw;
   background: linear-gradient(156deg, white, #ecf8f8 77%);
@@ -218,7 +187,7 @@
 
 .sk-stage__phone-visual {
   display: grid;
-  height: 15.25cqw;
+  height: 17.5cqw;
   place-items: center;
   overflow: hidden;
   border: 1px solid #c4e1e1;

@@ -11,13 +11,14 @@ import { useClickSpark } from "./useClickSpark";
 import "./signal-stage.css";
 
 const stageSize = { width: 720, height: 480 };
-const emitter = { x: 337, y: 237 };
-const receiver = { x: 497, y: 259 };
-const signalPath = `M ${emitter.x} ${emitter.y} C 383 237 365 324 415 324 S 457 259 ${receiver.x} ${receiver.y}`;
+const emitter = { x: 294, y: 220 };
+const receiver = { x: 438, y: 220 };
+const trigger = { x: 360, y: 307 };
+const signalPath = `M ${emitter.x} ${emitter.y} H ${receiver.x}`;
 const travelDuration = 0.94;
-const impactParticles = Array.from({ length: 12 }, (_, index) => {
-  const angle = index * (Math.PI / 6);
-  const distance = [82, 56, 106][index % 3];
+const impactParticles = Array.from({ length: 8 }, (_, index) => {
+  const angle = index * (Math.PI / 4);
+  const distance = [13, 22, 19][index % 3];
   return { x: Math.cos(angle) * distance, y: Math.sin(angle) * distance, delay: (index % 3) * 0.04 };
 });
 
@@ -93,12 +94,12 @@ function Shockwave({ point, delay, radius, color }: {
 function SignalBurst({ scene, delay }: { scene: Scene; delay: number }) {
   const arrival = delay + travelDuration;
   const packetCount = scene.id === "habits" ? 4 : 3;
-  const impactRadius = scene.id === "sos" ? 116 : 90;
+  const impactRadius = scene.id === "sos" ? 22 : 18;
 
   return (
     <g className="sk-stage__burst">
-      <Shockwave point={emitter} delay={delay} radius={54} color={scene.accent} />
-      <motion.path d={signalPath} stroke={scene.accent} strokeWidth="7" strokeLinecap="round"
+      <Shockwave point={emitter} delay={delay} radius={16} color={scene.accent} />
+      <motion.path d={signalPath} stroke={scene.accent} strokeWidth="4" strokeLinecap="round"
         initial={{ pathLength: 0, opacity: 0 }}
         animate={{ pathLength: 1, opacity: [0, 0.85, 0.85, 0] }}
         transition={{ duration: travelDuration + 0.4, delay, ease: "easeOut" }} />
@@ -108,8 +109,8 @@ function SignalBurst({ scene, delay }: { scene: Scene; delay: number }) {
           <g key={index}>
             <animateMotion path={signalPath} dur={`${travelDuration}s`} begin="indefinite"
               ref={(animation) => { (animation as SVGAnimationElement | null)?.beginElementAt(start); }} />
-            <motion.circle r={index === 0 ? 7 : 3.25} fill={index === 0 ? "white" : scene.accent}
-              stroke={scene.accent} strokeWidth={index === 0 ? 2.5 : 0}
+            <motion.circle r={index === 0 ? 5.5 : 2.75} fill={index === 0 ? "white" : scene.accent}
+              stroke={scene.accent} strokeWidth={index === 0 ? 2 : 0}
               className={index === 0 ? "sk-stage__pulse" : undefined}
               initial={{ opacity: 0 }}
               animate={{ opacity: [0, 1, 1, 0] }}
@@ -117,9 +118,9 @@ function SignalBurst({ scene, delay }: { scene: Scene; delay: number }) {
           </g>
         );
       })}
-      {[0, 1, 2].map((index) => (
+      {[0, 1].map((index) => (
         <Shockwave key={index} point={receiver} delay={arrival + index * 0.11}
-          radius={impactRadius - index * 14} color={scene.accent} />
+          radius={impactRadius - index * 7} color={scene.accent} />
       ))}
       {impactParticles.map(({ x, y, delay: stagger }, index) => (
         <motion.circle key={index} cx={receiver.x} cy={receiver.y}
@@ -198,50 +199,47 @@ export function SignalStage({
         <div className="sk-stage__art">
           <div ref={rig} className="sk-stage__rig">
             <Fragment key={replay}>
-              <motion.div className="sk-stage__halo" aria-hidden="true"
-                initial={reduce ? false : { opacity: 0.45, scale: 0.62, rotate: -36 }}
-                animate={{ opacity: 1, scale: 1, rotate: -14 }}
-                transition={{ duration: reduce ? 0 : 1.05, ease: EASE }} />
               <div className="sk-stage__devices" aria-hidden="true">
                 <div className="sk-stage__watch">
                   <motion.img src={watch} width={620} height={620} loading={loading}
                     fetchPriority={loading === "eager" ? "high" : undefined} alt="" draggable={false}
                     initial={reduce ? false : intro
-                      ? { opacity: 0, x: "-38%", y: "27%", scale: 0.48, rotate: -33, rotateY: -48 }
-                      : { opacity: 1, x: "0%", y: "0%", scale: 1, rotate: 0, rotateY: 0 }}
+                      ? { opacity: 0, x: "-12%", y: "8%", scale: 0.85, rotate: -6 }
+                      : { opacity: 1, x: "0%", y: "0%", scale: 1, rotate: 0 }}
                     animate={reduce ? undefined : intro
-                      ? { opacity: 1, x: "0%", y: "0%", scale: 1, rotate: 0, rotateY: 0 }
-                      : { scale: [1, 1.15, 1], rotate: [0, -11, 4, 0], rotateY: [0, -13, 0] }}
+                      ? { opacity: 1, x: "0%", y: "0%", scale: 1, rotate: 0 }
+                      : { scale: [1, 1.08, 1], rotate: [0, -4, 0] }}
                     transition={{ duration: intro ? 1.44 : 0.76, ease: EASE }} />
                 </div>
                 <div className="sk-stage__phone">
                   <motion.div className="sk-stage__phone-shell"
                     initial={reduce ? false : intro
-                      ? { opacity: 0, x: "49%", y: "19%", scale: 0.55, rotate: 38, rotateY: 67 }
-                      : { opacity: 1, x: "0%", y: "0%", scale: 1, rotate: 0, rotateY: 0 }}
+                      ? { opacity: 0, x: "14%", y: "8%", scale: 0.9 }
+                      : { opacity: 1, x: "0%", y: "0%", scale: 1 }}
                     animate={reduce ? undefined : intro
-                      ? { opacity: 1, x: "0%", y: "0%", scale: 1, rotate: 0, rotateY: 0 }
-                      : { scale: [1, 1.16, 1], rotate: [0, 10, -4, 0], rotateY: [0, 19, 0] }}
+                      ? { opacity: 1, x: "0%", y: "0%", scale: 1 }
+                      : { scale: [1, 1.045, 1], y: [0, -3, 0] }}
                     transition={{ duration: intro ? 1.48 : 0.9, delay: intro ? 0.16 : arrival - 0.18, ease: EASE }}>
                     <DemoScreen scene={scene} arrival={arrival} reduce={reduce} />
                   </motion.div>
                 </div>
               </div>
               <svg className="sk-stage__signal" viewBox={`0 0 ${stageSize.width} ${stageSize.height}`} aria-hidden="true" preserveAspectRatio="none" fill="none">
-                <circle cx={receiver.x} cy={receiver.y} r="5" stroke={scene.accent} />
-                <path d={signalPath} stroke={scene.accent} strokeOpacity=".48" strokeWidth="1.5" strokeDasharray="3 7" />
+                <path d={signalPath} stroke={scene.accent} strokeOpacity=".58" strokeWidth="2" strokeDasharray="2 6" strokeLinecap="round" />
+                <circle cx={emitter.x} cy={emitter.y} r="3" fill={scene.accent} />
+                <circle cx={receiver.x} cy={receiver.y} r="5" fill="white" stroke={scene.accent} strokeWidth="2" />
                 {!reduce && <SignalBurst scene={scene} delay={signalDelay} />}
               </svg>
               {!reduce && (
                 <motion.div className="sk-stage__sweep" aria-hidden="true"
                   initial={{ x: "-78%", opacity: 0 }}
-                  animate={{ x: "78%", opacity: [0, 0.68, 0] }}
+                  animate={{ x: "78%", opacity: [0, 0.46, 0] }}
                   transition={{ duration: 1.66, delay: signalDelay + 0.04, ease: "easeInOut" }} />
               )}
             </Fragment>
             <motion.button className="sk-app__tap sk-stage__trigger" type="button" onClick={onReplay}
               aria-label="Send signal from the watch" title="Send signal from the watch"
-              style={{ left: `${(emitter.x / stageSize.width) * 100}%`, top: `${(emitter.y / stageSize.height) * 100}%` }}
+              style={{ left: `${(trigger.x / stageSize.width) * 100}%`, top: `${(trigger.y / stageSize.height) * 100}%` }}
               whileHover={reduce ? undefined : { scale: 1.12 }} whileTap={reduce ? undefined : { scale: 0.87 }}>
               <Zap size={18} aria-hidden="true" />
             </motion.button>
