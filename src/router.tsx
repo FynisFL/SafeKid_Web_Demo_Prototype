@@ -1,10 +1,9 @@
 import { lazy } from "react";
+import { Navigate, useLocation } from "react-router-dom";
 
 const AppExperience = lazy(() => import("./pages/AppExperience"));
 const Home = lazy(() => import("./pages/Home"));
-const Zodiac = lazy(() => import("./pages/Zodiac"));
 const WatchPassport = lazy(() => import("./pages/WatchPassport"));
-const Product = lazy(() => import("./pages/Product"));
 const ShoppingBag = lazy(() => import("./pages/ShoppingBag"));
 const About = lazy(() => import("./pages/About"));
 const Support = lazy(() => import("./pages/Support"));
@@ -13,12 +12,18 @@ const Chat = lazy(() => import("./pages/Chat"));
 const Sos = lazy(() => import("./pages/Sos"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
+function PassportRedirect() {
+  const { search, hash } = useLocation();
+  return <Navigate to={{ pathname: "/watch-passport", search, hash }} replace />;
+}
+
 export const routers = [
   { path: "/", name: "home", element: <Home /> },
   { path: "/app", name: "app", element: <AppExperience /> },
-  { path: "/zodiac", name: "zodiac", element: <Zodiac /> },
+  { path: "/zodiac", name: "zodiac", lazy: async () => ({ Component: (await import("./pages/Zodiac")).default }) },
+  { path: "/watchpassport", name: "watch-passport-legacy", element: <PassportRedirect /> },
   { path: "/watch-passport", name: "watch-passport", element: <WatchPassport /> },
-  { path: "/product/:id", name: "product", element: <Product /> },
+  { path: "/product/:id", name: "product", lazy: async () => ({ Component: (await import("./pages/Product")).default }) },
   { path: "/cart", name: "cart", element: <ShoppingBag /> },
   { path: "/checkout", name: "checkout", element: <ShoppingBag checkout /> },
   { path: "/about", name: "about", element: <About /> },

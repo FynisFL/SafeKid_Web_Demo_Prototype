@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useId, useMemo, useState } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import { BadgeCheck, Eraser, Fingerprint, ShieldCheck, Wrench } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { DISTANCE, DURATION, EASE } from "@/components/motion/tokens";
@@ -23,12 +23,18 @@ const VIEWS: { id: View; label: string }[] = [
 ];
 
 const ease = EASE;
+const panel = {
+  incoming: (direction: number) => ({ opacity: 0.65, x: direction * DISTANCE.sm }),
+  active: { opacity: 1, x: 0 },
+};
 
 export function PassportDemo({ className }: { className?: string }) {
   const reduce = useReducedMotion();
   const [life, setLife] = useState<LifeId>("life1");
   const [view, setView] = useState<View>("overview");
 
+  const selectionId = useId();
+  const [direction, setDirection] = useState(1);
   const lifeIndex = LIFE_ORDER.indexOf(life);
   const stage = LIFE_STAGES[lifeIndex];
   const events = useMemo(() => eventsAt(life), [life]);
@@ -47,14 +53,17 @@ export function PassportDemo({ className }: { className?: string }) {
           aria-label="Lifecycle chapter"
           className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-1"
         >
-          {LIFE_STAGES.map((item) => {
+          {LIFE_STAGES.map((item, index) => {
             const active = item.id === life;
             return (
               <button
                 key={item.id}
                 type="button"
                 aria-pressed={active}
-                onClick={() => setLife(item.id)}
+                onClick={() => {
+                  setDirection(index < lifeIndex ? -1 : 1);
+                  setLife(item.id);
+                }}
                 className={cn(
                   "group flex min-h-12 min-w-0 items-center gap-2 rounded-2xl border p-2.5 text-left transition duration-300 motion-safe:active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:gap-3 sm:px-3 lg:px-4 lg:py-3",
                   active
@@ -63,11 +72,11 @@ export function PassportDemo({ className }: { className?: string }) {
                 )}
               >
                 <span
-                  className={cn(
-                    "flex h-7 w-7 shrink-0 items-center justify-center rounded-full font-mono text-[11px]",
-                    active ? "bg-primary text-ink" : "bg-mist text-deep"
-                  )}
+                  className="relative isolate flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-mist font-mono text-[11px] text-deep"
                 >
+                  {active && (
+                    <motion.span aria-hidden="true" layoutId={reduce ? undefined : `${selectionId}-life`} className="absolute inset-0 -z-10 rounded-full bg-primary" transition={{ duration: DURATION.quick, ease }} />
+                  )}
                   {item.index}
                 </span>
                 <span className="min-w-0">
@@ -134,119 +143,124 @@ export function PassportDemo({ className }: { className?: string }) {
 
         <div className="relative px-5 pt-5 sm:px-8">
           <div role="group" aria-label="Passport section" className="flex flex-wrap gap-1.5">
-            {VIEWS.map((item) => (
+            {VIEWS.map((item, index) => (
               <button
                 key={item.id}
                 type="button"
                 aria-pressed={view === item.id}
-                onClick={() => setView(item.id)}
+                onClick={() => {
+                  setDirection(index < VIEWS.findIndex(({ id }) => id === view) ? -1 : 1);
+                  setView(item.id);
+                }}
                 className={cn(
-                  "min-h-11 rounded-full px-3 text-[12.5px] transition duration-300 motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:px-4",
-                  view === item.id ? "bg-aqua-soft text-ink" : "text-deep/65 hover:text-ink"
+                  "relative isolate min-h-11 rounded-full px-3 text-[12.5px] transition duration-300 motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:px-4",
+                  view === item.id ? "text-ink" : "text-deep/65 hover:text-ink"
                 )}
               >
+                {view === item.id && (
+                  <motion.span aria-hidden="true" layoutId={reduce ? undefined : `${selectionId}-view`} className="absolute inset-0 -z-10 rounded-full bg-aqua-soft" transition={{ duration: DURATION.quick, ease }} />
+                )}
                 {item.label}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="relative min-h-[330px] px-5 pb-7 pt-5 sm:px-8" aria-live="polite">
-          <AnimatePresence mode="wait" initial={false}>
-            <motion.div
-              key={`${view}-${life}`}
-              initial={reduce ? false : { opacity: 0, y: DISTANCE.sm }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={reduce ? undefined : { opacity: 0, y: -6 }}
-              transition={{ duration: reduce ? 0 : DURATION.quick, ease }}
-            >
-              {view === "overview" && (
-                <div>
-                  <dl className="grid gap-px overflow-hidden rounded-2xl border border-border/80 bg-border/80 sm:grid-cols-2">
-                    {stage.condition.map((row) => (
-                      <div key={row.label} className="bg-white px-4 py-3.5">
-                        <dt className="text-[10px] uppercase tracking-[0.18em] text-deep/55">{row.label}</dt>
-                        <dd className="mt-1 text-[14px] text-ink">{row.value}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                    <div className="flex items-start gap-3 rounded-2xl bg-mist px-4 py-3.5">
-                      <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                      <div>
-                        <p className="text-[10px] uppercase tracking-[0.18em] text-deep/55">Warranty eligibility</p>
-                        <p className="mt-1 text-[14px] text-ink">{stage.warranty}</p>
-                      </div>
+        <div className="relative min-h-[330px] px-4 min-[375px]:px-5 pb-7 pt-5 sm:px-8" aria-live="polite">
+          <motion.div
+            key={`${view}-${life}`}
+            custom={direction}
+            variants={panel}
+            initial={reduce ? false : "incoming"}
+            animate="active"
+            transition={{ duration: reduce ? 0 : DURATION.quick, ease }}
+          >
+            {view === "overview" && (
+              <div>
+                <dl className="grid gap-px overflow-hidden rounded-2xl border border-border/80 bg-border/80 sm:grid-cols-2">
+                  {stage.condition.map((row) => (
+                    <div key={row.label} className="bg-white px-4 py-3.5">
+                      <dt className="text-[10px] uppercase tracking-[0.18em] text-deep/55">{row.label}</dt>
+                      <dd className="mt-1 text-[14px] text-ink">{row.value}</dd>
                     </div>
-                    <div className="flex items-start gap-3 rounded-2xl bg-mist px-4 py-3.5">
-                      <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                      <div>
-                        <p className="text-[10px] uppercase tracking-[0.18em] text-deep/55">Lifecycle status</p>
-                        <p className="mt-1 text-[14px] text-ink">{stage.status.split(" · ")[1]}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {view === "history" && (
-                <ol className="relative space-y-4 border-l border-border pl-6">
-                  {events.map((event, i) => {
-                    const latest = i === events.length - 1;
-                    return (
-                      <li key={event.id} className="relative">
-                        <span
-                          aria-hidden="true"
-                          className={cn(
-                            "absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-white",
-                            latest ? "bg-primary" : "bg-deep/30"
-                          )}
-                        />
-                        <p className="flex items-center gap-2 text-[14px] font-medium text-ink">
-                          <Wrench className="h-3.5 w-3.5 text-deep/45" aria-hidden="true" />
-                          {event.title}
-                        </p>
-                        <p className="mt-0.5 text-[13px] leading-relaxed text-deep/65">{event.detail}</p>
-                      </li>
-                    );
-                  })}
-                </ol>
-              )}
-
-              {view === "wipe" && (
-                <div>
-                  <div className="flex items-center gap-3 rounded-2xl bg-mist p-4 sm:gap-4 sm:p-5">
-                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-primary">
-                      <Eraser className="h-5 w-5" aria-hidden="true" />
-                    </span>
+                  ))}
+                </dl>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div className="flex items-start gap-3 rounded-2xl bg-mist px-4 py-3.5">
+                    <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                     <div>
-                      <p className="font-display text-3xl font-medium tracking-[-0.04em] text-ink">
-                        {wipeCount}
-                      </p>
-                      <p className="text-[12px] text-deep/65">
-                        Certified Data Wipe record{wipeCount === 1 ? "" : "s"} on this passport
-                      </p>
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-deep/55">Warranty eligibility</p>
+                      <p className="mt-1 text-[14px] text-ink">{stage.warranty}</p>
                     </div>
                   </div>
-                  {wipeEvents.length > 0 ? (
-                    <ul className="mt-4 space-y-2">
-                      {wipeEvents.map((event) => (
-                        <li key={event.id} className="flex items-start gap-2.5 text-[13.5px] text-ink">
-                          <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
-                          {event.wipeLabel}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="mt-4 text-[13.5px] text-deep/65">
-                      No wipe record yet. The first cycle begins with a new device.
-                    </p>
-                  )}
-                  <p className="mt-5 text-[12.5px] leading-relaxed text-deep/65">{WIPE_NOTE}</p>
+                  <div className="flex items-start gap-3 rounded-2xl bg-mist px-4 py-3.5">
+                    <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                    <div>
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-deep/55">Lifecycle status</p>
+                      <p className="mt-1 text-[14px] text-ink">{stage.status.split(" · ")[1]}</p>
+                    </div>
+                  </div>
                 </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
+              </div>
+            )}
+
+            {view === "history" && (
+              <ol className="relative space-y-4 border-l border-border pl-6">
+                {events.map((event, i) => {
+                  const latest = i === events.length - 1;
+                  return (
+                    <li key={event.id} className="relative">
+                      <span
+                        aria-hidden="true"
+                        className={cn(
+                          "absolute -left-[29px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-white",
+                          latest ? "bg-primary" : "bg-deep/30"
+                        )}
+                      />
+                      <p className="flex items-center gap-2 text-[14px] font-medium text-ink">
+                        <Wrench className="h-3.5 w-3.5 text-deep/45" aria-hidden="true" />
+                        {event.title}
+                      </p>
+                      <p className="mt-0.5 text-[13px] leading-relaxed text-deep/65">{event.detail}</p>
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
+
+            {view === "wipe" && (
+              <div>
+                <div className="flex items-center gap-3 rounded-2xl bg-mist p-4 sm:gap-4 sm:p-5">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white text-primary">
+                    <Eraser className="h-5 w-5" aria-hidden="true" />
+                  </span>
+                  <div>
+                    <p className="font-display text-3xl font-medium tracking-[-0.04em] text-ink">
+                      {wipeCount}
+                    </p>
+                    <p className="text-[12px] text-deep/65">
+                      Certified Data Wipe record{wipeCount === 1 ? "" : "s"} on this passport
+                    </p>
+                  </div>
+                </div>
+                {wipeEvents.length > 0 ? (
+                  <ul className="mt-4 space-y-2">
+                    {wipeEvents.map((event) => (
+                      <li key={event.id} className="flex items-start gap-2.5 text-[13.5px] text-ink">
+                        <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                        {event.wipeLabel}
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className="mt-4 text-[13.5px] text-deep/65">
+                    No wipe record yet. The first cycle begins with a new device.
+                  </p>
+                )}
+                <p className="mt-5 text-[12.5px] leading-relaxed text-deep/65">{WIPE_NOTE}</p>
+              </div>
+            )}
+          </motion.div>
         </div>
 
         <p className="relative border-t border-border/80 bg-mist/70 px-5 py-3.5 text-[11px] leading-relaxed text-deep/60 sm:px-8">

@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowUpRight, RotateCcw, ShieldAlert } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { DURATION, EASE } from "@/components/motion/tokens";
+import { ArrowUpRight, Check, RotateCcw, ShieldAlert } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { sosDisclosure } from "@/data/zodiac";
@@ -14,6 +16,8 @@ export default function Sos() {
     "A local interaction demo of the SafeKid SOS concept. No emergency alert is sent."
   );
 
+  const reduce = useReducedMotion();
+  const completed = useRef(false);
   const [progress, setProgress] = useState(0);
   const [holding, setHolding] = useState(false);
   const [acknowledged, setAcknowledged] = useState(false);
@@ -38,8 +42,17 @@ export default function Sos() {
     if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate(pattern);
   }
 
+  function finish() {
+    if (completed.current) return;
+    completed.current = true;
+    stop();
+    setProgress(1);
+    setAcknowledged(true);
+    haptic([40, 60, 40]);
+  }
+
   function begin() {
-    if (acknowledged) return;
+    if (completed.current || frame.current !== null) return;
     haptic(15);
     setHolding(true);
     startedAt.current = performance.now();
@@ -47,14 +60,11 @@ export default function Sos() {
     const tick = (now: number) => {
       const elapsed = now - startedAt.current;
       const next = Math.min(1, elapsed / HOLD_DURATION);
-      setProgress(next);
       if (next >= 1) {
-        setHolding(false);
-        setAcknowledged(true);
-        haptic([40, 60, 40]);
-        frame.current = null;
+        finish();
         return;
       }
+      if (!reduce) setProgress(next);
       frame.current = requestAnimationFrame(tick);
     };
 
@@ -63,11 +73,12 @@ export default function Sos() {
 
   function cancel() {
     stop();
-    if (!acknowledged) setProgress(0);
+    if (!completed.current) setProgress(0);
   }
 
   function reset() {
     stop();
+    completed.current = false;
     setAcknowledged(false);
     setProgress(0);
   }
@@ -167,22 +178,30 @@ export default function Sos() {
                     onPointerUp={cancel}
                     onPointerLeave={cancel}
                     onPointerCancel={cancel}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        setAcknowledged(true);
-                        setProgress(1);
-                      }
+                    onBlur={cancel}
+                    onClick={(event) => {
+                      if (event.detail === 0) finish();
                     }}
-                    className="absolute inset-0 m-auto flex h-[180px] w-[180px] touch-none flex-col items-center justify-center gap-1.5 rounded-full bg-primary text-primary-foreground shadow-[0_30px_80px_-30px_hsl(var(--primary)/0.8)] transition-all duration-300 hover:scale-[1.03] active:scale-[0.95] sm:h-[204px] sm:w-[204px]"
+                    className="absolute inset-0 m-auto flex h-[180px] w-[180px] touch-none flex-col items-center justify-center gap-1.5 rounded-full bg-primary text-primary-foreground shadow-[0_30px_80px_-30px_hsl(var(--primary)/0.8)] transition-all duration-300 motion-safe:hover:scale-[1.03] motion-safe:active:scale-[0.95] sm:h-[204px] sm:w-[204px]"
+
                     aria-label="Press and hold to preview the SOS demonstration"
                   >
                     <span className="text-[10px] font-semibold uppercase tracking-[0.24em] opacity-70">
                       Hold
                     </span>
-                    <span className="font-display text-[34px] font-bold tracking-[-0.04em]">
-                      SOS
-                    </span>
+                    <AnimatePresence initial={false} mode="wait">
+                      <motion.span
+                        key={acknowledged ? "done" : "sos"}
+                        className="grid h-11 place-items-center font-display text-[34px] font-bold leading-none tracking-[-0.04em]"
+                        initial={reduce ? false : { opacity: 0, scale: 0.85 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: reduce ? 0 : 0.16, ease: EASE }}
+                        aria-hidden="true"
+                      >
+                        {acknowledged ? <Check size={35} /> : "SOS"}
+                      </motion.span>
+                    </AnimatePresence>
                     <span className="text-[9px] uppercase tracking-[0.2em] opacity-60">
                       Demo only
                     </span>
@@ -202,14 +221,17 @@ export default function Sos() {
                         : "Hold the button to preview the interaction."}
                   </p>
                   {acknowledged && (
-                    <button
+                    <motion.button
                       type="button"
                       onClick={reset}
+                      initial={reduce ? false : { opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
                       className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-[11px] text-white/70 transition-colors hover:border-primary/50 hover:text-white"
                     >
                       <RotateCcw className="h-3 w-3" aria-hidden="true" />
                       Reset demo
-                    </button>
+                    </motion.button>
                   )}
                 </div>
               </div>

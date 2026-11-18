@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { MotionConfig } from "motion/react";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { RouteErrorBoundary } from "./components/error-boundary/route-error-boundary";
 import { ShoppingBagProvider } from "./components/shop/ShoppingBagProvider";
@@ -11,6 +12,7 @@ import { routers } from "./router";
 const router = createBrowserRouter([
   {
     errorElement: <RouteErrorBoundary />,
+    HydrateFallback: PageLoader,
     element: <RootShell />,
     children: routers,
   },
@@ -45,7 +47,11 @@ function RootShell() {
 }
 
 const App = () => {
-  return <RouterProvider router={router} />;
+  return (
+    <MotionConfig reducedMotion="user">
+      <RouterProvider router={router} />
+    </MotionConfig>
+  );
 };
 
 export default App;

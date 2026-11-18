@@ -1,10 +1,14 @@
-import { Link, useParams } from "react-router-dom";
-import { AnimatePresence, motion } from "motion/react";
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate, useParams, useViewTransitionState } from "react-router-dom";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, Maximize2 } from "lucide-react";
 import { AddToBag } from "@/components/shop/AddToBag";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Reveal } from "@/components/site/Reveal";
 import { TiltCard } from "@/components/motion/TiltCard";
+import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { DURATION, EASE } from "@/components/motion/tokens";
 import NotFound from "@/pages/NotFound";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { conceptCapabilities, conceptNote, zodiacProducts } from "@/data/zodiac";
@@ -27,10 +31,30 @@ const PILLARS = [
   },
 ];
 
+const artwork = {
+  incoming: (direction: number) => ({ opacity: 0, scale: 0.97, x: direction * 28 }),
+  active: { opacity: 1, scale: 1, x: 0 },
+  outgoing: (direction: number) => ({ opacity: 0, scale: 0.98, x: direction * -22 }),
+};
+
 export default function Product() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const reduce = useReducedMotion();
+  const sharedFromCollection = useViewTransitionState("/zodiac");
   const index = zodiacProducts.findIndex((item) => item.id === id);
   const product = index >= 0 ? zodiacProducts[index] : null;
+  const previousIndex = useRef(index);
+  const recentSwipe = useRef(0);
+  const [zoomed, setZoomed] = useState(false);
+  const total = zodiacProducts.length;
+  const forward = (index - previousIndex.current + total) % total;
+  const direction = forward > total / 2 ? -1 : 1;
+
+  useEffect(() => {
+    previousIndex.current = index;
+    setZoomed(false);
+  }, [index]);
 
   usePageTitle(product ? `${product.detailTitle} | SafeKid` : "Edition not found | SafeKid");
 
@@ -75,24 +99,57 @@ export default function Product() {
                   {product.animal.charAt(0)}
                 </span>
 
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.img
-                    key={product.id}
-                    src={product.image}
-                    alt={`SafeKid smartwatch concept in the ${product.label} edition`}
-                    initial={{ opacity: 0, scale: 0.96, x: 30 }}
-                    animate={{ opacity: 1, scale: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.98, x: -24 }}
-                    transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_44px_70px_rgba(16,42,56,0.16)]"
-                  />
-                </AnimatePresence>
+                <Dialog open={zoomed} onOpenChange={setZoomed}>
+                  <DialogTrigger asChild>
+                    <motion.button
+                      type="button"
+                      aria-label={`Enlarge ${product.label} edition image`}
+                      className="absolute inset-0 h-full w-full cursor-zoom-in rounded-[32px] touch-pan-y touch-pinch-zoom focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      onPanEnd={(_, { offset }) => {
+                        if (Math.abs(offset.x) < 48 || Math.abs(offset.x) < 1.4 * Math.abs(offset.y)) return;
+                        recentSwipe.current = performance.now();
+                        navigate(`/product/${offset.x < 0 ? next.id : previous.id}`, { state: { keepProductScroll: true } });
+                      }}
+                      onClick={(event) => {
+                        if (event.detail > 0 && performance.now() - recentSwipe.current < 400 && recentSwipe.current > 0) {
+                          event.preventDefault();
+                        }
+                      }}
+                    >
+                      <AnimatePresence mode="wait" initial={false} custom={direction}>
+                        <motion.img
+                          key={product.id}
+                          custom={direction}
+                          src={product.image}
+                          alt={`SafeKid smartwatch concept in the ${product.label} edition`}
+                          draggable={false}
+                          style={sharedFromCollection ? { viewTransitionName: `edition-${product.id}` } : undefined}
+                          variants={artwork}
+                          initial={reduce || sharedFromCollection ? false : "incoming"}
+                          animate="active"
+                          exit={reduce || sharedFromCollection ? undefined : "outgoing"}
+                          transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+                          className="pointer-events-none absolute inset-0 h-full w-full object-contain drop-shadow-[0_44px_70px_rgba(16,42,56,0.16)]"
+                        />
+                      </AnimatePresence>
+                      <span className="absolute right-2 top-2 inline-flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-white text-deep shadow-sm sm:right-4 sm:top-4" aria-hidden="true">
+                        <Maximize2 className="h-4 w-4" />
+                      </span>
+                    </motion.button>
+                  </DialogTrigger>
+                  <DialogContent className="product-image-dialog max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-[700px] gap-1 overflow-auto rounded-[26px] bg-mist p-5 sm:p-7">
+                    <DialogTitle>{product.label} edition</DialogTitle>
+                    <DialogDescription>SafeKid smartwatch concept</DialogDescription>
+                    <img src={product.image} alt={`Enlarged view of the ${product.label} edition`} className="mx-auto max-h-[68dvh] w-full object-contain" />
+                  </DialogContent>
+                </Dialog>
 
                 <div className="absolute bottom-1 left-1/2 flex -translate-x-1/2 items-center gap-2">
                   <Link
                     to={`/product/${previous.id}`}
+                    state={{ keepProductScroll: true }}
                     aria-label={`Previous edition: ${previous.label}`}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/10 bg-white/80 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-white/80 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
                   >
                     <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                   </Link>
@@ -101,8 +158,9 @@ export default function Product() {
                   </span>
                   <Link
                     to={`/product/${next.id}`}
+                    state={{ keepProductScroll: true }}
                     aria-label={`Next edition: ${next.label}`}
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/10 bg-white/80 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-white/80 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
                   >
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
@@ -277,40 +335,48 @@ export default function Product() {
             </Link>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {related.map((item, itemIndex) => (
-              <Reveal key={item.id} variant="soft" delay={itemIndex * 0.05}>
-                <TiltCard className="h-full rounded-[24px]">
-                <Link
-                  to={`/product/${item.id}`}
-                  className="group flex h-full flex-col rounded-[24px] border border-ink/[0.07] bg-white p-3 transition-colors duration-500 hover:border-primary/25"
-                >
-                  <span className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[18px] bg-mist">
-                    <img
-                      src={item.image}
-                      alt=""
-                      loading="lazy"
-                      width={900}
-                      height={900}
-                      className="relative h-[88%] w-[88%] object-contain transition-transform duration-700 group-hover:scale-[1.04]"
-                    />
-                  </span>
-                  <span className="flex items-end justify-between gap-2 px-2 pb-1 pt-3.5">
-                    <span>
-                      <span className="block text-[9px] uppercase tracking-[0.18em] text-primary">
-                        {item.animal}
-                      </span>
-                      <span className="mt-1 block font-display text-[15px] font-medium text-ink">
-                        {item.label} edition
-                      </span>
-                    </span>
-                    <ArrowUpRight className="h-4 w-4 text-deep/40 transition-all duration-300 group-hover:text-primary" aria-hidden="true" />
-                  </span>
-                </Link>
-                </TiltCard>
-              </Reveal>
-            ))}
-          </div>
+          <Carousel className="mt-7" aria-label="Related editions" opts={{ align: "start" }}>
+            <div className="mb-3 flex justify-end gap-1.5 lg:hidden">
+              <CarouselPrevious aria-label="Previous related editions" className="static h-11 w-11 translate-y-0 bg-white text-deep" />
+              <CarouselNext aria-label="Next related editions" className="static h-11 w-11 translate-y-0 bg-white text-deep" />
+            </div>
+            <CarouselContent>
+              {related.map((item, itemIndex) => (
+                <CarouselItem key={item.id} className="basis-[76%] sm:basis-1/2 lg:basis-1/4">
+                  <Reveal key={item.id} variant="soft" delay={itemIndex * 0.05}>
+                    <TiltCard className="h-full rounded-[24px]">
+                      <Link
+                        to={`/product/${item.id}`}
+                        className="group flex h-full flex-col rounded-[24px] border border-ink/[0.07] bg-white p-3 transition-colors duration-500 hover:border-primary/25"
+                      >
+                        <span className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[18px] bg-mist">
+                          <img
+                            src={item.image}
+                            alt=""
+                            loading="lazy"
+                            width={900}
+                            height={900}
+                            className="relative h-[88%] w-[88%] object-contain transition-transform duration-700 group-hover:scale-[1.04]"
+                          />
+                        </span>
+                        <span className="flex items-end justify-between gap-2 px-2 pb-1 pt-3.5">
+                          <span>
+                            <span className="block text-[9px] uppercase tracking-[0.18em] text-primary">
+                              {item.animal}
+                            </span>
+                            <span className="mt-1 block font-display text-[15px] font-medium text-ink">
+                              {item.label} edition
+                            </span>
+                          </span>
+                          <ArrowUpRight className="h-4 w-4 text-deep/40 transition-all duration-300 group-hover:text-primary" aria-hidden="true" />
+                        </span>
+                      </Link>
+                    </TiltCard>
+                  </Reveal>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
 
           <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-ink/10 pt-6">
             <Link

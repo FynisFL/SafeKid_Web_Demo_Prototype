@@ -11,11 +11,14 @@ const pageEntries: PluginOption = {
     const index = bundle["index.html"];
     if (!dir || index?.type !== "asset") return;
 
+    const html = typeof index.source === "string" ? index.source : new TextDecoder().decode(index.source);
+    await writeFile(path.join(dir, "404.html"), html.replace("<head>", '<head><meta name="robots" content="noindex" />'));
+
     const editionImages = await readdir(path.join(__dirname, "src/assets/safekid/editions"));
     const productRoutes = editionImages
       .filter((file) => /^[a-z]+\.webp$/.test(file))
       .map((file) => `product/${path.basename(file, ".webp")}`);
-    for (const route of ["app", "watch-passport", "zodiac", "support", "contact", "about", "chat", "s-f-ai", "sos", "cart", "checkout", ...productRoutes]) {
+    for (const route of ["app", "watch-passport", "watchpassport", "Watchpassport", "WatchPassport", "zodiac", "support", "contact", "about", "chat", "s-f-ai", "sos", "cart", "checkout", ...productRoutes]) {
       const pageDirectory = path.join(dir, route);
       await mkdir(pageDirectory, { recursive: true });
       await writeFile(path.join(pageDirectory, "index.html"), index.source);

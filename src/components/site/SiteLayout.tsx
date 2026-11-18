@@ -1,13 +1,16 @@
-import { useEffect, type ReactNode } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useRef, type ReactNode } from "react";
+import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
 import { motion, useReducedMotion } from "motion/react";
+import { DURATION, EASE } from "@/components/motion/tokens";
 import { ScrollProgress } from "@/components/motion/ScrollProgress";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const navigationType = useNavigationType();
+  const previousPath = useRef("");
   const reduce = useReducedMotion();
 
   // The original site used hash routing (#/zodiac). Keep those links working.
@@ -18,20 +21,24 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   }, [location.hash, navigate]);
 
   useEffect(() => {
-    const hash = location.hash;
+    const { hash, pathname, state } = location;
+    const movedBetweenEditions = previousPath.current.startsWith("/product/") &&
+      pathname.startsWith("/product/") && previousPath.current !== pathname;
+    previousPath.current = pathname;
 
     if (hash && !hash.startsWith("#/")) {
       const target = document.getElementById(hash.slice(1));
       if (target) {
         const timer = window.setTimeout(() => {
-          target.scrollIntoView({ behavior: "smooth", block: "start" });
+          target.scrollIntoView({ behavior: reduce ? "instant" : "smooth", block: "start" });
         }, 90);
         return () => window.clearTimeout(timer);
       }
     }
 
-    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
-  }, [location.pathname, location.hash]);
+    if (movedBetweenEditions && (state?.keepProductScroll || navigationType === "POP")) return;
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [location, navigationType, reduce]);
 
   return (
     <div className="relative flex min-h-screen flex-col bg-background">
@@ -43,9 +50,10 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <motion.main
         id="main"
         className="flex-1"
-        initial={reduce ? false : { opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+        tabIndex={-1}
+        initial={reduce ? false : { opacity: 0.88 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
       >
         {children}
       </motion.main>

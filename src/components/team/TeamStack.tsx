@@ -1,13 +1,13 @@
-import { useRef } from "react";
+import { useId, useRef, useState } from "react";
 import {
-  motion,
+  AnimatePresence, motion,
   useReducedMotion,
   useScroll,
   useSpring,
   useTransform,
   type Variants,
 } from "motion/react";
-import { Stagger } from "@/components/motion/Stagger";
+import { ChevronDown } from "lucide-react";
 import { SplitText, useRevealOnView } from "./kinetic";
 import { JourneyPill, RoleLabel } from "./shared";
 import type { Member } from "./types";
@@ -27,6 +27,8 @@ const itemVariants: Variants = {
 
 function StackProfile({ member, index, reduce }: { member: Member; index: number; reduce: boolean }) {
   const { ref, progress } = useRevealOnView<HTMLLIElement>(reduce);
+  const [expanded, setExpanded] = useState(false);
+  const detailsId = useId();
   const clip = useTransform(progress, [0, 0.7], [FROM[index % FROM.length], FULL]);
   const scale = useTransform(progress, [0, 1], [1.24, 1.08]);
   const branch = useTransform(progress, [0, 0.35], [0, 1]);
@@ -80,20 +82,46 @@ function StackProfile({ member, index, reduce }: { member: Member; index: number
           >
             {member.summary}
           </motion.p>
-          <Stagger className="mt-4" gap={0.06}>
-            <ul className="space-y-1.5">
-              {member.responsibilities.map((item) => (
-                <motion.li
-                  key={item}
-                  variants={itemVariants}
-                  className="flex gap-2.5 text-[13.5px] leading-relaxed text-deep/80"
+          <button
+            type="button"
+            aria-expanded={expanded}
+            aria-controls={detailsId}
+            aria-label={`What ${member.name} works on`}
+            onClick={() => setExpanded((current) => !current)}
+            className="mt-3 inline-flex min-h-11 items-center gap-2 rounded-full border border-ink/15 bg-white px-4 text-xs font-semibold text-deep transition-colors hover:border-primary"
+          >
+            What they work on
+            <ChevronDown size={15} aria-hidden="true" className={expanded ? "rotate-180 motion-safe:transition-transform" : "motion-safe:transition-transform"} />
+          </button>
+          <div id={detailsId}>
+            <AnimatePresence initial={false}>
+              {expanded && (
+                <motion.div
+                  initial={reduce ? false : { height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: reduce ? 0 : 0.3, ease }}
+                  className="overflow-hidden"
                 >
-                  <span aria-hidden="true" className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-primary" />
-                  {item}
-                </motion.li>
-              ))}
-            </ul>
-          </Stagger>
+                  <ul className="space-y-1.5 pt-3">
+                    {member.responsibilities.map((item, i) => (
+                      <motion.li
+                        key={item}
+                        variants={itemVariants}
+                        initial={reduce ? false : "hidden"}
+                        animate="show"
+                        transition={{ delay: reduce ? 0 : i * 0.035 }}
+                        className="flex gap-2.5 text-[13.5px] leading-relaxed text-deep/80"
+                      >
+                        <span aria-hidden="true" className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-primary" />
+                        {item}
+                      </motion.li>
+                    ))}
+                  </ul>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </li>

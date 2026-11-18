@@ -5,7 +5,7 @@ import { motion, useInView, useReducedMotion } from "motion/react";
 import { Link } from "react-router-dom";
 
 import { SignalStage } from "@/components/app-experience/SignalStage";
-import { scenes } from "@/components/app-experience/scenes";
+import { scenes, signalArrival } from "@/components/app-experience/scenes";
 import { DURATION, EASE } from "@/components/motion/tokens";
 import { Reveal } from "@/components/site/Reveal";
 import "./parent-app-section.css";
@@ -80,9 +80,9 @@ export function ParentAppSection() {
           <div className="home-parent-app__event" aria-live="polite" aria-atomic="true">
             <motion.div
               key={scene.id}
-              initial={reduce ? false : { opacity: 0.45, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+              initial={reduce || !interaction.replay ? false : { opacity: 0.66 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: reduce ? 0 : signalArrival(false), duration: reduce ? 0 : DURATION.quick, ease: EASE }}
             >
               <p className="text-sm font-semibold text-white">{scene.title}</p>
               <p className="mt-1 text-[13px] leading-relaxed text-white/70">{scene.description}</p>

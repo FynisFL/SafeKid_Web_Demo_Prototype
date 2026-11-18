@@ -57,8 +57,8 @@ function BagItems({ checkout }: { checkout: boolean }) {
   return (
     <section className="min-w-0 rounded-[28px] border border-border bg-white p-4 sm:p-7" aria-labelledby="bag-items-title">
       <h2 id="bag-items-title" className="shop-card-title">{checkout ? "Your items" : "In your bag"}</h2>
-      <ul className="mt-4 divide-y divide-border">
-        <AnimatePresence initial={false}>
+      <ul className="relative mt-4 divide-y divide-border">
+        <AnimatePresence initial={false} mode={reduce ? "sync" : "popLayout"}>
           {lines.map(({ id, quantity }) => {
             const product = zodiacProducts.find((item) => item.id === id);
             if (!product) return null;
@@ -188,43 +188,45 @@ export default function ShoppingBag({ checkout = false }: { checkout?: boolean }
 
   return (
     <SiteLayout>
-      <AnimatePresence mode="wait">
-        <motion.section
-          key={title}
-          data-shop-step={checkout ? "checkout" : "bag"}
-          className="bg-mist pb-20 pt-28 sm:pb-28 lg:pt-36"
-          initial={reduce ? false : { opacity: 0, y: DISTANCE.md }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={reduce ? undefined : { opacity: 0, y: -DISTANCE.sm }}
-          transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
-        >
-          <div className="shell">
-            <PurchaseSteps checkout={checkout} />
-            <h1 className="display display-lg">{title}</h1>
-            <p className="lede mt-4 max-w-[48ch]">
-              {checkout ? "Review your total and choose a payment method to preview." : "Review your chosen editions before previewing checkout."}
-            </p>
-            {count === 0 ? (
-              <div className="mt-8 rounded-[28px] border border-border bg-white px-5 py-12 text-center">
-                <BagIcon className="mx-auto mb-4 h-7 w-7 text-deep" aria-hidden="true" />
-                <h2 className="display display-md">Your bag is empty</h2>
-                <Button asChild variant="outline" className="shop-flow-btn mt-6"><Link to="/zodiac">Explore the collection</Link></Button>
-              </div>
-            ) : (
-              <div className="mt-8 grid items-start gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-                <div className="grid min-w-0 gap-5">
-                  {checkout && <PaymentPreview selected={method} onSelect={setMethod} />}
-                  <BagItems checkout={checkout} />
+      <div className="overflow-x-clip">
+        <AnimatePresence mode="wait">
+          <motion.section
+            key={title}
+            data-shop-step={checkout ? "checkout" : "bag"}
+            className="bg-mist pb-20 pt-28 sm:pb-28 lg:pt-36"
+            initial={reduce ? false : { opacity: 0.65, x: checkout ? DISTANCE.sm : -DISTANCE.sm }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={reduce ? undefined : { opacity: 0.65, x: checkout ? DISTANCE.sm : -DISTANCE.sm }}
+            transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+          >
+            <div className="shell">
+              <PurchaseSteps checkout={checkout} />
+              <h1 className="display display-lg">{title}</h1>
+              <p className="lede mt-4 max-w-[48ch]">
+                {checkout ? "Review your total and choose a payment method to preview." : "Review your chosen editions before previewing checkout."}
+              </p>
+              {count === 0 ? (
+                <div className="mt-8 rounded-[28px] border border-border bg-white px-5 py-12 text-center">
+                  <BagIcon className="mx-auto mb-4 h-7 w-7 text-deep" aria-hidden="true" />
+                  <h2 className="display display-md">Your bag is empty</h2>
+                  <Button asChild variant="outline" className="shop-flow-btn mt-6"><Link to="/zodiac">Explore the collection</Link></Button>
                 </div>
-                <BagSummary checkout={checkout} method={method} subtotal={subtotal} total={total} />
-              </div>
-            )}
-            <Link to={checkout ? "/cart" : "/zodiac"} className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-deep hover:text-ink">
-              <ArrowLeft size={16} aria-hidden="true" /> {checkout ? "Back to bag" : "Browse the collection"}
-            </Link>
-          </div>
-        </motion.section>
-      </AnimatePresence>
+              ) : (
+                <div className="mt-8 grid items-start gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+                  <div className="grid min-w-0 gap-5">
+                    {checkout && <PaymentPreview selected={method} onSelect={setMethod} />}
+                    <BagItems checkout={checkout} />
+                  </div>
+                  <BagSummary checkout={checkout} method={method} subtotal={subtotal} total={total} />
+                </div>
+              )}
+              <Link to={checkout ? "/cart" : "/zodiac"} className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-deep hover:text-ink">
+                <ArrowLeft size={16} aria-hidden="true" /> {checkout ? "Back to bag" : "Browse the collection"}
+              </Link>
+            </div>
+          </motion.section>
+        </AnimatePresence>
+      </div>
       {count > 0 && <div className="h-[calc(5rem+env(safe-area-inset-bottom))] lg:hidden" aria-hidden="true" />}
       {count > 0 && createPortal(
         <motion.aside

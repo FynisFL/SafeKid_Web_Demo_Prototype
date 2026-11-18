@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   AnimatePresence,
@@ -13,6 +13,8 @@ import {
 import { ArrowUpRight, Check, MapPin, Phone } from "lucide-react";
 import heroWatch from "@/assets/safekid/hero-watch.webp";
 import { sosDisclosure } from "@/data/zodiac";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
+import { DURATION, EASE } from "@/components/motion/tokens";
 import { cn } from "@/lib/utils";
 
 type Chapter = {
@@ -181,14 +183,14 @@ function ParentApp({ chapter, compact = false }: { chapter: number; compact?: bo
       <MiniMap chapter={chapter} height={compact ? 146 : 164} />
 
       <div className="mt-2.5 flex items-center gap-2.5 rounded-[16px] border border-ink/[0.07] px-3 py-2.5">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary font-display text-[12px] font-semibold text-primary-foreground">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary font-display text-[12px] font-semibold text-primary-foreground">
           S
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-[12px] font-medium text-ink">Little explorer</p>
-          <p className="truncate text-[10px] text-muted-foreground">{CHAPTERS[chapter].appState}</p>
+          <p className="break-words text-[12px] font-medium text-ink">Little explorer</p>
+          <p className="break-words text-[10px] text-muted-foreground">{CHAPTERS[chapter].appState}</p>
         </div>
-        <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
+        <span className="hidden h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground sm:flex">
           <Phone className="h-3 w-3" aria-hidden="true" />
         </span>
       </div>
@@ -246,21 +248,23 @@ function WatchPanel({ chapter, className }: { chapter: number; className?: strin
         draggable="false"
         loading="lazy"
       />
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={chapter}
-          initial={{ opacity: 0, y: 8, scale: 0.97 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -8, scale: 0.98 }}
-          transition={{ duration: 0.4, ease }}
-          className="absolute left-1/2 top-[15%] flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-white/15 bg-night/80 px-3 py-1.5 backdrop-blur"
-        >
-          <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
-          <span className="text-[9.5px] font-medium uppercase tracking-[0.14em] text-white/85">
-            {CHAPTERS[chapter].watchState}
-          </span>
-        </motion.div>
-      </AnimatePresence>
+      <div className="pointer-events-none absolute inset-x-0 top-[15%] flex justify-center">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={chapter}
+            initial={{ opacity: 0, y: 8, scale: 0.97 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            transition={{ duration: 0.4, ease }}
+            className="flex max-w-full items-center gap-1.5 rounded-full border border-white/15 bg-night/90 px-2 py-1.5 text-center backdrop-blur sm:gap-2 sm:px-3"
+          >
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary" aria-hidden="true" />
+            <span className="text-[9px] font-medium uppercase tracking-[0.09em] text-white/85 sm:text-[9.5px] sm:tracking-[0.14em]">
+              {CHAPTERS[chapter].watchState}
+            </span>
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
@@ -401,9 +405,9 @@ function StaticStory() {
   );
 }
 
-function StoryBeat({ chapter, index }: { chapter: Chapter; index: number }) {
+function StoryBeat({ chapter, index, active, direction }: { chapter: Chapter; index: number; active: boolean; direction: number }) {
   return (
-    <article className="relative border-t border-white/10 pt-10">
+    <article className="relative border-t border-white/10 pt-6">
       <div className="flex items-center justify-between gap-4">
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
           {chapter.kicker}
@@ -414,17 +418,76 @@ function StoryBeat({ chapter, index }: { chapter: Chapter; index: number }) {
         {chapter.title}
       </h3>
       <p className="mt-3 max-w-[40ch] text-[13.5px] leading-relaxed text-white/55">{chapter.body}</p>
-      <div className="mt-7 flex flex-col items-center">
-        <WatchPanel chapter={index} className="h-[236px] w-[190px] shrink-0" />
-        <div className="relative mt-4 w-full max-w-[340px]">
+      <div className="mt-7 grid min-w-0 items-center gap-3 min-[390px]:grid-cols-[minmax(0,0.40fr)_minmax(0,0.60fr)] sm:mx-auto sm:max-w-[590px] sm:gap-5">
+        <motion.div initial={false} animate={{ x: active ? 0 : 12 * direction }} transition={{ duration: DURATION.quick, ease: EASE }}>
+          <WatchPanel chapter={index} className="mx-auto h-[clamp(154px,48vw,260px)] w-full max-w-[240px]" />
+        </motion.div>
+        <motion.div initial={false} animate={{ x: active ? 0 : 18 * direction }} transition={{ duration: DURATION.base, ease: EASE }} className="relative mx-auto w-full min-w-0 max-w-[310px]">
           <span
             aria-hidden="true"
-            className="absolute -top-4 left-1/2 h-4 w-px -translate-x-1/2 bg-gradient-to-b from-transparent to-primary/50"
+            className="absolute -left-2 hidden min-[390px]:block top-1/2 h-px w-2 bg-primary/55 sm:-left-5 sm:w-5"
           />
           <ParentApp chapter={index} compact />
-        </div>
+        </motion.div>
       </div>
     </article>
+  );
+}
+
+function StoryCarousel() {
+  const [api, setApi] = useState<CarouselApi>();
+  const [selection, setSelection] = useState({ index: 0, direction: 1 });
+
+  useEffect(() => {
+    if (!api) return;
+    const update = () => {
+      const index = api.selectedScrollSnap();
+      setSelection((current) => current.index === index ? current : {
+        index,
+        direction: index > current.index ? 1 : -1,
+      });
+    };
+    update();
+    api.on("select", update).on("reInit", update);
+    return () => { api.off("select", update).off("reInit", update); };
+  }, [api]);
+
+  const buttonClass = "static h-11 w-11 translate-y-0 border-white/25 bg-white/10 text-white hover:bg-white hover:text-ink";
+
+  return (
+    <Carousel setApi={setApi} opts={{ watchFocus: false }} aria-label="SafeKid story chapters" className="mt-7">
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <div className="flex min-w-0 gap-1">
+          {CHAPTERS.map((chapter, index) => (
+            <button
+              key={chapter.id}
+              type="button"
+              aria-label={`Chapter ${index + 1}: ${chapter.title}`}
+              aria-current={selection.index === index ? "step" : undefined}
+              onClick={() => api?.scrollTo(index)}
+              className={cn(
+                "h-11 w-9 rounded-full text-[11px] font-semibold tabular-nums sm:w-11",
+                selection.index === index ? "bg-primary text-ink" : "bg-white/10 text-white"
+              )}
+            >
+              {String(index + 1).padStart(2, "0")}
+            </button>
+          ))}
+        </div>
+        <div className="flex shrink-0 gap-1">
+          <CarouselPrevious className={buttonClass} aria-label="Previous story chapter" />
+          <CarouselNext className={buttonClass} aria-label="Next story chapter" />
+        </div>
+      </div>
+      <span className="sr-only" aria-live="polite">Chapter {selection.index + 1} of {CHAPTERS.length}</span>
+      <CarouselContent>
+        {CHAPTERS.map((chapter, index) => (
+          <CarouselItem key={chapter.id} aria-hidden={index !== selection.index}>
+            <StoryBeat chapter={chapter} index={index} direction={selection.direction} active={index === selection.index} />
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+    </Carousel>
   );
 }
 
@@ -473,7 +536,7 @@ export function StorySequence() {
     <div id="story" className="lg:bg-mist">
       <motion.section
         ref={sectionRef}
-        className="relative hidden bg-night lg:block"
+        className="relative hidden bg-night lg:[@media(min-height:650px)]:block"
         style={{
           height: `${CHAPTERS.length * 100}vh`,
           borderTopLeftRadius: topRadius,
@@ -575,7 +638,7 @@ export function StorySequence() {
         </div>
       </motion.section>
 
-      <section id="story-mobile" className="bg-night pb-16 lg:hidden">
+      <section id="story-mobile" className="bg-night pb-16 lg:[@media(min-height:650px)]:hidden">
         <div className="shell pt-14">
           <p className="eyebrow eyebrow-inverse">
             <span className="eyebrow-line" />
@@ -590,11 +653,7 @@ export function StorySequence() {
             A product concept, imagined around the moments that help children grow. Four moments
             between the watch and the app.
           </p>
-          <div className="mt-10 space-y-11">
-            {CHAPTERS.map((chapter, index) => (
-              <StoryBeat key={chapter.id} chapter={chapter} index={index} />
-            ))}
-          </div>
+          <StoryCarousel />
           <p className="mt-9 text-[11px] leading-relaxed text-white/45">
             Illustrative concept. No watch is connected and no live data is shown.
           </p>

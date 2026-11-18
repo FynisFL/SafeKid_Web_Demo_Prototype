@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useViewTransitionState } from "react-router-dom";
 import {
   AnimatePresence,
   animate,
@@ -15,12 +15,14 @@ import { cn } from "@/lib/utils";
 
 type ZodiacStageProps = {
   variant?: "home" | "page";
+  ownsEditionTransition?: boolean;
+  onEditionClick?: () => void;
 };
 
 const COUNT = zodiacProducts.length;
 const DEGREES_PER_STEP = 360 / COUNT;
 
-export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
+export function ZodiacStage({ variant = "home", ownsEditionTransition = false, onEditionClick }: ZodiacStageProps) {
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   // Cumulative dial angle in degrees. Invariant: dial is congruent to index * 30 (mod 360).
@@ -62,6 +64,8 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
   // Always the latest selection, so rapid inputs never compute from a stale render.
   const indexRef = useRef(0);
   const product = zodiacProducts[index];
+  const editionPath = `/product/${product.id}`;
+  const transitioning = useViewTransitionState(editionPath);
 
   // One place that changes the selection. The image slides in `dir`, and the dial turns the
   // same way by the same number of editions, so the two can never disagree.
@@ -315,6 +319,7 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
                 <AnimatePresence custom={direction} initial={false}>
                   <motion.img
                     key={product.id}
+                    style={transitioning && ownsEditionTransition ? { viewTransitionName: `edition-${product.id}` } : undefined}
                     src={product.image}
                     alt={`SafeKid smartwatch concept in the ${product.label} edition, Vietnamese Zodiac ${product.animal}`}
                     custom={direction}
@@ -375,7 +380,9 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
                 </AnimatePresence>
               </div>
               <Link
-                to={`/product/${product.id}`}
+                to={editionPath}
+                viewTransition={variant === "page" && !reduce}
+                onClick={onEditionClick}
                 className="group inline-flex h-11 shrink-0 items-center gap-2 self-start rounded-full bg-ink px-5 text-[13px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-night btn-motion sm:self-auto"
               >
                 Explore this edition

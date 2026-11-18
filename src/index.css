@@ -342,3 +342,53 @@
     scale: 1;
   }
 }
+
+/* Route snapshots stay brief, while a selected edition can cross between pages. */
+::view-transition-group(*) {
+  animation-duration: 360ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+::view-transition-group(root),
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 220ms;
+}
+
+::view-transition-old(*),
+::view-transition-new(*) {
+  pointer-events: none;
+}
+
+:root::view-transition {
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+
+  .animate-sk-spin,
+  .animate-sk-pulse,
+  .animate-sk-ring {
+    animation: none;
+  }
+}
+
+@keyframes product-image-dialog-in {
+  from { opacity: 0; scale: 0.96; }
+  to { opacity: 1; scale: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .product-image-dialog[role="dialog"][data-state="open"] {
+    animation: 220ms cubic-bezier(0.22, 1, 0.36, 1) product-image-dialog-in both;
+  }
+
+  .product-image-dialog[role="dialog"][data-state="closed"] {
+    animation: 150ms ease-in product-image-dialog-in reverse both;
+  }
+}

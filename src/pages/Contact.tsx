@@ -1,5 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { DURATION, EASE } from "@/components/motion/tokens";
 import { ArrowUpRight, Facebook, Mail, MapPin, Phone, Send } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { PageHero } from "@/components/site/PageHero";
@@ -37,6 +39,7 @@ const DETAILS = [
 ];
 
 export default function Contact() {
+  const reduce = useReducedMotion();
   const [draftOpened, setDraftOpened] = useState(false);
   usePageTitle(
     "Contact | SafeKid",
@@ -110,7 +113,7 @@ export default function Contact() {
       <section className="bg-white py-16 sm:py-20">
         <div className="shell grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
           <Reveal variant="soft">
-            <form onSubmit={openEmailDraft} className="rounded-[28px] border border-ink/10 bg-mist/40 p-6 sm:p-8">
+            <form onSubmit={openEmailDraft} onChange={() => setDraftOpened(false)} className="rounded-[28px] border border-ink/10 bg-mist/40 p-6 sm:p-8">
               <div className="flex items-end justify-between gap-4 border-b border-ink/10 pb-5">
                 <div>
                   <p className="text-[9.5px] uppercase tracking-[0.2em] text-primary">
@@ -190,18 +193,25 @@ export default function Contact() {
               </div>
 
               <div aria-live="polite" className="mt-5">
-                {draftOpened && (
-                  <div className="rounded-2xl border border-primary/25 bg-white px-4 py-3 text-[12px] leading-relaxed text-deep/70">
-                    An email draft should have opened. If nothing happened, email{" "}
-                    <a
-                      className="font-medium text-ink underline decoration-primary/40 underline-offset-2"
-                      href="mailto:safekid.digibabi@gmail.com"
-                    >
-                      safekid.digibabi@gmail.com
-                    </a>
-                    . This concept site does not send messages automatically.
-                  </div>
-                )}
+                <AnimatePresence initial={false}>
+                  {draftOpened && (
+                    <motion.div
+                      initial={reduce ? false : { opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+                      className="rounded-2xl border border-primary/25 bg-white px-4 py-3 text-[12px] leading-relaxed text-deep/70">
+                      An email draft should have opened. If nothing happened, email{" "}
+                      <a
+                        className="font-medium text-ink underline decoration-primary/40 underline-offset-2"
+                        href="mailto:safekid.digibabi@gmail.com"
+                      >
+                        safekid.digibabi@gmail.com
+                      </a>
+                      . This concept site does not send messages automatically.
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             </form>
           </Reveal>

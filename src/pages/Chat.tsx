@@ -11,6 +11,7 @@ import {
   useLocalChat,
   type ChatMessage,
 } from "@/hooks/useLocalChat";
+import { DURATION, EASE } from "@/components/motion/tokens";
 import { cn } from "@/lib/utils";
 
 function MessageBubble({
@@ -33,7 +34,7 @@ function MessageBubble({
         <div className="rounded-2xl rounded-tl-md border border-ink/10 bg-white px-4 py-3">
           <p className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-deep/60">
             {message.working ? "Thinking" : "Reviewed"}
-            <span className="flex gap-1" aria-hidden="true">
+            {message.working && <span className="flex gap-1" aria-hidden="true">
               {[0, 1, 2].map((dot) => (
                 <motion.span
                   key={dot}
@@ -42,7 +43,7 @@ function MessageBubble({
                   transition={{ duration: 1.1, repeat: Infinity, delay: dot * 0.16 }}
                 />
               ))}
-            </span>
+            </span>}
           </p>
           <ul className="mt-2 space-y-1.5">
             {(message.steps ?? THOUGHT_STEPS).map((step) => (
@@ -143,20 +144,20 @@ export default function Chat() {
   useEffect(() => {
     const list = listRef.current;
     if (!list) return;
-    list.scrollTo({ top: list.scrollHeight, behavior: reduce ? "auto" : "smooth" });
+    list.scrollTo({ top: list.scrollHeight, behavior: reduce ? "instant" : "smooth" });
   }, [messages, isBusy, reduce]);
 
   function submit(event: FormEvent) {
     event.preventDefault();
-    if (!draft.trim()) return;
+    if (isBusy || !draft.trim()) return;
     send(draft);
     setDraft("");
   }
 
   function onComposerKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
-    if (event.key === "Enter" && !event.shiftKey) {
+    if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
       event.preventDefault();
-      if (!draft.trim()) return;
+      if (isBusy || !draft.trim()) return;
       send(draft);
       setDraft("");
     }
@@ -240,8 +241,9 @@ export default function Chat() {
               </button>
             </div>
 
-            <div
+            <motion.div
               ref={listRef}
+              layoutScroll
               className="h-[clamp(280px,38vh,400px)] space-y-4 overflow-y-auto bg-white px-4 py-5 sm:px-5"
               role="log"
               aria-live="polite"
@@ -250,9 +252,10 @@ export default function Chat() {
               {messages.map((message) => (
                 <motion.div
                   key={message.id}
-                  initial={reduce ? false : { opacity: 0, y: 12, scale: 0.97 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                  layout={reduce ? false : "position"}
+                  initial={reduce ? false : { opacity: 0, y: 10, x: message.role === "user" ? 8 : -8 }}
+                  animate={{ opacity: 1, y: 0, x: 0 }}
+                  transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
                   style={{ transformOrigin: message.role === "user" ? "bottom right" : "bottom left" }}
                 >
                   <MessageBubble
@@ -262,7 +265,7 @@ export default function Chat() {
                   />
                 </motion.div>
               ))}
-            </div>
+            </motion.div>
 
             <div className="border-t border-ink/10 bg-mist/40 px-4 py-3 sm:px-5">
               {fresh && (

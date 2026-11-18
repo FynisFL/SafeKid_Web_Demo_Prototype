@@ -1,16 +1,17 @@
 import { ArrowLeft, ArrowUpRight, Download, Globe2, Smartphone } from "lucide-react";
-import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
+import { motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { MouseEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import { AndroidDownload } from "@/components/app-experience/AndroidDownload";
 import { SignalStage } from "@/components/app-experience/SignalStage";
-import { scenes } from "@/components/app-experience/scenes";
-import { EASE } from "@/components/motion/tokens";
+import { scenes, signalArrival } from "@/components/app-experience/scenes";
+import { DURATION, EASE } from "@/components/motion/tokens";
 import { BrandMark } from "@/components/site/BrandMark";
 import { Button } from "@/components/ui/button";
 import { usePageTitle } from "@/hooks/usePageTitle";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import "./app-experience.css";
 
 const webAppUrl = "https://fynisfl.github.io/SafeKid-Parent-App-/";
@@ -45,8 +46,12 @@ export default function AppExperience() {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const downloadTrigger = useRef<HTMLButtonElement>(null);
   const { scrollYProgress } = useScroll({ target: hero, offset: ["start start", "end start"] });
-  const stageY = useTransform(scrollYProgress, [0, 0.65, 1], [0, 70, 20]);
-  const stageScale = useTransform(scrollYProgress, [0, 0.45, 1], [1, 1.065, 0.94]);
+  const wide = useMediaQuery("(min-width: 961px)");
+  const stageRef = useRef<HTMLDivElement>(null);
+  const stageVisible = useInView(stageRef, { once: true, amount: 0.2 });
+  const playing = stageVisible || interaction.replay > 0;
+  const stageY = useTransform(() => scrollYProgress.get() * (wide ? 34 : 8));
+  const stageScale = useTransform(() => 1 + scrollYProgress.get() * (wide ? 0.035 : 0.012));
 
   useEffect(() => {
     if (window.location.hash === "#android") {
@@ -117,8 +122,8 @@ export default function AppExperience() {
             </div>
           </div>
 
-          <motion.div className="sk-app__stage-placement" style={reduce ? undefined : { y: stageY, scale: stageScale }}>
-            <SignalStage scene={scene} replay={interaction.replay} reduce={reduce}
+          <motion.div ref={stageRef} className="sk-app__stage-placement" style={reduce ? undefined : { y: stageY, scale: stageScale }}>
+            <SignalStage scene={scene} replay={interaction.replay} reduce={reduce || !playing}
               onReplay={() => playScene(interaction.index)} />
           </motion.div>
 
@@ -132,15 +137,32 @@ export default function AppExperience() {
                   className="sk-app__tap sk-app__scene"
                   aria-pressed={index === interaction.index}
                   whileHover={reduce ? undefined : { y: -3 }}
-                  whileTap={reduce ? undefined : { scale: 0.91 }}
+                  whileTap={reduce ? undefined : { scale: 0.97 }}
                   onClick={() => playScene(index)}
                 >
-                  <Icon size={16} aria-hidden="true" /> {label}
+                  {index === interaction.index && (
+                    <motion.span
+                      className="sk-app__scene-selection"
+                      layoutId={reduce ? undefined : "app-scene-selection"}
+                      transition={{ duration: DURATION.quick, ease: EASE }}
+                      aria-hidden="true"
+                    />
+                  )}
+                  <Icon size={16} className="relative shrink-0" aria-hidden="true" />
+                  <span className="relative">{label}</span>
                 </motion.button>
               ))}
             </div>
             <p className="sk-app__scene-description" aria-live="polite" aria-atomic="true">
-              <span className="sr-only">{scene.title}. </span>{scene.description}
+              <motion.span
+                key={scene.id}
+                className="block"
+                initial={reduce ? false : { opacity: 0.65 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: reduce ? 0 : signalArrival(false), duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+              >
+                <span className="sr-only">{scene.title}. </span>{scene.description}
+              </motion.span>
             </p>
           </div>
         </section>

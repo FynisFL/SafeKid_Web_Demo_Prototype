@@ -1,5 +1,9 @@
 import { Activity, BellRing, MapPin } from "lucide-react";
 
+export const travelDuration = 0.94;
+export const signalStart = (intro: boolean) => intro ? 0.72 : 0.18;
+export const signalArrival = (intro: boolean) => signalStart(intro) + travelDuration;
+
 export const scenes = [
   {
     id: "zone",

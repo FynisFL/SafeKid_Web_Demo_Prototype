@@ -1055,7 +1055,7 @@ export function LittleDetourGame({ onClose }: { onClose: () => void }) {
     let frame = 0;
     let lastTime = 0;
     let scoreClock = 0;
-    let world: World = {
+    const world: World = {
       distance: phase === "gameover" ? lastRunDistanceRef.current : 0,
       elapsed: 0,
       speed: 315,

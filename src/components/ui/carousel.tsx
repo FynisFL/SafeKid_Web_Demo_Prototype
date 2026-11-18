@@ -2,6 +2,7 @@ import * as React from "react"
 import useEmblaCarousel, {
   type UseEmblaCarouselType,
 } from "embla-carousel-react"
+import { useReducedMotion } from "motion/react"
 import { ArrowLeft, ArrowRight } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -56,6 +57,7 @@ const Carousel = React.forwardRef<
     },
     ref
   ) => {
+    const reduce = useReducedMotion()
     const [carouselRef, api] = useEmblaCarousel(
       {
         ...opts,
@@ -76,15 +78,16 @@ const Carousel = React.forwardRef<
     }, [])
 
     const scrollPrev = React.useCallback(() => {
-      api?.scrollPrev()
-    }, [api])
+      api?.scrollPrev(Boolean(reduce))
+    }, [api, reduce])
 
     const scrollNext = React.useCallback(() => {
-      api?.scrollNext()
-    }, [api])
+      api?.scrollNext(Boolean(reduce))
+    }, [api, reduce])
 
     const handleKeyDown = React.useCallback(
       (event: React.KeyboardEvent<HTMLDivElement>) => {
+        if (orientation !== "horizontal") return
         if (event.key === "ArrowLeft") {
           event.preventDefault()
           scrollPrev()
@@ -93,7 +96,7 @@ const Carousel = React.forwardRef<
           scrollNext()
         }
       },
-      [scrollPrev, scrollNext]
+      [orientation, scrollPrev, scrollNext]
     )
 
     React.useEffect(() => {
@@ -114,7 +117,8 @@ const Carousel = React.forwardRef<
       api.on("select", onSelect)
 
       return () => {
-        api?.off("select", onSelect)
+        api.off("select", onSelect)
+        api.off("reInit", onSelect)
       }
     }, [api, onSelect])
 
@@ -160,7 +164,7 @@ const CarouselContent = React.forwardRef<
         ref={ref}
         className={cn(
           "flex",
-          orientation === "horizontal" ? "-ml-4" : "-mt-4 flex-col",
+          orientation === "horizontal" ? "-ml-4 touch-pan-y touch-pinch-zoom" : "-mt-4 flex-col touch-pan-x",
           className
         )}
         {...props}

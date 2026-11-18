@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
 
+import { DURATION, EASE } from "@/components/motion/tokens";
+
 type PageHeroProps = {
   eyebrow: string;
   title: ReactNode;
@@ -25,12 +27,7 @@ export function PageHero({ eyebrow, title, intro, actions, art, meta, compact }:
         className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-white/70"
       />
       <div className="shell relative grid items-center gap-10 lg:grid-cols-[1.04fr_0.96fr] lg:gap-12">
-        <motion.div
-          className="min-w-0"
-          initial={reduce ? undefined : { opacity: 0, y: 22 }}
-          animate={reduce ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        >
+        <div className="min-w-0">
           <p className="eyebrow">
             <span className="eyebrow-line" />
             {eyebrow}
@@ -42,20 +39,34 @@ export function PageHero({ eyebrow, title, intro, actions, art, meta, compact }:
                 : "display display-lg mt-6"
             }
           >
-            {title}
+            <motion.span
+              className="block pb-[0.08em]"
+              initial={reduce ? false : { opacity: 0.45, y: 16, clipPath: "inset(0 0 100% 0)" }}
+              animate={{ opacity: 1, y: 0, clipPath: "inset(-10% -5% -12% -5%)" }}
+              transition={{ duration: reduce ? 0 : DURATION.base, ease: EASE }}
+            >
+              {title}
+            </motion.span>
           </h1>
-          <p className="lede mt-6 max-w-[46ch]">{intro}</p>
+          <motion.p
+            className="lede mt-6 max-w-[46ch]"
+            initial={reduce ? false : { opacity: 0.65, y: 8, filter: "blur(3px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            transition={{ duration: reduce ? 0 : 0.55, delay: reduce ? 0 : 0.09, ease: EASE }}
+          >
+            {intro}
+          </motion.p>
           {actions && <div className="mt-8 flex flex-wrap items-center gap-5">{actions}</div>}
           {meta && (
             <p className="mt-8 text-[10px] uppercase tracking-[0.2em] text-deep/55">{meta}</p>
           )}
-        </motion.div>
+        </div>
 
         {art && (
           <motion.div
             initial={reduce ? undefined : { opacity: 0, scale: 0.97 }}
             animate={reduce ? undefined : { opacity: 1, scale: 1 }}
-            transition={{ duration: 1.1, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: reduce ? 0 : DURATION.base, delay: reduce ? 0 : 0.07, ease: EASE }}
             className="relative min-w-0"
           >
             {art}

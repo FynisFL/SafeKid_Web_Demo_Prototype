@@ -195,6 +195,8 @@
 }
 
 .sk-app__scene {
+  position: relative;
+  isolation: isolate;
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
@@ -211,7 +213,14 @@
 .sk-app__scene:is(:hover, [aria-pressed="true"]) {
   border-color: #79bfc1;
   color: var(--sk-accent-ink);
-  background-color: #e0f5f4;
+}
+
+.sk-app__scene-selection {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: #e0f5f4;
 }
 
 .sk-app__scene-description {
@@ -366,7 +375,6 @@
 
   .sk-app__stage-placement {
     width: min(100%, 43rem);
-    transform: none !important;
   }
 }
 

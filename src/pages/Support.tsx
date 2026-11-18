@@ -229,13 +229,15 @@ export default function Support() {
                   </span>
                   <span
                     aria-hidden="true"
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ink/12 text-deep/50 transition-all duration-300 group-data-[state=open]:rotate-180 group-data-[state=open]:border-primary/40 group-data-[state=open]:text-primary"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ink/12 text-deep/50 transition-all duration-300 motion-safe:group-data-[state=open]:rotate-180 group-data-[state=open]:border-primary/40 group-data-[state=open]:text-primary"
                   >
                     <ChevronDown className="h-4 w-4" />
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-5 pl-9 pr-10 text-[13.5px] leading-relaxed text-muted-foreground">
-                  {faq.answer}
+                <AccordionContent className="pb-4 pl-5 sm:pl-9">
+                  <p className="border-l-2 border-primary/50 pl-3 text-[13.5px] leading-relaxed text-muted-foreground sm:pr-10">
+                    {faq.answer}
+                  </p>
                 </AccordionContent>
               </AccordionItem>
             ))}

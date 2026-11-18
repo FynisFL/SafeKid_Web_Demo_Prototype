@@ -6,7 +6,7 @@ import type { CSSProperties, PointerEvent } from "react";
 import watch from "@/assets/safekid/hero-watch.webp";
 import { EASE } from "@/components/motion/tokens";
 
-import type { Scene } from "./scenes";
+import { signalArrival, signalStart, travelDuration, type Scene } from "./scenes";
 import { useClickSpark } from "./useClickSpark";
 import "./signal-stage.css";
 
@@ -15,7 +15,7 @@ const emitter = { x: 294, y: 220 };
 const receiver = { x: 438, y: 220 };
 const trigger = { x: 360, y: 307 };
 const signalPath = `M ${emitter.x} ${emitter.y} H ${receiver.x}`;
-const travelDuration = 0.94;
+
 const impactParticles = Array.from({ length: 8 }, (_, index) => {
   const angle = index * (Math.PI / 4);
   const distance = [13, 22, 19][index % 3];
@@ -143,8 +143,8 @@ export function SignalStage({
   loading?: "eager" | "lazy";
 }) {
   const intro = replay === 0;
-  const signalDelay = intro ? 0.72 : 0.18;
-  const arrival = signalDelay + travelDuration;
+  const signalDelay = signalStart(intro);
+  const arrival = signalArrival(intro);
   const [rig, animateRig] = useAnimate<HTMLDivElement>();
   const { canvasRef, spark } = useClickSpark(reduce, scene.accent);
 

@@ -1,10 +1,13 @@
 import { getErrorMessage, type FallbackProps } from "react-error-boundary";
 
+import { motion, useReducedMotion } from "motion/react";
+import { DURATION, EASE } from "@/components/motion/tokens";
 import { Button } from "@/components/ui/button";
 
 /** Full-page fallback shown when a render error escapes a page or the app shell. */
 export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   // Error details help while building; published builds keep them out of the UI.
+  const reduce = useReducedMotion();
   const details = import.meta.env.DEV ? getErrorMessage(error) : undefined;
 
   return (
@@ -12,7 +15,12 @@ export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
       role="alert"
       className="flex min-h-screen items-center justify-center bg-background p-6"
     >
-      <div className="w-full max-w-md text-center">
+      <motion.div
+        className="w-full max-w-md text-center"
+        initial={reduce ? false : { opacity: 0.65, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+      >
         <h1 className="mb-2 text-2xl font-semibold text-foreground">
           Something went wrong
         </h1>
@@ -30,7 +38,7 @@ export const ErrorFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
             <a href={import.meta.env.BASE_URL}>Back to home</a>
           </Button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

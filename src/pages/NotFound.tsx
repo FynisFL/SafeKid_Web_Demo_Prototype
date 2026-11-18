@@ -1,9 +1,12 @@
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { motion, useReducedMotion } from "motion/react";
+import { DURATION, EASE } from "@/components/motion/tokens";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
 export default function NotFound() {
+  const reduce = useReducedMotion();
   usePageTitle("Page not found | SafeKid");
 
   return (
@@ -53,12 +56,15 @@ export default function NotFound() {
               aria-hidden="true"
               className="absolute inset-[24%] rounded-full border border-dashed border-primary/25 animate-sk-spin"
             />
-            <p
+            <motion.p
               aria-hidden="true"
+              initial={reduce ? false : { opacity: 0, scale: 0.88, y: 12 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: reduce ? 0 : DURATION.base, ease: EASE }}
               className="relative font-display text-[6.5rem] font-semibold tracking-[-0.07em] text-ink/15"
             >
               404
-            </p>
+            </motion.p>
           </div>
         </div>
       </section>
