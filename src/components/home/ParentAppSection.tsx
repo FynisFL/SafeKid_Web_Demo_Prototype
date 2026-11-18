@@ -1,68 +1,101 @@
+import { useRef, useState } from "react";
+import type { CSSProperties } from "react";
+import { ArrowRight } from "lucide-react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Smartphone } from "lucide-react";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
+
+import { SignalStage } from "@/components/app-experience/SignalStage";
 import { scenes } from "@/components/app-experience/scenes";
+import { DURATION, EASE } from "@/components/motion/tokens";
 import { Reveal } from "@/components/site/Reveal";
+import "./parent-app-section.css";
 
 export function ParentAppSection() {
+  const stage = useRef<HTMLDivElement>(null);
+  const inView = useInView(stage, { amount: 0.35 });
+  const reduce = Boolean(useReducedMotion());
+  const [interaction, setInteraction] = useState({ index: 0, replay: 0 });
+  const scene = scenes[interaction.index];
+  const play = inView || interaction.replay > 0;
+
+  function playScene(index: number) {
+    setInteraction((current) => ({ index, replay: current.replay + 1 }));
+  }
+
   return (
-    <section aria-labelledby="home-parent-app" className="relative overflow-hidden bg-night py-20 text-white sm:py-28">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_80%_70%,hsl(var(--primary)/0.2),transparent_65%)]"
-      />
-      <div className="shell relative grid grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16">
-        <Reveal className="min-w-0">
+    <section
+      aria-labelledby="home-parent-app"
+      className="home-parent-app relative isolate overflow-clip bg-night py-20 text-white sm:py-28"
+      data-in-view={inView}
+      style={{ "--home-app-signal": scene.accent } as CSSProperties}
+    >
+      <div className="home-parent-app__glow" aria-hidden="true" />
+      <div className="shell home-parent-app__layout relative">
+        <Reveal className="home-parent-app__intro min-w-0">
           <h2 id="home-parent-app" className="display display-lg text-white">
             SafeKid <span className="text-primary">Parent App</span>
           </h2>
-          <p className="mt-6 max-w-[42ch] text-[15px] leading-[1.75] text-white/75 sm:text-base">
-            See how SafeKid brings safe zones, SOS events and everyday habits together in one place for parents.
+          <p className="mt-5 max-w-[42ch] text-[15px] leading-[1.75] text-white/75 sm:text-base">
+            Pick a scenario or press the signal button to see how watch activity reaches the Parent App.
           </p>
+        </Reveal>
+
+        <div ref={stage} className="home-parent-app__stage min-w-0">
+          <SignalStage
+            scene={scene}
+            replay={play ? interaction.replay + 1 : 0}
+            reduce={reduce || !play}
+            loading="lazy"
+            onReplay={() => playScene(interaction.index)}
+          />
+        </div>
+
+        <div className="home-parent-app__controls min-w-0">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2" role="group" aria-label="Parent App demo scenarios">
+            {scenes.map(({ id, label, icon: Icon }, index) => {
+              const active = index === interaction.index;
+              return (
+                <motion.button
+                  key={id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => playScene(index)}
+                  whileTap={reduce ? undefined : { scale: 0.96 }}
+                  className="home-parent-app__scenario sk-app__tap"
+                >
+                  {active && (
+                    <motion.span
+                      aria-hidden="true"
+                      className="home-parent-app__selection"
+                      layoutId={reduce ? undefined : "home-parent-app-selection"}
+                      transition={{ duration: DURATION.quick, ease: EASE }}
+                    />
+                  )}
+                  <Icon size={17} className="relative shrink-0" aria-hidden="true" />
+                  <span className="relative">{label}</span>
+                </motion.button>
+              );
+            })}
+          </div>
+          <div className="home-parent-app__event" aria-live="polite" aria-atomic="true">
+            <motion.div
+              key={scene.id}
+              initial={reduce ? false : { opacity: 0.45, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+            >
+              <p className="text-sm font-semibold text-white">{scene.title}</p>
+              <p className="mt-1 text-[13px] leading-relaxed text-white/70">{scene.description}</p>
+            </motion.div>
+          </div>
           <Link
-            to="/app"
-            className="btn-motion btn-motion-light group mt-8 inline-flex min-h-12 max-w-full items-center gap-3 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-ink transition-colors hover:bg-aqua-soft"
+            to={interaction.index === 0 ? "/app" : `/app?scenario=${scene.id}`}
+            className="btn-motion btn-motion-light group mt-5 inline-flex min-h-12 max-w-full items-center gap-3 rounded-full bg-primary px-5 py-2 text-sm font-semibold text-ink transition-colors hover:bg-aqua-soft"
           >
             Explore the Parent App
             <ArrowRight className="h-4 w-4 shrink-0 transition-transform motion-safe:group-hover:translate-x-1" aria-hidden="true" />
           </Link>
-        </Reveal>
-
-        <Reveal variant="soft" className="relative mx-auto w-full min-w-0 max-w-[620px]">
-          <div className="relative isolate grid grid-cols-[minmax(0,0.7fr)_minmax(0,1.3fr)] items-center gap-2 overflow-hidden rounded-[28px] border border-white/15 bg-white/5 px-3 py-5 sm:gap-4 sm:px-7 sm:py-9">
-            <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_24%_50%,hsl(var(--primary)/0.19),transparent_70%)]" />
-            <Reveal variant="drift" className="relative min-w-0">
-              <div aria-hidden="true" className="absolute inset-x-0 top-1/2 aspect-square -translate-y-1/2 rounded-full border border-primary/25" />
-              <img
-                src={heroWatch}
-                alt=""
-                width={620}
-                height={620}
-                loading="lazy"
-                className="relative h-auto w-full object-contain drop-shadow-[0_12px_16px_rgba(0,0,0,0.35)]"
-              />
-            </Reveal>
-            <div className="min-w-0 rounded-2xl border border-white/80 bg-mist p-2.5 text-ink shadow-xl sm:rounded-[24px] sm:p-4">
-              <p className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-deep sm:mb-3 sm:text-xs">
-                <Smartphone className="h-4 w-4 shrink-0 text-deep" aria-hidden="true" />
-                Sample activity
-              </p>
-              <ul className="grid gap-1.5 sm:gap-2">
-                {scenes.map(({ id, icon: Icon, label, title, accent }, index) => (
-                  <li key={id}>
-                    <Reveal delay={index * 0.09} className="flex items-start gap-2 rounded-xl bg-white px-2 py-1.5 sm:px-3 sm:py-2">
-                      <Icon className="mt-0.5 h-4 w-4 shrink-0" style={{ color: accent }} aria-hidden="true" />
-                      <div className="min-w-0">
-                        <p className="text-[11px] font-semibold leading-snug sm:text-[13px]">{title}</p>
-                        <p className="mt-0.5 text-[10px] leading-snug text-deep/75 sm:text-[11px]">{label}</p>
-                      </div>
-                    </Reveal>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

@@ -8,6 +8,7 @@ import { EASE } from "@/components/motion/tokens";
 
 import type { Scene } from "./scenes";
 import { useClickSpark } from "./useClickSpark";
+import "./signal-stage.css";
 
 const stageSize = { width: 720, height: 480 };
 const emitter = { x: 337, y: 237 };
@@ -132,12 +133,13 @@ function SignalBurst({ scene, delay }: { scene: Scene; delay: number }) {
 }
 
 export function SignalStage({
-  scene, replay, reduce, onReplay,
+  scene, replay, reduce, onReplay, loading = "eager",
 }: {
   scene: Scene;
   replay: number;
   reduce: boolean;
   onReplay: () => void;
+  loading?: "eager" | "lazy";
 }) {
   const intro = replay === 0;
   const signalDelay = intro ? 0.72 : 0.18;
@@ -202,7 +204,8 @@ export function SignalStage({
                 transition={{ duration: reduce ? 0 : 1.05, ease: EASE }} />
               <div className="sk-stage__devices" aria-hidden="true">
                 <div className="sk-stage__watch">
-                  <motion.img src={watch} width={620} height={620} fetchPriority="high" alt="" draggable={false}
+                  <motion.img src={watch} width={620} height={620} loading={loading}
+                    fetchPriority={loading === "eager" ? "high" : undefined} alt="" draggable={false}
                     initial={reduce ? false : intro
                       ? { opacity: 0, x: "-38%", y: "27%", scale: 0.48, rotate: -33, rotateY: -48 }
                       : { opacity: 1, x: "0%", y: "0%", scale: 1, rotate: 0, rotateY: 0 }}

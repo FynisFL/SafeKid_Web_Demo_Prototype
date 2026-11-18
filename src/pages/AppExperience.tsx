@@ -2,7 +2,7 @@ import { ArrowLeft, ArrowUpRight, Download, Globe2, Smartphone } from "lucide-re
 import { motion, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { MouseEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import { AndroidDownload } from "@/components/app-experience/AndroidDownload";
 import { SignalStage } from "@/components/app-experience/SignalStage";
@@ -36,7 +36,11 @@ export default function AppExperience() {
 
   const reduce = Boolean(useReducedMotion());
   const hero = useRef<HTMLElement>(null);
-  const [interaction, setInteraction] = useState({ index: 0, replay: 0 });
+  const [searchParams] = useSearchParams();
+  const [interaction, setInteraction] = useState(() => ({
+    index: Math.max(0, scenes.findIndex(({ id }) => id === searchParams.get("scenario"))),
+    replay: 0,
+  }));
   const scene = scenes[interaction.index];
   const [downloadOpen, setDownloadOpen] = useState(false);
   const downloadTrigger = useRef<HTMLButtonElement>(null);

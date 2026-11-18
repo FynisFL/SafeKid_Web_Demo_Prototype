@@ -1,0 +1,96 @@
+.home-parent-app__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "intro" "stage" "controls";
+  align-items: center;
+  gap: 1.55rem;
+}
+
+.home-parent-app__intro { grid-area: intro; }
+.home-parent-app__stage {
+  grid-area: stage;
+  width: min(100%, 44rem);
+  justify-self: center;
+}
+.home-parent-app__controls { grid-area: controls; }
+
+.home-parent-app__glow {
+  position: absolute;
+  z-index: -1;
+  inset: -12%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 70% 67%, #00c7ca30, transparent 58%),
+    radial-gradient(ellipse at 44% 44%, #12617555, transparent 52%);
+  animation: home-parent-app-drift 12s ease-in-out infinite alternate paused;
+}
+
+.home-parent-app[data-in-view="true"] .home-parent-app__glow { animation-play-state: running; }
+
+@keyframes home-parent-app-drift {
+  from { transform: translate3d(-5%, 3%, 0) scale(0.94); }
+  to { transform: translate3d(6%, -4%, 0) scale(1.06); }
+}
+
+.home-parent-app__scenario {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  min-width: 0;
+  min-height: 3rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.25rem;
+  border: 1px solid #ffffff32;
+  border-radius: 0.8rem;
+  color: #e7f2f3;
+  font-size: clamp(0.68rem, 2.75vw, 0.8rem);
+  font-weight: 650;
+  line-height: 1.15;
+  transition: border-color 220ms, color 220ms;
+}
+
+.home-parent-app__scenario:hover { border-color: #7fe4e7a8; }
+.home-parent-app__scenario[aria-pressed="true"] { color: white; border-color: #7fe4e7a8; }
+
+.home-parent-app__selection {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: #00c7ca2e;
+  background: color-mix(in srgb, var(--home-app-signal) 42%, #143741);
+}
+
+.home-parent-app__event {
+  min-height: 5.5rem;
+  margin-top: 1rem;
+  padding: 0.65rem 0.85rem;
+  border-inline-start: 2px solid #7fe4e7;
+  background: #ffffff08;
+}
+
+@media (max-width: 420px) {
+  .home-parent-app__scenario { flex-direction: column; }
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .home-parent-app__intro,
+  .home-parent-app__controls { width: min(100%, 44rem); justify-self: center; }
+}
+
+@media (min-width: 1024px) {
+  .home-parent-app__layout {
+    grid-template-columns: minmax(0, 0.84fr) minmax(0, 1.16fr);
+    grid-template-areas: "intro stage" "controls stage";
+    gap: 1.6rem clamp(2rem, 4.5vw, 4.5rem);
+  }
+
+  .home-parent-app__intro { align-self: end; }
+  .home-parent-app__controls { align-self: start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-parent-app__glow { animation: none; }
+}
