@@ -1,5 +1,6 @@
 import { lazy } from "react";
 
+const AppExperience = lazy(() => import("./pages/AppExperience"));
 const Home = lazy(() => import("./pages/Home"));
 const Zodiac = lazy(() => import("./pages/Zodiac"));
 const WatchPassport = lazy(() => import("./pages/WatchPassport"));
@@ -13,6 +14,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 
 export const routers = [
   { path: "/", name: "home", element: <Home /> },
+  { path: "/app", name: "app", element: <AppExperience /> },
   { path: "/zodiac", name: "zodiac", element: <Zodiac /> },
   { path: "/watch-passport", name: "watch-passport", element: <WatchPassport /> },
   { path: "/product/:id", name: "product", element: <Product /> },
