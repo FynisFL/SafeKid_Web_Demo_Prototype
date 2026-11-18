@@ -52,7 +52,7 @@ const FAQS = [
   {
     question: "Can I place an order or make a payment?",
     answer:
-      "No. This concept site does not process orders or payments. Pricing, shipping and return policies are not currently confirmed.",
+      "The store preview lets you add editions to your bag and explore checkout. Ordering and payments are closed until launch. Shipping and return details are pending.",
   },
   {
     question: "How can I contact the team?",

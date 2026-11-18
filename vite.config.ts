@@ -1,7 +1,7 @@
 import { defineConfig, PluginOption } from "vite";
 import { enterDevPlugin, enterProdPlugin } from 'vite-plugin-enter-dev';
 import path from "path";
-import { mkdir, writeFile } from "node:fs/promises";
+import { mkdir, readdir, writeFile } from "node:fs/promises";
 
 const pageEntries: PluginOption = {
   name: "safekid-page-entries",
@@ -11,7 +11,11 @@ const pageEntries: PluginOption = {
     const index = bundle["index.html"];
     if (!dir || index?.type !== "asset") return;
 
-    for (const route of ["app", "watch-passport"]) {
+    const editionImages = await readdir(path.join(__dirname, "src/assets/safekid/editions"));
+    const productRoutes = editionImages
+      .filter((file) => /^[a-z]+\.webp$/.test(file))
+      .map((file) => `product/${path.basename(file, ".webp")}`);
+    for (const route of ["app", "watch-passport", "zodiac", "support", "contact", "cart", "checkout", ...productRoutes]) {
       const pageDirectory = path.join(dir, route);
       await mkdir(pageDirectory, { recursive: true });
       await writeFile(path.join(pageDirectory, "index.html"), index.source);

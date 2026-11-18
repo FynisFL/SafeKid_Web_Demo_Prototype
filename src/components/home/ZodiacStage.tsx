@@ -229,8 +229,7 @@ export function ZodiacStage({ variant = "home" }: ZodiacStageProps) {
             </ul>
 
             <p className="mt-6 max-w-[38ch] text-[11px] leading-relaxed text-deep/60">
-              Use arrow keys to move through the collection. These are design concepts — pricing,
-              availability and live device capabilities are not confirmed.
+              Use arrow keys to move through the collection. SafeKid isn’t available to order yet.
             </p>
           </div>
 

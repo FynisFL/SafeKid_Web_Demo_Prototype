@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from "motion/react";
-import { ArrowUpRight, Menu, Search, X } from "lucide-react";
+import { ArrowUpRight, Menu, Search, ShoppingBag, X } from "lucide-react";
+import { useShoppingBag } from "@/components/shop/shoppingBag";
 import { BrandMark } from "./BrandMark";
 import { EditionSearch } from "./EditionSearch";
 import { cn } from "@/lib/utils";
@@ -29,6 +30,7 @@ function isActive(pathname: string, to: string) {
 
 export function SiteHeader() {
   const location = useLocation();
+  const { count } = useShoppingBag();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -118,6 +120,25 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-1.5">
+            <Link
+              to="/cart"
+              aria-label={`Shopping bag, ${count} ${count === 1 ? "item" : "items"}`}
+              aria-current={location.pathname.startsWith("/cart") ? "page" : undefined}
+              className="press relative grid size-11 shrink-0 place-items-center rounded-full border border-ink/12 text-ink transition-colors hover:bg-mist"
+            >
+              <ShoppingBag size={18} aria-hidden="true" />
+              {count > 0 && (
+                <motion.span
+                  key={count}
+                  initial={reduce ? false : { scale: 0.75, opacity: 0.6 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="absolute -right-1 -top-1 grid min-h-5 min-w-5 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold tabular-nums text-ink"
+                  aria-hidden="true"
+                >
+                  {count > 99 ? "99+" : count}
+                </motion.span>
+              )}
+            </Link>
             <button
               type="button"
               onClick={() => setSearchOpen(true)}
@@ -128,7 +149,7 @@ export function SiteHeader() {
             </button>
             <Link
               to="/contact"
-              className="hidden h-11 items-center gap-2 rounded-full bg-ink px-5 text-[13px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-night btn-motion sm:inline-flex"
+              className="hidden h-11 items-center gap-2 rounded-full bg-ink px-5 text-[13px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-night btn-motion sm:inline-flex lg:hidden xl:inline-flex"
             >
               Talk to the team
               <ArrowUpRight className="h-3.5 w-3.5" aria-hidden="true" />

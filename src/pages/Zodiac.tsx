@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { formatVnd, WATCH_PRICE_VND } from "@/components/shop/shoppingBag";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { PageHero } from "@/components/site/PageHero";
 import { ZodiacStage } from "@/components/home/ZodiacStage";
@@ -99,6 +100,7 @@ function CollectionRail() {
                 <span className="mt-1 block font-display text-[16px] font-medium tracking-[-0.02em] text-ink">
                   {product.label}
                 </span>
+                <span className="mt-1 block text-xs font-semibold tabular-nums text-deep">{formatVnd(WATCH_PRICE_VND)}</span>
               </span>
               <ArrowUpRight
                 className="h-4 w-4 text-deep/40 transition-all duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-primary"
@@ -134,7 +136,7 @@ function Closing() {
           <Reveal variant="soft" delay={0.1}>
             <p className="mt-6 max-w-[44ch] text-[14.5px] leading-relaxed text-muted-foreground">
               Take a closer look at an edition, or get in touch to talk about the SafeKid concept.
-              These are design concepts — no prices or availability are confirmed.
+              Explore the store preview. SafeKid isn’t available to order yet.
             </p>
           </Reveal>
         </div>
@@ -189,7 +191,7 @@ export default function Zodiac() {
             <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </a>
         }
-        meta="Design concepts · No pricing or availability confirmed"
+        meta={`${formatVnd(WATCH_PRICE_VND)} per watch · Not available to order yet`}
         art={
           <div className="relative mx-auto aspect-square w-full max-w-[440px]">
             <div aria-hidden="true" className="stage-glow absolute inset-[4%] rounded-full" />

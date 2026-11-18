@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { RouteErrorBoundary } from "./components/error-boundary/route-error-boundary";
+import { ShoppingBagProvider } from "./components/shop/ShoppingBagProvider";
 import { routers } from "./router";
 
 // Created once so remounting App (e.g. after an error-boundary retry) never
@@ -35,9 +36,11 @@ function PageLoader() {
 
 function RootShell() {
   return (
-    <Suspense fallback={<PageLoader />}>
-      <Outlet />
-    </Suspense>
+    <ShoppingBagProvider>
+      <Suspense fallback={<PageLoader />}>
+        <Outlet />
+      </Suspense>
+    </ShoppingBagProvider>
   );
 }
 

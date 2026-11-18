@@ -141,7 +141,7 @@ export function EditionSearch({ open, onClose }: EditionSearchProps) {
             </div>
 
             <p className="border-t border-ink/10 px-5 py-3 text-[11px] text-deep/60">
-              Design concepts. No prices, stock or availability are confirmed.
+              SafeKid isn’t available to order yet.
             </p>
           </motion.div>
         </motion.div>

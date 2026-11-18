@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { AddToBag } from "@/components/shop/AddToBag";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Reveal } from "@/components/site/Reveal";
 import { TiltCard } from "@/components/motion/TiltCard";
@@ -123,23 +124,11 @@ export default function Product() {
                 Meet the {product.label} edition — a Vietnamese Zodiac-inspired character in the
                 SafeKid watch concept, made for the little person who is always a few steps ahead.
               </p>
-              <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
-                <Link
-                  to="/contact"
-                  className="inline-flex h-[52px] items-center gap-2 rounded-full bg-ink px-6 text-[13.5px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-night btn-motion"
-                >
-                  Ask about this edition
-                  <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-                <a href="#idea" className="group inline-flex items-center gap-2 text-[13.5px] font-medium text-ink">
-                  Discover the idea
-                  <ArrowRight className="h-4 w-4 text-primary transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />
-                </a>
-              </div>
-              <p className="mt-8 inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white/60 px-3.5 py-2 text-[10px] uppercase tracking-[0.16em] text-deep/50">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-                Design concept · No price or availability confirmed
-              </p>
+              <AddToBag key={product.id} editionId={product.id} />
+              <a href="#idea" className="group mt-3 inline-flex min-h-11 items-center gap-2 text-[13.5px] font-medium text-ink">
+                Discover the idea
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />
+              </a>
             </div>
           </div>
         </div>
@@ -343,8 +332,7 @@ export default function Product() {
             </Link>
           </div>
           <p className="mt-6 max-w-[80ch] text-[11px] leading-relaxed text-deep/55">
-            {conceptNote} Edition-specific specifications, prices and availability have not been
-            confirmed.
+            {conceptNote} Final edition specifications are pending.
           </p>
         </div>
       </section>

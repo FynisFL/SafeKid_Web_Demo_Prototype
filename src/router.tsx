@@ -5,6 +5,7 @@ const Home = lazy(() => import("./pages/Home"));
 const Zodiac = lazy(() => import("./pages/Zodiac"));
 const WatchPassport = lazy(() => import("./pages/WatchPassport"));
 const Product = lazy(() => import("./pages/Product"));
+const ShoppingBag = lazy(() => import("./pages/ShoppingBag"));
 const About = lazy(() => import("./pages/About"));
 const Support = lazy(() => import("./pages/Support"));
 const Contact = lazy(() => import("./pages/Contact"));
@@ -18,6 +19,8 @@ export const routers = [
   { path: "/zodiac", name: "zodiac", element: <Zodiac /> },
   { path: "/watch-passport", name: "watch-passport", element: <WatchPassport /> },
   { path: "/product/:id", name: "product", element: <Product /> },
+  { path: "/cart", name: "cart", element: <ShoppingBag /> },
+  { path: "/checkout", name: "checkout", element: <ShoppingBag checkout /> },
   { path: "/about", name: "about", element: <About /> },
   { path: "/support", name: "support", element: <Support /> },
   { path: "/contact", name: "contact", element: <Contact /> },
