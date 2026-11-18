@@ -124,7 +124,7 @@ export default function Product() {
                 Meet the {product.label} edition — a Vietnamese Zodiac-inspired character in the
                 SafeKid watch concept, made for the little person who is always a few steps ahead.
               </p>
-              <AddToBag key={product.id} editionId={product.id} />
+              <AddToBag key={product.id} editionId={product.id} image={product.image} />
               <a href="#idea" className="group mt-3 inline-flex min-h-11 items-center gap-2 text-[13.5px] font-medium text-ink">
                 Discover the idea
                 <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:text-primary" aria-hidden="true" />

@@ -121,6 +121,7 @@ export function SiteHeader() {
 
           <div className="flex items-center gap-1.5">
             <Link
+              id="site-shopping-bag"
               to="/cart"
               aria-label={`Shopping bag, ${count} ${count === 1 ? "item" : "items"}`}
               aria-current={location.pathname.startsWith("/cart") ? "page" : undefined}

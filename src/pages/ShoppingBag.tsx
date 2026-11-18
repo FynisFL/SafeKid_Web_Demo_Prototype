@@ -1,150 +1,233 @@
-import { ArrowLeft, ArrowRight, CreditCard, Minus, Plus, QrCode, ShoppingBag as BagIcon, Wallet } from "lucide-react";
+import { ArrowLeft, ArrowRight, CreditCard, LockKeyhole, Minus, Plus, ShoppingBag as BagIcon, Trash2 } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
+import { DISTANCE, DURATION, EASE } from "@/components/motion/tokens";
+import { CheckoutConfirm, PaymentPreview } from "@/components/shop/PaymentPreview";
+import { paymentMethods, type PaymentMethod } from "@/components/shop/paymentMethods";
 import { formatVnd, MAX_QUANTITY, useShoppingBag, WATCH_PRICE_VND } from "@/components/shop/shoppingBag";
-import { Reveal } from "@/components/site/Reveal";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { zodiacProducts } from "@/data/zodiac";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
-const paymentMethods = [
-  { id: "qr", label: "Bank QR", detail: "VNPAY-QR", icon: QrCode },
-  { id: "card", label: "Debit or credit card", detail: "Domestic or international card", icon: CreditCard },
-  { id: "wallet", label: "E-wallet", detail: "MoMo", icon: Wallet },
-] as const;
+const previewFees = [
+  { label: "Shipping", amount: 0 },
+  { label: "VAT", amount: 0 },
+  { label: "Platform fee", amount: 0 },
+];
 
-function PaymentPreview() {
+function PurchaseSteps({ checkout }: { checkout: boolean }) {
   return (
-    <fieldset className="min-w-0 rounded-[28px] border border-border bg-white p-5 sm:p-7">
-      <legend className="sr-only">Payment method</legend>
-      <h2 className="display display-md">Payment method</h2>
-      <p className="mt-3 text-sm leading-relaxed text-deep/75">Preview the options planned for launch. Ordering is currently closed.</p>
-      <div className="mt-5 grid gap-2">
-        {paymentMethods.map(({ id, label, detail, icon: Icon }, index) => (
-          <label key={id} className="flex min-h-16 cursor-pointer items-center gap-3 rounded-2xl border border-border px-3 py-3 transition-colors has-[:checked]:border-primary has-[:checked]:bg-aqua-soft/60 sm:px-4">
-            <input className="h-4 w-4 shrink-0 accent-ink" type="radio" name="payment-method" value={id} defaultChecked={index === 0} />
-            <Icon className="h-5 w-5 shrink-0 text-deep" aria-hidden="true" />
-            <span className="min-w-0">
-              <span className="block text-sm font-semibold text-ink">{label}</span>
-              <span className="block text-xs leading-relaxed text-deep/70">{detail}</span>
+    <nav aria-label="Shopping steps" className="mb-6">
+      <ol className="flex flex-wrap items-center gap-2 text-xs font-medium text-deep/75">
+        <li>
+          {checkout ? (
+            <Link to="/cart" className="inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 hover:bg-white hover:text-ink">
+              <BagIcon size={15} aria-hidden="true" /> Bag
+            </Link>
+          ) : (
+            <span aria-current="step" className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-ink px-3 text-white">
+              <BagIcon size={15} aria-hidden="true" /> Bag
             </span>
-          </label>
+          )}
+        </li>
+        <li aria-hidden="true"><ArrowRight size={13} /></li>
+        <li>
+          <span
+            aria-current={checkout ? "step" : undefined}
+            className={`inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 ${checkout ? "bg-ink text-white" : ""}`}
+          >
+            <CreditCard size={15} aria-hidden="true" /> Checkout
+          </span>
+        </li>
+      </ol>
+    </nav>
+  );
+}
+
+function BagItems({ checkout }: { checkout: boolean }) {
+  const { lines, setQuantity } = useShoppingBag();
+  const reduce = useReducedMotion();
+
+  return (
+    <section className="min-w-0 rounded-[28px] border border-border bg-white p-4 sm:p-7" aria-labelledby="bag-items-title">
+      <h2 id="bag-items-title" className="display display-md">{checkout ? "Your items" : "In your bag"}</h2>
+      <ul className="mt-4 divide-y divide-border">
+        <AnimatePresence initial={false}>
+          {lines.map(({ id, quantity }) => {
+            const product = zodiacProducts.find((item) => item.id === id);
+            if (!product) return null;
+            return (
+              <motion.li
+                key={id}
+                layout={reduce ? false : "position"}
+                exit={reduce ? undefined : { opacity: 0, y: -6 }}
+                transition={{ duration: reduce ? 0 : 0.2, ease: EASE }}
+                className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 py-4 sm:gap-5"
+              >
+                <Link to={`/product/${id}`} aria-label={product.detailTitle} className="grid size-16 place-items-center rounded-xl bg-mist transition-colors hover:bg-aqua-soft sm:size-24">
+                  <img src={product.image} width={900} height={900} alt="" className="h-full w-full object-contain" />
+                </Link>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                    <p className="font-semibold text-ink">{product.detailTitle}</p>
+                    <motion.p
+                      key={quantity}
+                      initial={reduce ? false : { opacity: 0.55, y: 4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: reduce ? 0 : 0.24, ease: EASE }}
+                      className="text-sm font-semibold tabular-nums text-ink"
+                    >
+                      {formatVnd(quantity * WATCH_PRICE_VND)}
+                    </motion.p>
+                  </div>
+                  <p className="mt-1 text-xs text-deep/75">{quantity} × {formatVnd(WATCH_PRICE_VND)}</p>
+                  {!checkout && (
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <div className="inline-flex items-center rounded-full border border-border">
+                        <motion.button
+                          type="button" className="grid size-11 place-items-center rounded-full hover:bg-mist disabled:opacity-40"
+                          disabled={quantity <= 1} whileTap={reduce ? undefined : { scale: 0.87 }}
+                          aria-label={`Decrease quantity for ${product.detailTitle}`} onClick={() => setQuantity(id, quantity - 1)}
+                        >
+                          <Minus size={15} aria-hidden="true" />
+                        </motion.button>
+                        <output aria-label={`Quantity for ${product.detailTitle}`} className="min-w-5 text-center text-sm tabular-nums">{quantity}</output>
+                        <motion.button
+                          type="button" className="grid size-11 place-items-center rounded-full hover:bg-mist disabled:opacity-40"
+                          disabled={quantity >= MAX_QUANTITY} whileTap={reduce ? undefined : { scale: 0.87 }}
+                          aria-label={`Increase quantity for ${product.detailTitle}`} onClick={() => setQuantity(id, quantity + 1)}
+                        >
+                          <Plus size={15} aria-hidden="true" />
+                        </motion.button>
+                      </div>
+                      <button
+                        type="button" aria-label={`Remove ${product.detailTitle}`}
+                        className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-2 text-xs text-deep transition-colors hover:bg-mist hover:text-ink"
+                        onClick={() => setQuantity(id, 0)}
+                      >
+                        <Trash2 size={14} aria-hidden="true" /> Remove
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </motion.li>
+            );
+          })}
+        </AnimatePresence>
+      </ul>
+    </section>
+  );
+}
+
+function BagSummary({ checkout, method, subtotal, total }: {
+  checkout: boolean;
+  method: PaymentMethod;
+  subtotal: number;
+  total: number;
+}) {
+  const { count } = useShoppingBag();
+  const reduce = useReducedMotion();
+
+  return (
+    <section className="min-w-0 rounded-[28px] bg-night p-5 text-white shadow-[0_22px_54px_-36px_rgba(16,42,56,0.9)] sm:p-7 lg:sticky lg:top-28" aria-labelledby="bag-summary-title">
+      <h2 id="bag-summary-title" className="display display-md text-white">Bag summary</h2>
+      <dl className="mt-6">
+        <div className="flex justify-between gap-3 text-sm">
+          <dt>Subtotal <span className="whitespace-nowrap text-white/65">· {count} {count === 1 ? "watch" : "watches"}</span></dt>
+          <dd className="shrink-0 font-semibold tabular-nums">{formatVnd(subtotal)}</dd>
+        </div>
+        {previewFees.map(({ label, amount }) => (
+          <div key={label} className="mt-3 flex justify-between gap-3 text-sm text-white/75">
+            <dt>{label}</dt>
+            <dd className="shrink-0 font-medium text-aqua-soft">{amount === 0 ? "Free" : formatVnd(amount)}</dd>
+          </div>
         ))}
+        <div className="mt-6 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-t border-white/20 pt-5">
+          <dt className="font-semibold">Preview total</dt>
+          <motion.dd
+            key={total}
+            data-preview-total=""
+            initial={reduce ? false : { opacity: 0.45, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+            className="font-display text-2xl font-semibold tracking-tight text-aqua-soft tabular-nums sm:text-3xl"
+          >
+            {formatVnd(total)}
+          </motion.dd>
+        </div>
+      </dl>
+      <p className="mt-3 text-xs leading-relaxed text-white/70">Fees shown apply to this preview. Launch rates may differ.</p>
+      <div className="mb-5 mt-5 flex items-center gap-2 text-sm text-white/85">
+        <LockKeyhole size={16} className="shrink-0 text-aqua-soft" aria-hidden="true" /> SafeKid isn’t available to order yet.
       </div>
-    </fieldset>
+      {checkout ? (
+        <CheckoutConfirm method={method} />
+      ) : (
+        <Button asChild className="w-full" variant="brand" size="lg">
+          <Link to="/checkout">Preview checkout <ArrowRight aria-hidden="true" /></Link>
+        </Button>
+      )}
+    </section>
   );
 }
 
 export default function ShoppingBag({ checkout = false }: { checkout?: boolean }) {
-  const { count, lines, setQuantity } = useShoppingBag();
+  const { count } = useShoppingBag();
+  const reduce = useReducedMotion();
+  const [method, setMethod] = useState<PaymentMethod>(paymentMethods[0]);
+  const subtotal = count * WATCH_PRICE_VND;
+  const total = subtotal + previewFees.reduce((sum, fee) => sum + fee.amount, 0);
   const title = checkout ? "Checkout" : "Shopping bag";
   usePageTitle(`${title} | SafeKid`);
 
   return (
     <SiteLayout>
-      <section className="bg-mist pb-20 pt-28 sm:pb-28 lg:pt-36">
-        <div className="shell">
-          <Reveal>
-            <Link to={checkout ? "/cart" : "/zodiac"} className="inline-flex min-h-11 items-center gap-2 text-sm font-medium text-deep hover:text-ink">
+      <AnimatePresence mode="wait">
+        <motion.section
+          key={title}
+          data-shop-step={checkout ? "checkout" : "bag"}
+          className="bg-mist pb-20 pt-28 sm:pb-28 lg:pt-36"
+          initial={reduce ? false : { opacity: 0, y: DISTANCE.md }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={reduce ? undefined : { opacity: 0, y: -DISTANCE.sm }}
+          transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+        >
+          <div className="shell">
+            <PurchaseSteps checkout={checkout} />
+            <h1 className="display display-lg">{title}</h1>
+            <p className="lede mt-4 max-w-[48ch]">
+              {checkout ? "Review your total and choose a payment method to preview." : "Review your chosen editions before previewing checkout."}
+            </p>
+            {count > 0 && (
+              <p className="mt-5 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 rounded-2xl border border-border bg-white px-4 py-3 text-sm lg:hidden">
+                <span className="font-medium text-deep">Preview total</span>
+                <strong className="text-base font-semibold tabular-nums text-ink">{formatVnd(total)}</strong>
+              </p>
+            )}
+            {count === 0 ? (
+              <div className="mt-8 rounded-[28px] border border-border bg-white px-5 py-12 text-center">
+                <BagIcon className="mx-auto mb-4 h-7 w-7 text-deep" aria-hidden="true" />
+                <h2 className="display display-md">Your bag is empty</h2>
+                <Button asChild variant="brand" className="mt-6"><Link to="/zodiac">Explore the collection</Link></Button>
+              </div>
+            ) : (
+              <div className="mt-8 grid items-start gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+                <div className="grid min-w-0 gap-5">
+                  {checkout && <PaymentPreview selected={method} onSelect={setMethod} />}
+                  <BagItems checkout={checkout} />
+                </div>
+                <BagSummary checkout={checkout} method={method} subtotal={subtotal} total={total} />
+              </div>
+            )}
+            <Link to={checkout ? "/cart" : "/zodiac"} className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-deep hover:text-ink">
               <ArrowLeft size={16} aria-hidden="true" /> {checkout ? "Back to bag" : "Browse the collection"}
             </Link>
-            <h1 className="display display-lg mt-4">{title}</h1>
-            <p className="lede mt-4 max-w-[48ch]">
-              {checkout ? "Review your bag and explore the planned payment options." : "Review your chosen editions before previewing checkout."}
-            </p>
-          </Reveal>
-          {count === 0 ? (
-            <Reveal className="mt-8 rounded-[28px] border border-border bg-white px-5 py-12 text-center">
-              <BagIcon className="mx-auto mb-4 h-7 w-7 text-deep" aria-hidden="true" />
-              <h2 className="display display-md">Your bag is empty</h2>
-              <Button asChild variant="brand" className="mt-6"><Link to="/zodiac">Explore the collection</Link></Button>
-            </Reveal>
-          ) : (
-            <div className="mt-8 grid items-start gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
-              <div className="grid min-w-0 gap-5">
-                {checkout && <PaymentPreview />}
-                <Reveal className="min-w-0 rounded-[28px] border border-border bg-white p-4 sm:p-7">
-                  <h2 className="display display-md">{checkout ? "Your items" : "In your bag"}</h2>
-                  <ul className="mt-4 divide-y divide-border">
-                    {lines.map(({ id, quantity }) => {
-                      const product = zodiacProducts.find((item) => item.id === id);
-                      if (!product) return null;
-                      return (
-                        <li key={id} className="grid grid-cols-[auto_minmax(0,1fr)] gap-3 py-4 sm:gap-5">
-                          <Link to={`/product/${id}`} aria-label={product.detailTitle} className="grid size-16 place-items-center rounded-xl bg-mist sm:size-24">
-                            <img src={product.image} alt="" className="h-full w-full object-contain" />
-                          </Link>
-                          <div className="min-w-0">
-                            <p className="font-semibold text-ink">{product.detailTitle}</p>
-                            <p className="mt-1 text-xs text-deep/75">{formatVnd(WATCH_PRICE_VND)} each</p>
-                            {checkout ? (
-                              <p className="mt-2 text-sm text-deep">Quantity {quantity}</p>
-                            ) : (
-                              <div className="mt-2 flex flex-wrap items-center gap-2">
-                                <div className="inline-flex items-center rounded-full border border-border">
-                                  <button type="button" className="grid size-11 place-items-center rounded-full hover:bg-mist disabled:opacity-40" disabled={quantity <= 1}
-                                    aria-label={`Decrease quantity for ${product.detailTitle}`} onClick={() => setQuantity(id, quantity - 1)}>
-                                    <Minus size={15} aria-hidden="true" />
-                                  </button>
-                                  <output aria-label={`Quantity for ${product.detailTitle}`} className="min-w-5 text-center text-sm tabular-nums">{quantity}</output>
-                                  <button type="button" className="grid size-11 place-items-center rounded-full hover:bg-mist disabled:opacity-40" disabled={quantity >= MAX_QUANTITY}
-                                    aria-label={`Increase quantity for ${product.detailTitle}`} onClick={() => setQuantity(id, quantity + 1)}>
-                                    <Plus size={15} aria-hidden="true" />
-                                  </button>
-                                </div>
-                                <button type="button" aria-label={`Remove ${product.detailTitle}`} className="min-h-11 px-1 text-xs text-deep underline underline-offset-4" onClick={() => setQuantity(id, 0)}>
-                                  Remove
-                                </button>
-                              </div>
-                            )}
-                            <p className="mt-2 text-sm font-semibold tabular-nums text-ink">{formatVnd(quantity * WATCH_PRICE_VND)}</p>
-                          </div>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                </Reveal>
-              </div>
-              <Reveal delay={0.06} className="rounded-[28px] border border-border bg-white p-5 sm:p-7">
-                <h2 className="display display-md">Bag summary</h2>
-                <dl className="mt-5 space-y-3 text-sm">
-                  <div className="flex justify-between gap-3 text-ink">
-                    <dt>Subtotal · {count} {count === 1 ? "watch" : "watches"}</dt>
-                    <dd className="shrink-0 font-semibold tabular-nums">{formatVnd(count * WATCH_PRICE_VND)}</dd>
-                  </div>
-                  <div className="flex justify-between gap-3 text-deep/75">
-                    <dt>Delivery</dt>
-                    <dd>Calculated after launch</dd>
-                  </div>
-                </dl>
-                <p className="my-5 border-t border-border pt-4 text-sm leading-relaxed text-deep/75">
-                  SafeKid isn’t available to order yet.
-                </p>
-                {checkout ? (
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <Button className="w-full" variant="brand" size="lg">Confirm payment <ArrowRight aria-hidden="true" /></Button>
-                    </DialogTrigger>
-                    <DialogContent className="w-[calc(100%-2rem)] max-w-[28rem] rounded-[28px]">
-                      <DialogTitle className="display display-md pr-7">SafeKid isn’t available to order yet</DialogTitle>
-                      <DialogDescription className="leading-relaxed">Your items are still in your bag. No payment was taken.</DialogDescription>
-                      <DialogClose asChild>
-                        <Button variant="brand" className="mt-1">Continue reviewing checkout</Button>
-                      </DialogClose>
-                    </DialogContent>
-                  </Dialog>
-                ) : (
-                  <Button asChild className="w-full" variant="brand" size="lg">
-                    <Link to="/checkout">Preview checkout <ArrowRight aria-hidden="true" /></Link>
-                  </Button>
-                )}
-              </Reveal>
-            </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </motion.section>
+      </AnimatePresence>
     </SiteLayout>
   );
 }
