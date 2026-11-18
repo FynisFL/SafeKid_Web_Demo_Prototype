@@ -5,6 +5,7 @@ import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { formatVnd, WATCH_PRICE_VND } from "@/components/shop/shoppingBag";
 import { usePageTitle } from "@/hooks/usePageTitle";
 
 const TOPICS = [
@@ -17,10 +18,10 @@ const TOPICS = [
   },
   {
     number: "02",
-    title: "Zodiac collection",
-    description: "Explore all 12 character editions inspired by the Vietnamese Zodiac.",
-    href: "/zodiac",
-    link: "Explore the collection",
+    title: "Parent App",
+    description: "Try the Web App or check the Android test build.",
+    href: "/app",
+    link: "Explore the Parent App",
     internal: true,
   },
   {
@@ -37,7 +38,7 @@ const FAQS = [
   {
     question: "What is SafeKid right now?",
     answer:
-      "This site presents a SafeKid product and brand concept. It does not connect to a watch, an account or a live service.",
+      "SafeKid has a store preview and a separate Parent App in testing. You can explore twelve watch designs, add them to your bag and preview checkout. Watch orders are closed.",
   },
   {
     question: "Are the watch features available to use?",
@@ -47,12 +48,20 @@ const FAQS = [
   {
     question: "Do the Zodiac editions have different features?",
     answer:
-      "The collection presents 12 visual designs for the same watch concept. Product specifications and edition availability have not been confirmed.",
+      "The collection presents twelve visual designs for the same planned watch. Final edition specifications are pending and all watch orders are currently closed.",
   },
   {
     question: "Can I place an order or make a payment?",
     answer:
       "The store preview lets you add editions to your bag and explore checkout. Ordering and payments are closed until launch. Shipping and return details are pending.",
+  },
+  {
+    question: "How much does a SafeKid watch cost?",
+    answer: `Each watch is listed at ${formatVnd(WATCH_PRICE_VND)}. Preview checkout shows shipping, VAT and platform fees as Free. These are preview amounts; launch rates may differ.`,
+  },
+  {
+    question: "How can I try the Parent App?",
+    answer: "Open the Parent App page to launch the Web App on iPhone, Android or desktop, or check the Android APK test release. The Web App and Android app keep their data separately. The location view shows the device running the app.",
   },
   {
     question: "How can I contact the team?",
@@ -64,7 +73,7 @@ const FAQS = [
 export default function Support() {
   usePageTitle(
     "Support | SafeKid",
-    "Clear answers about the SafeKid concept, the Zodiac collection and how to reach the team."
+    "Help with the SafeKid store preview, watch pricing, Parent App testing and contacting the team."
   );
 
   return (
@@ -79,7 +88,7 @@ export default function Support() {
             for <span className="text-primary">SafeKid.</span>
           </>
         }
-        intro="Find your way around the SafeKid concept, browse the collection, or get in touch with the team."
+        intro="Find help with the store preview and Parent App, browse the collection, or get in touch with the team."
         actions={
           <a
             href="#faq"
@@ -89,7 +98,7 @@ export default function Support() {
             <ChevronDown className="h-4 w-4" aria-hidden="true" />
           </a>
         }
-        meta="Concept site · Store, payment and delivery services are not active"
+        meta="Store preview available · Parent App testing · Watch orders closed"
         art={
           <div className="relative mx-auto aspect-square w-full max-w-[380px]">
             <div aria-hidden="true" className="stage-glow absolute inset-[4%] rounded-full" />
@@ -125,7 +134,7 @@ export default function Support() {
               </h2>
             </div>
             <p className="max-w-[32ch] text-[13.5px] leading-relaxed text-muted-foreground lg:pb-2">
-              Quick links to the most useful parts of the SafeKid concept site.
+              Quick links to product details, Parent App testing and the SafeKid team.
             </p>
           </div>
 
@@ -191,8 +200,8 @@ export default function Support() {
               asked <span className="text-primary">questions.</span>
             </h2>
             <p className="mt-5 max-w-[36ch] text-[13.5px] leading-relaxed text-muted-foreground">
-              This page stays focused on what the concept currently represents, and clear about what
-              is not yet available.
+              Find the current watch price, learn how preview checkout works, and get started with
+              the Parent App test build.
             </p>
             <Link
               to="/contact"
@@ -234,6 +243,45 @@ export default function Support() {
         </div>
       </section>
 
+      <section aria-labelledby="before-launch-title" className="bg-white py-16">
+        <div className="shell">
+          <h2 id="before-launch-title" className="display display-md">Before you check out</h2>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {[
+              {
+                id: "payments",
+                title: "Payment methods",
+                body: "Preview Bank QR (VNPAY-QR), debit or credit card, and MoMo in checkout. Confirm payment opens a notice that ordering is closed. Card entry, QR transfers and wallet payments will be available when ordering opens.",
+              },
+              {
+                id: "shipping",
+                title: "Shipping & preview fees",
+                body: "Preview totals show shipping, VAT and platform fees as Free. These are preview amounts. Delivery areas, shipping rates, tax treatment and delivery times will be published before watch orders open.",
+              },
+              {
+                id: "returns",
+                title: "Returns & warranty",
+                body: "Return, refund and warranty terms will be published before watch orders open. Watch Passport displays sample lifecycle and warranty information. Contact the team if you have a question about the planned product.",
+              },
+              {
+                id: "privacy",
+                title: "Privacy & data",
+                body: "Your shopping bag is saved in this browser. Checkout asks for no address or card details. Contact opens your email app so you can send your message. S-F AI is a local scripted demo. The Web App and Android Parent App store data separately; their location view shows the device running the app.",
+              },
+            ].map(({ id, title, body }) => (
+              <Reveal key={id} variant="soft">
+                <article id={id} className="h-full scroll-mt-28 rounded-[26px] border border-border bg-mist/50 p-6">
+                  <h3 className="font-display text-xl font-medium tracking-tight text-ink">{title}</h3>
+                  <p className="mt-3 text-sm leading-relaxed text-deep/75">{body}</p>
+                  {id === "payments" && <Link className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4" to="/checkout">Explore checkout</Link>}
+                  {id === "privacy" && <Link className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4" to="/app">Explore the Parent App</Link>}
+                </article>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="bg-white py-16">
         <div className="shell">
           <div className="flex flex-col gap-5 rounded-[26px] border border-ink/10 bg-mist/50 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
@@ -241,11 +289,11 @@ export default function Support() {
               <span className="mt-0.5 flex h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />
               <div>
                 <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-deep/60">
-                  Concept site
+                  Before launch
                 </p>
                 <p className="mt-2 max-w-[62ch] text-[13px] leading-relaxed text-muted-foreground">
-                  SafeKid is currently presented here as a product concept. Store, payment, delivery,
-                  return and live device services are not active on this website.
+                  Explore the store preview and Parent App test build today. Watch ordering, payment
+                  collection and fulfilment will open at launch.
                 </p>
               </div>
             </div>

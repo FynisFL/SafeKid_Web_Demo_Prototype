@@ -113,7 +113,7 @@ const JOURNEY = [
     number: "03",
     verb: "Build",
     title: "Building the prototype",
-    body: "The ideas became this concept: twelve Vietnamese Zodiac editions, an interactive site, and demo screens such as SOS and a scripted support assistant. Everything is a prototype; nothing is live.",
+    body: "The ideas became twelve Vietnamese Zodiac designs, a store preview with a shopping bag and checkout, and a Parent App test build. Interactive demos explore the watch experience while the hardware remains in development.",
   },
 ];
 
@@ -481,8 +481,8 @@ export default function About() {
           <Reveal variant="soft" delay={0.12}>
             <p className="lede mx-auto mt-6 max-w-[52ch]">
               We want to explore how technology can give children space to grow and give families a
-              gentler way to stay in touch. SafeKid is a design exploration of that goal, not a
-              claim about a shipping product.
+              gentler way to stay in touch. Explore the store preview and try the Parent App as
+              we work toward the watch’s launch.
             </p>
           </Reveal>
         </div>

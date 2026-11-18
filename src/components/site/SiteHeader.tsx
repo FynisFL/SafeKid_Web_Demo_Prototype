@@ -17,6 +17,7 @@ const NAV = [
 ];
 
 const SECONDARY = [
+  { label: "Parent App", to: "/app" },
   { label: "Contact", to: "/contact" },
   { label: "SOS demo", to: "/sos" },
   { label: "Support centre", to: "/support" },
@@ -249,7 +250,7 @@ export function SiteHeader() {
                 </nav>
 
                 <div className="shell shrink-0 border-t border-ink/10 py-6 text-xs text-deep/55">
-                  <p>Product concept · No live device or service.</p>
+                  <p>Store preview · Parent App testing · Watch orders closed.</p>
                   <p className="mt-1">Developed by DigiBabi.</p>
                 </div>
               </div>

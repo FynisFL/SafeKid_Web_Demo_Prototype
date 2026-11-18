@@ -231,7 +231,7 @@ export default function Sos() {
             },
             {
               title: "What stays unconfirmed",
-              body: "Live SOS behaviour, device specifications and availability are not confirmed anywhere on this concept site.",
+              body: "Watch SOS is a planned feature. This page previews the interaction locally and sends no remote alerts.",
             },
           ].map((item) => (
             <article key={item.title} className="rounded-[24px] border border-ink/10 bg-mist/40 p-6">

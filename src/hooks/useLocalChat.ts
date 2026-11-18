@@ -1,3 +1,4 @@
+import { formatVnd, WATCH_PRICE_VND } from "@/components/shop/shoppingBag";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 export type ChatRole = "assistant" | "user" | "agent" | "system" | "thought";
@@ -25,6 +26,8 @@ export const STARTER_PROMPTS = [
   "What is SafeKid?",
   "Tell me about the Zodiac collection.",
   "Can I place an order?",
+  "How much does a watch cost?",
+  "How can I try the Parent App?",
   "I need help from a person.",
 ];
 
@@ -34,6 +37,8 @@ export const QUICK_QUESTIONS = [
   "Tell me about the Zodiac collection.",
   "Which SafeKid pages can I explore?",
   "Can I place an order?",
+  "How much does a watch cost?",
+  "How can I try the Parent App?",
   "I need help from a person.",
 ];
 
@@ -49,7 +54,7 @@ function greeting(): ChatMessage {
     id: createId(),
     role: "assistant",
     content:
-      "Hi, I'm the SafeKid assistant. Ask about the SafeKid concept, the Zodiac collection, or what this prototype can help with.",
+      "Hi, I'm the SafeKid assistant. Ask about the store preview, watch price, Parent App or Zodiac collection.",
   };
 }
 
@@ -103,22 +108,35 @@ function resolveQuestion(text: string): Resolution {
     /\b(tinh nang khan cap|nut khan cap|tin hieu khan cap|tinh huong khan cap|goi cuu giup)\b/.test(query);
 
   if (asksSos) {
-    const vietnameseQuestion =
-      /\b(la gi|tinh nang|lam sao|gui|tre|xem thu|nut|khan cap|mo phong|bam giu|cach)\b/.test(query);
-
     return {
       action: "sos",
-      actionLabel: vietnameseQuestion ? "Trải nghiệm SOS" : "Explore SOS Demo",
-      answer: vietnameseQuestion
-        ? "SafeKid giới thiệu One-Touch SOS như một tương tác mô phỏng để người xem khám phá cách nhấn giữ nút yêu cầu trợ giúp. M có thể mở bản demo tại trang SOS. Đây chỉ là mô phỏng cục bộ; không gửi cảnh báo, chia sẻ vị trí, gọi điện hay thông báo cho phụ huynh."
-        : "SafeKid's One-Touch SOS is presented as a concept interaction. You can explore a local press-and-hold simulation on the SOS Demo page. It does not send an emergency alert, share location, place a call or notify a parent.",
+      actionLabel: "Explore SOS Demo",
+      answer:
+        "SafeKid's SOS page lets you try a local press-and-hold simulation. The demo shows the interaction with sample content. It does not send emergency alerts, share location or contact another person.",
     };
   }
 
+  if (
+    /\b(order|orders|buy|purchase|payment|pay|price|cost|costs|shipping|delivery|return|warranty|available|availability)\b/.test(
+      query
+    )
+  ) {
+    return {
+      offerHandoff: true,
+      answer:
+        `SafeKid watches are listed at ${formatVnd(WATCH_PRICE_VND)} each. Add an edition to your bag and preview checkout. Confirm payment shows that ordering is closed. Shipping, VAT and platform fees show as Free in the preview; launch rates may differ. Shipping, returns and warranty terms will be published before orders open.`,
+    };
+  }
   if (/\b(zodiac|collection|edition|editions|animal|animals)\b/.test(query)) {
     return {
       answer:
-        "The SafeKid collection presents 12 visual designs inspired by the Vietnamese Zodiac. They are editions of the same watch concept; live product availability has not been confirmed.",
+        "The SafeKid collection presents 12 visual designs inspired by the Vietnamese Zodiac. Open an edition to see its price, add it to your bag and explore checkout. Watch orders are currently closed.",
+    };
+  }
+  if (/\b(app|apk|android|iphone|ios)\b/.test(query)) {
+    return {
+      answer:
+        "Try the SafeKid Parent App at /app. Open the Web App on iPhone, Android or desktop, or check the Android APK test release. Its location view shows the device running the app. Web and Android data are stored separately; live watch pairing and remote emergency alerts are not available.",
     };
   }
   if (
@@ -128,18 +146,7 @@ function resolveQuestion(text: string): Resolution {
   ) {
     return {
       answer:
-        "SafeKid's watch, parent-app, location, calling, safe-zone and SOS elements are presented as product concepts. This website is not connected to a live watch, account, location service or app.",
-    };
-  }
-  if (
-    /\b(order|orders|buy|purchase|payment|pay|price|shipping|delivery|return|warranty|available|availability)\b/.test(
-      query
-    )
-  ) {
-    return {
-      offerHandoff: true,
-      answer:
-        "This concept website does not process orders or payments. Pricing, availability, shipping, delivery, return and warranty policies have not been confirmed here, so I won't guess.",
+        "The website illustrates planned watch features such as location, calling, safe zones and SOS. The separate Parent App test build is available at /app. Website demos use sample events; live watch pairing and remote emergency alerts are not available.",
     };
   }
   if (/\b(contact|email|reach|team)\b/.test(query)) {
@@ -157,13 +164,13 @@ function resolveQuestion(text: string): Resolution {
   if (/\b(page|pages|explore)\b/.test(query)) {
     return {
       answer:
-        "You can explore the Support, Zodiac collection and Contact pages from the navigation. Those pages describe the SafeKid concept and offer a prototype contact route.",
+        "Explore the Zodiac collection, shopping bag, preview checkout, Parent App, Watch Passport, SOS Demo, About and Support pages. Contact opens an email draft for the team.",
     };
   }
   if (/\b(what is|about|concept|safekid)\b/.test(query)) {
     return {
       answer:
-        "SafeKid is presented on this website as a product concept for a child-focused watch and a playful collection inspired by the Vietnamese Zodiac. No live product or connected service is represented.",
+        "SafeKid combines twelve Vietnamese Zodiac watch designs, a store preview and a Parent App test build. You can try the app and explore the shopping flow while watch orders remain closed.",
     };
   }
   return {

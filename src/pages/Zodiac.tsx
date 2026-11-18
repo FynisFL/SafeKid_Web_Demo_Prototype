@@ -135,8 +135,8 @@ function Closing() {
           </Reveal>
           <Reveal variant="soft" delay={0.1}>
             <p className="mt-6 max-w-[44ch] text-[14.5px] leading-relaxed text-muted-foreground">
-              Take a closer look at an edition, or get in touch to talk about the SafeKid concept.
-              Explore the store preview. SafeKid isn’t available to order yet.
+              Choose an edition to see its price and add it to your bag. You can explore checkout
+              while watch orders remain closed.
             </p>
           </Reveal>
         </div>

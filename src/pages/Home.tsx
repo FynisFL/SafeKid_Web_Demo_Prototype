@@ -13,7 +13,7 @@ import { usePageTitle } from "@/hooks/usePageTitle";
 export default function Home() {
   usePageTitle(
     "SafeKid — The space between them",
-    "SafeKid is a product concept: a child's smartwatch and a parent's app, imagined around the space between independence and connection."
+    "Explore SafeKid’s twelve Zodiac watch designs, preview your shopping bag and checkout, and try the Parent App. Watch orders are not open yet."
   );
 
   return (

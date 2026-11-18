@@ -270,8 +270,8 @@ export default function Contact() {
                   Developed by <span className="font-medium text-ink">DigiBabi</span>
                 </p>
                 <p className="mt-3 text-[10.5px] leading-relaxed text-deep/55">
-                  Details are shown for this concept demonstration. No orders, payments or live
-                  support queues are active.
+                  Contact the team about the store preview or Parent App testing. Use the email
+                  form above to prepare a message, then send it from your email app.
                 </p>
               </div>
 

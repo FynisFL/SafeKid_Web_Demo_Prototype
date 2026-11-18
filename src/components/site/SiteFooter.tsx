@@ -19,10 +19,10 @@ const support = [
   { label: "Support centre", to: "/support" },
   { label: "FAQ", to: "/support#faq" },
   { label: "Contact", to: "/contact" },
-  { label: "Shipping information", to: "/support" },
-  { label: "Payment method", to: "/support" },
-  { label: "Return & refund", to: "/support" },
-  { label: "Privacy policy", to: "/support" },
+  { label: "Shipping information", to: "/support#shipping" },
+  { label: "Payment methods", to: "/support#payments" },
+  { label: "Returns & warranty", to: "/support#returns" },
+  { label: "Privacy & data", to: "/support#privacy" },
 ];
 
 export function SiteFooter() {
@@ -67,8 +67,8 @@ export function SiteFooter() {
           <div>
             <BrandMark tone="light" compact onSecretUnlock={() => setLittleDetourOpen(true)} />
             <p className="mt-5 max-w-[26ch] text-sm leading-relaxed text-white/55">
-              A child-focused watch concept and twelve Vietnamese Zodiac editions, imagined around
-              growing independence.
+              Explore twelve Vietnamese Zodiac watch designs, preview your shopping bag, and try
+              the SafeKid Parent App.
             </p>
             <div className="mt-6 flex items-center gap-2" aria-label="Social channels and source code">
               <a
@@ -165,14 +165,13 @@ export function SiteFooter() {
               </li>
             </ul>
             <p className="mt-6 max-w-[30ch] text-[11px] leading-relaxed text-white/50">
-              Contact details are shown for this concept demonstration. No orders or payments are
-              processed on this site.
+              Try the store preview and Parent App. Watch orders and payments will open at launch.
             </p>
           </div>
         </div>
 
         <div className="flex flex-col gap-2 border-t border-white/10 py-6 text-[11px] text-white/55 sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} SafeKid · Concept site for demonstration</p>
+          <p>© {new Date().getFullYear()} SafeKid · Store preview & Parent App testing</p>
           <p>
             Developed by <span className="text-white/65">DigiBabi</span>
           </p>

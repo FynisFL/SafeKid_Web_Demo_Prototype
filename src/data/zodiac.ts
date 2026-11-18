@@ -49,6 +49,6 @@ export const conceptCapabilities = [
 ];
 
 export const conceptNote =
-  "SafeKid is presented on this site as a product concept. No watch, account, pairing, location or emergency service is connected.";
+  "Watch features shown here are illustrative. Try the separate Parent App test build at /app; live watch pairing and emergency alerts are not available.";
 
 export const sosDisclosure = "Local simulation only. No emergency alert is sent.";

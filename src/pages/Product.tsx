@@ -221,7 +221,7 @@ export default function Product() {
                 Concept capabilities
               </h3>
               <p className="text-[10px] uppercase tracking-[0.18em] text-deep/55">
-                Not connected · Not confirmed
+                Illustrative watch features
               </p>
             </div>
             <ul className="mt-5 flex flex-wrap gap-2">

@@ -15,7 +15,7 @@ const pageEntries: PluginOption = {
     const productRoutes = editionImages
       .filter((file) => /^[a-z]+\.webp$/.test(file))
       .map((file) => `product/${path.basename(file, ".webp")}`);
-    for (const route of ["app", "watch-passport", "zodiac", "support", "contact", "cart", "checkout", ...productRoutes]) {
+    for (const route of ["app", "watch-passport", "zodiac", "support", "contact", "about", "chat", "s-f-ai", "sos", "cart", "checkout", ...productRoutes]) {
       const pageDirectory = path.join(dir, route);
       await mkdir(pageDirectory, { recursive: true });
       await writeFile(path.join(pageDirectory, "index.html"), index.source);
