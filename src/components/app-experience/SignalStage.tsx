@@ -4,7 +4,7 @@ import { Fragment, useEffect } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 
 import watch from "@/assets/safekid/editions/rat.webp";
-import { EASE } from "@/components/motion/tokens";
+import { DURATION, EASE } from "@/components/motion/tokens";
 
 import { signalArrival, signalStart, travelDuration, type Scene } from "./scenes";
 import { useClickSpark } from "./useClickSpark";
@@ -14,7 +14,7 @@ const stageSize = { width: 720, height: 480 };
 const emitter = { x: 294, y: 220 };
 const receiver = { x: 438, y: 220 };
 const trigger = { x: 360, y: 307 };
-const signalPath = `M ${emitter.x} ${emitter.y} H ${receiver.x}`;
+const signalPath = `M ${emitter.x} ${emitter.y} C 326 220 318 188 354 188 S 382 244 409 239 S 425 220 ${receiver.x} ${receiver.y}`;
 
 const impactParticles = Array.from({ length: 8 }, (_, index) => {
   const angle = index * (Math.PI / 4);
@@ -205,7 +205,7 @@ export function SignalStage({
         <div className="sk-stage__art">
           <div ref={rig} className="sk-stage__rig">
             <Fragment key={replay}>
-              <div className="sk-stage__devices" aria-hidden="true">
+              <div className="sk-stage__devices">
                 <div className="sk-stage__watch">
                   <motion.img src={watch} width={620} height={620} loading={loading}
                     fetchPriority={loading === "eager" ? "high" : undefined} alt="" draggable={false}
@@ -215,7 +215,7 @@ export function SignalStage({
                     animate={reduce ? undefined : intro
                       ? { opacity: 1, x: "0%", y: "0%", scale: 1, rotate: 0 }
                       : { scale: [1, 1.08, 1], rotate: [0, -4, 0] }}
-                    transition={{ duration: intro ? 1.44 : 0.76, ease: EASE }} />
+                    transition={{ duration: intro ? DURATION.slow : DURATION.base, ease: EASE }} />
                 </div>
                 <div className="sk-stage__phone">
                   <motion.div className="sk-stage__phone-shell"
@@ -225,7 +225,7 @@ export function SignalStage({
                     animate={reduce ? undefined : intro
                       ? { opacity: 1, x: "0%", y: "0%", scale: 1 }
                       : { scale: [1, 1.045, 1], y: [0, -3, 0] }}
-                    transition={{ duration: intro ? 1.48 : 0.9, delay: intro ? 0.16 : arrival - 0.18, ease: EASE }}>
+                    transition={{ duration: intro ? DURATION.slow : DURATION.base, delay: intro ? 0.16 : arrival - 0.18, ease: EASE }}>
                     <DemoScreen scene={scene} arrival={arrival} reduce={reduce} />
                   </motion.div>
                 </div>

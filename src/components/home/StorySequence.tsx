@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useId } from "react";
 import { Link } from "react-router-dom";
 import {
   AnimatePresence,
@@ -14,7 +14,8 @@ import { ArrowUpRight, Check, MapPin, Phone } from "lucide-react";
 import heroWatch from "@/assets/safekid/editions/rat.webp";
 import { sosDisclosure } from "@/data/zodiac";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
-import { DURATION, EASE } from "@/components/motion/tokens";
+import { DURATION, EASE, SCROLL_SPRING } from "@/components/motion/tokens";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
 
 type Chapter = {
@@ -36,35 +37,28 @@ const CHAPTERS: Chapter[] = [
     appState: "Waiting for a check-in",
   },
   {
-    id: "signal",
-    kicker: "02 / A way to reach you",
-    title: "Close, even from afar.",
-    body: "A small signal crosses the gap. On the watch, one familiar face. On the app, a moment of reassurance.",
-    watchState: "Incoming call",
-    appState: "Calling you",
+    id: "arrival",
+    kicker: "02 / The familiar route",
+    title: "Made it to school.",
+    body: "The watch reaches the school zone. A small signal begins its trip to the Parent App.",
+    watchState: "Arrived at school",
+    appState: "Check-in in transit",
   },
   {
     id: "connection",
-    kicker: "03 / Two perspectives",
+    kicker: "03 / The check-in",
     title: "One shared moment.",
-    body: "Two screens describe the same walk: a child on their way, a parent following along. One story, seen from both sides.",
-    watchState: "On my way",
-    appState: "On the way home",
-  },
-  {
-    id: "reassurance",
-    kicker: "04 / What matters",
-    title: "Independence, with connection.",
-    body: "The walk ends. The connection doesn't. SafeKid is imagined around both halves of that feeling.",
-    watchState: "Home",
-    appState: "Arrived home",
+    body: "The Parent App shows the arrival as a simple update. A little reassurance, even from afar.",
+    watchState: "Check-in sent",
+    appState: "Arrived at school",
   },
 ];
 
-const ease = [0.22, 1, 0.36, 1] as const;
+const ease = EASE;
 
 function MiniMap({ chapter, height = 164 }: { chapter: number; height?: number }) {
-  const moving = chapter >= 2;
+  const reduce = useReducedMotion();
+  const moving = chapter >= 1;
 
   return (
     <div className="relative overflow-hidden rounded-[18px] bg-mist" style={{ height }}>
@@ -89,9 +83,9 @@ function MiniMap({ chapter, height = 164 }: { chapter: number; height?: number }
             stroke="hsl(var(--primary))"
             strokeWidth="3"
             strokeLinecap="round"
-            initial={{ pathLength: 0, opacity: 0 }}
+            initial={reduce ? false : { pathLength: 0, opacity: 0 }}
             animate={{ pathLength: 1, opacity: 1 }}
-            transition={{ duration: 1.1, ease }}
+            transition={{ duration: reduce ? 0 : DURATION.slow, ease }}
           />
         )}
       </svg>
@@ -109,10 +103,10 @@ function MiniMap({ chapter, height = 164 }: { chapter: number; height?: number }
         className="absolute"
         initial={false}
         animate={{ left: moving ? 232 : 148, top: moving ? 44 : 76 }}
-        transition={{ duration: 1.1, ease }}
+        transition={{ duration: reduce ? 0 : DURATION.slow, ease }}
       >
         <span className="relative flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
-          <span className="absolute h-8 w-8 rounded-full bg-primary/25 animate-sk-pulse" />
+          <span className="absolute h-8 w-8 rounded-full bg-primary/25" />
           <span className="relative flex h-6 w-6 items-center justify-center rounded-full bg-primary text-primary-foreground shadow">
             <MapPin className="h-3 w-3" aria-hidden="true" />
           </span>
@@ -121,7 +115,7 @@ function MiniMap({ chapter, height = 164 }: { chapter: number; height?: number }
 
       <AnimatePresence mode="wait">
         <motion.span
-          key={moving ? "moving" : "waiting"}
+          key={chapter}
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
@@ -129,15 +123,15 @@ function MiniMap({ chapter, height = 164 }: { chapter: number; height?: number }
           className={cn(
             "absolute rounded-full border px-2.5 py-1 text-[10px] font-medium",
             moving
-              ? "left-[196px] top-[12px] border-primary/25 bg-white text-ink"
+              ? "right-2 top-[12px] border-primary/25 bg-white text-ink"
               : "left-[18px] top-[18px] border-ink/10 bg-white/80 text-deep/60"
           )}
         >
-          {moving ? "On the way" : "No check-in yet"}
+          {chapter === 2 ? "School zone" : moving ? "Check-in in transit" : "No check-in yet"}
         </motion.span>
       </AnimatePresence>
 
-      {chapter === 3 && (
+      {chapter === 2 && (
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -147,7 +141,7 @@ function MiniMap({ chapter, height = 164 }: { chapter: number; height?: number }
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <Check className="h-3 w-3" aria-hidden="true" />
           </span>
-          <span className="text-[11px] font-medium text-ink">Home safe · safe zone reached</span>
+          <span className="text-[11px] font-medium text-ink">Arrived at school</span>
         </motion.div>
       )}
     </div>
@@ -195,34 +189,7 @@ function ParentApp({ chapter, compact = false }: { chapter: number; compact?: bo
         </span>
       </div>
 
-      <AnimatePresence>
-        {chapter === 1 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 8 }}
-            transition={{ duration: 0.4, ease }}
-            className="absolute inset-x-3.5 bottom-3.5 flex items-center gap-2.5 rounded-[18px] border border-primary/25 bg-night px-3 py-2.5 text-white shadow-lg"
-          >
-            <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-primary/20 text-primary">
-              <span aria-hidden="true" className="animate-sk-ring absolute inset-0 rounded-full border border-primary/60" />
-              <span
-                aria-hidden="true"
-                style={{ animationDelay: "1.3s" }}
-                className="animate-sk-ring absolute inset-0 rounded-full border border-primary/40"
-              />
-              <Phone className="relative h-3.5 w-3.5" aria-hidden="true" />
-            </span>
-            <div className="flex-1">
-              <p className="text-[10px] uppercase tracking-[0.16em] text-white/60">Incoming call</p>
-              <p className="text-[12px] font-medium">Little explorer</p>
-            </div>
-            <span className="rounded-full bg-white/10 px-2 py-1 text-[8.5px] uppercase tracking-[0.14em] text-white/60">
-              Demo
-            </span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
 
       {!compact && (
         <p className="mt-2.5 px-1 text-[8.5px] leading-snug text-deep/50">
@@ -316,51 +283,23 @@ function ChapterCopy({ chapter, direction }: { chapter: number; direction: 1 | -
 }
 
 function Thread({ progress }: { progress: MotionValue<number> }) {
-  const x = useTransform(progress, [0.06, 1], ["44%", "60%"]);
-  const y = useTransform(progress, [0.06, 1], ["58%", "47%"]);
-  const opacity = useTransform(progress, [0, 0.06, 0.93, 1], [0, 1, 1, 0.25]);
-
+  const gradient = useId();
   return (
-    <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-      <svg
-        viewBox="0 0 1000 1000"
-        preserveAspectRatio="none"
-        className="absolute inset-0 h-full w-full"
-      >
-        <defs>
-          <linearGradient id="sk-thread" x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.12" />
-            <stop offset="45%" stopColor="hsl(var(--primary))" stopOpacity="0.85" />
-            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.2" />
-          </linearGradient>
-        </defs>
-        <motion.line
-          x1="440"
-          y1="580"
-          x2="600"
-          y2="470"
-          stroke="url(#sk-thread)"
-          strokeWidth="1.6"
-          strokeLinecap="round"
-          style={{ pathLength: progress }}
-        />
-        <motion.line
-          x1="440"
-          y1="580"
-          x2="600"
-          y2="470"
-          stroke="hsl(var(--primary))"
-          strokeWidth="12"
-          strokeLinecap="round"
-          opacity="0.06"
-          style={{ pathLength: progress }}
-        />
-      </svg>
-      <motion.span
-        className="absolute h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary shadow-[0_0_18px_4px_hsl(var(--primary)/0.45)]"
-        style={{ left: x, top: y, opacity }}
-      />
-    </div>
+    <svg aria-hidden="true" viewBox="0 0 1000 500" preserveAspectRatio="none"
+      className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
+      <defs>
+        <linearGradient id={gradient}>
+          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity=".16" />
+          <stop offset="55%" stopColor="hsl(var(--primary))" />
+          <stop offset="100%" stopColor="#d7ffff" />
+        </linearGradient>
+      </defs>
+      <path d="M240 240 C326 242 324 332 430 325 S534 163 620 193 S679 266 785 245"
+        fill="none" stroke="hsl(var(--primary) / .22)" strokeWidth="2" strokeDasharray="3 7" />
+      <motion.path d="M240 240 C326 242 324 332 430 325 S534 163 620 193 S679 266 785 245"
+        fill="none" stroke={`url(#${gradient})`} strokeWidth="3" strokeLinecap="round"
+        className="drop-shadow-[0_0_7px_#00c7ca]" style={{ pathLength: progress }} />
+    </svg>
   );
 }
 
@@ -412,7 +351,7 @@ function StoryBeat({ chapter, index, active, direction }: { chapter: Chapter; in
         <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary">
           {chapter.kicker}
         </p>
-        <span className="text-[10px] tabular-nums text-white/45">0{index + 1} / 04</span>
+        <span className="text-[10px] tabular-nums text-white/45">0{index + 1} / 0{CHAPTERS.length}</span>
       </div>
       <h3 className="mt-4 font-display text-[clamp(1.8rem,7vw,2.2rem)] font-medium leading-[1.02] tracking-[-0.045em] text-white">
         {chapter.title}
@@ -494,6 +433,7 @@ function StoryCarousel() {
 export function StorySequence() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const tablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px) and (min-height: 650px)");
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const activeRef = useRef(0);
@@ -502,7 +442,7 @@ export function StorySequence() {
     target: sectionRef,
     offset: ["start start", "end end"],
   });
-  const progress = useSpring(scrollYProgress, { stiffness: 170, damping: 30, mass: 0.35 });
+  const progress = useSpring(scrollYProgress, SCROLL_SPRING);
 
   useMotionValueEvent(progress, "change", (value) => {
     const next = Math.max(0, Math.min(CHAPTERS.length - 1, Math.floor(value * CHAPTERS.length)));
@@ -517,7 +457,8 @@ export function StorySequence() {
 
   const watchX = useTransform(progress, [0, 1], [-26, 0]);
   const appX = useTransform(progress, [0, 1], [46, 0]);
-  const appScale = useTransform(progress, [0, 1], [0.94, 1]);
+  const appScale = useTransform(progress, [0, 0.6, 1], [0.88, 0.97, 1]);
+  const signal = useTransform(progress, [0.16, 0.8], [0, 1]);
 
   function goTo(index: number) {
     const section = sectionRef.current;
@@ -538,7 +479,7 @@ export function StorySequence() {
         ref={sectionRef}
         className="relative hidden bg-night lg:[@media(min-height:650px)]:block"
         style={{
-          height: `${CHAPTERS.length * 100}vh`,
+          height: "265svh",
           borderTopLeftRadius: topRadius,
           borderTopRightRadius: topRadius,
         }}
@@ -562,7 +503,7 @@ export function StorySequence() {
             <div className="flex items-center gap-3 text-[10px] uppercase tracking-[0.2em] text-white/55">
               <span className="tabular-nums text-white">0{active + 1}</span>
               <span className="h-px w-10 bg-white/20" />
-              <span className="tabular-nums">04</span>
+              <span className="tabular-nums">0{CHAPTERS.length}</span>
             </div>
           </div>
 
@@ -570,16 +511,16 @@ export function StorySequence() {
             <div className="max-w-[340px]">
               <ChapterCopy chapter={active} direction={direction} />
               <Link
-                to="/zodiac"
+                to="/app"
                 className="group mt-7 inline-flex items-center gap-2 text-[13px] font-medium text-white/75 transition-colors hover:text-white"
               >
-                Meet the 12 editions
+                Try the Parent App
                 <ArrowUpRight className="h-3.5 w-3.5 text-primary" aria-hidden="true" />
               </Link>
             </div>
 
-            <div className="relative grid h-[clamp(400px,60vh,580px)] w-full grid-cols-[44%_12%_44%] items-center">
-              <Thread progress={progress} />
+            <div className="relative grid h-[clamp(320px,53svh,560px)] w-full grid-cols-[44%_12%_44%] items-center">
+              <Thread progress={signal} />
 
               <motion.div
                 style={{ x: watchX }}
@@ -598,7 +539,7 @@ export function StorySequence() {
           </div>
 
           <div className="shell relative border-t border-white/10 py-4">
-            <div className="grid grid-cols-4 gap-3 sm:gap-4">
+            <div className="grid grid-cols-3 gap-3 sm:gap-4">
               {CHAPTERS.map((chapter, index) => (
                 <button
                   key={chapter.id}
@@ -650,10 +591,19 @@ export function StorySequence() {
             A lasting connection.
           </h2>
           <p className="mt-5 max-w-[42ch] text-sm leading-relaxed text-white/50">
-            A product concept, imagined around the moments that help children grow. Four moments
+            A product concept, imagined around the moments that help children grow. Three moments
             between the watch and the app.
           </p>
-          <StoryCarousel />
+          {tablet ? (
+            <div className="mt-9 grid gap-7">
+              {CHAPTERS.map((chapter, index) => (
+                <StoryBeat key={chapter.id} chapter={chapter} index={index} direction={1} active />
+              ))}
+            </div>
+          ) : <StoryCarousel />}
+          <Link to="/app" className="mt-8 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-primary">
+            Try the Parent App <ArrowUpRight className="size-4" aria-hidden="true" />
+          </Link>
           <p className="mt-9 text-[11px] leading-relaxed text-white/45">
             Illustrative concept. No watch is connected and no live data is shown.
           </p>

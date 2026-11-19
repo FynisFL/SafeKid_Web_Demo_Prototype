@@ -5,12 +5,14 @@ import {
   useMotionValue,
   useReducedMotion,
   useScroll,
+  useInView,
   useSpring,
   useTransform,
 } from "motion/react";
 import { ArrowDown, ArrowUpRight, MoveDown } from "lucide-react";
 import heroWatch from "@/assets/safekid/editions/rat.webp";
-import { EASE } from "@/components/motion/tokens";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { DURATION, EASE } from "@/components/motion/tokens";
 
 const ease = EASE;
 
@@ -79,12 +81,16 @@ export function Hero() {
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const artY = useTransform(scrollYProgress, [0, 1], [0, -64]);
-  const artScale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
+  const visible = useInView(sectionRef, { once: true });
+  const wide = useMediaQuery("(min-width: 1024px) and (min-height: 650px)");
+  const artY = useTransform(scrollYProgress, [0, 1], [0, 74]);
+  const artX = useTransform(scrollYProgress, [0.15, 0.95], ["0%", "-23%"]);
+  const trail = useTransform(scrollYProgress, [0, 0.8], [0.13, 1]);
+  const artScale = useTransform(scrollYProgress, [0, 1], [1, 0.81]);
   const copyY = useTransform(scrollYProgress, [0, 1], [0, 40]);
   // Starts late on purpose: the CTAs sit about 60-70% down the hero and must stay readable
   // (>= ~0.7 opacity) for as long as they are on screen. See HE-1.
-  const copyOpacity = useTransform(scrollYProgress, [0.6, 1], [1, 0.25]);
+  const copyOpacity = useTransform(scrollYProgress, [0.75, 1], [1, 0.82]);
   // 36 degrees in total while the hero scrolls away.
   const ticksRotate = useTransform(scrollYProgress, [0, 1], [0, 36]);
 
@@ -139,7 +145,7 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-white pb-10 pt-[92px] lg:pb-14 lg:pt-[104px]"
+      className="relative isolate overflow-hidden bg-white pb-12 pt-[92px] lg:pb-20 lg:pt-[104px]"
       aria-label="SafeKid introduction"
     >
       <div
@@ -152,7 +158,7 @@ export function Hero() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-mist/60"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[29%] bg-gradient-to-b from-transparent via-mist/70 to-[#dcefee]"
       />
       <div
         aria-hidden="true"
@@ -165,6 +171,15 @@ export function Hero() {
         animate={{ scaleY: 1 }}
         transition={{ duration: 1.8, delay: 0.5, ease }}
       />
+
+      <svg viewBox="0 0 900 235" preserveAspectRatio="none" aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%] w-full text-primary">
+        <path d="M815 0 C808 76 761 117 700 137 S581 168 524 181 S462 207 450 235"
+          fill="none" stroke="currentColor" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity=".24" />
+        <motion.path d="M815 0 C808 76 761 117 700 137 S581 168 524 181 S462 207 450 235"
+          fill="none" stroke="currentColor" strokeWidth="2" vectorEffect="non-scaling-stroke"
+          strokeLinecap="round" style={reduce ? undefined : { pathLength: trail }} />
+      </svg>
 
       <div className="shell relative grid items-center gap-12 pb-8 pt-6 lg:grid-cols-[1.02fr_0.98fr] lg:gap-4 lg:pb-12">
         <motion.div
@@ -186,7 +201,7 @@ export function Hero() {
             </span>
             <span className="block overflow-hidden pb-[0.04em]">
               <motion.span variants={reduce ? undefined : line} className="block">
-                explore <span className="text-primary">the world.</span>
+                explore <span className="text-aqua-ink">the world.</span>
               </motion.span>
             </span>
           </h1>
@@ -243,13 +258,13 @@ export function Hero() {
         </motion.div>
 
         <motion.div
-          style={reduce ? undefined : { y: artY, scale: artScale }}
+          style={reduce ? undefined : { y: artY, scale: artScale, x: wide ? artX : 0 }}
           className="relative z-0 flex w-full justify-center lg:justify-end"
         >
           <motion.div
             initial={reduce ? undefined : { opacity: 0, scale: 0.94, y: 30 }}
             animate={reduce ? undefined : { opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 1.4, ease, delay: 0.12 }}
+            transition={{ duration: DURATION.slow, ease, delay: 0.12 }}
             className="flex w-full justify-center lg:justify-end"
           >
           <div
@@ -286,14 +301,21 @@ export function Hero() {
               <img
                 src={heroWatch}
                 alt="SafeKid smartwatch concept, Mouse edition, from the Vietnamese Zodiac collection"
-                width={1300}
-                height={1300}
+                width={620}
+                height={620}
                 fetchPriority="high"
                 className="h-[92%] w-[92%] select-none object-contain drop-shadow-[0_40px_60px_rgba(16,42,56,0.16)]"
                 draggable="false"
               />
             </motion.div>
 
+            {!reduce && visible && (
+              <motion.div aria-hidden="true"
+                className="pointer-events-none absolute inset-[8%] rounded-full border border-primary/60"
+                initial={{ scale: .85, opacity: 0 }} animate={{ scale: [0.85, 1.04, 1.09], opacity: [0, 0.62, 0] }}
+                transition={{ duration: DURATION.slow, delay: .22, ease }}
+              />
+            )}
             <motion.div
               className="pointer-events-none absolute inset-0"
               style={reduce ? undefined : { x: chipX, y: chipY }}

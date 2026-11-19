@@ -113,15 +113,15 @@ def interactions(browser, width, height, touch, reduce):
         track=story.locator('[aria-roledescription="slide"]:not([aria-hidden="true"])')
         swipe(ctx,page,track,-235)
         expect(story.get_by_role("button",name=re.compile("Chapter 2:"))).to_have_attribute("aria-current","step")
-        for i in (3,4,1):
+        for i in (3,1):
             button=story.get_by_role("button",name=re.compile(f"Chapter {i}:"))
             button.click()
             expect(button).to_have_attribute("aria-current","step")
             assert story.locator('[aria-roledescription="slide"]:not([aria-hidden="true"])').count() == 1
         in_bounds(story,width)
     elif not reduce:
-        page.get_by_role("button",name=re.compile("Go to chapter 4:")).click()
-        expect(page.get_by_role("button",name=re.compile("Go to chapter 4:"))).to_have_attribute("aria-current","step")
+        page.get_by_role("button",name=re.compile("Go to chapter 3:")).click()
+        expect(page.get_by_role("button",name=re.compile("Go to chapter 3:"))).to_have_attribute("aria-current","step")
 
     home_app=page.get_by_role("region",name="SafeKid Parent App")
     home_app.get_by_role("button",name="SOS Demo").click()
