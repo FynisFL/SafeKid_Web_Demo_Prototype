@@ -344,7 +344,15 @@ def failed_chunk_fallback(browser):
     ctx.close()
 
 with sync_playwright() as p:
-    browser=getattr(p, engine).launch(executable_path=os.getenv(f"SAFEKID_{engine.upper()}"), **({"args": ["--no-sandbox"]} if engine == "chromium" else {}))
+    launch_options = {}
+    if engine == "chromium":
+        launch_options["args"] = ["--no-sandbox"]
+    elif engine == "firefox":
+        # Headless Firefox's external mail picker can consume clicks after the Contact check.
+        launch_options["firefox_user_prefs"] = {"network.protocol-handler.external.mailto": False}
+    browser = getattr(p, engine).launch(
+        executable_path=os.getenv(f"SAFEKID_{engine.upper()}"), **launch_options,
+    )
     if os.environ.get("SAFEKID_SUITE","both") != "interactions":
         browse_all(browser)
     if os.environ.get("SAFEKID_SUITE","both") != "routes":

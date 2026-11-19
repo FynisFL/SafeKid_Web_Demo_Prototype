@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, Check, RotateCcw, Send, ShieldAlert, Sparkles, UserRound } from "lucide-react";
@@ -141,12 +141,11 @@ export default function Chat() {
   const listRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const list = listRef.current;
     if (!list) return;
-    // Keep the transcript settled before the next click can scroll the page to its controls.
-    list.scrollTo({ top: list.scrollHeight, behavior: "instant" });
-  }, [messages]);
+    list.scrollTo({ top: list.scrollHeight, behavior: reduce ? "instant" : "smooth" });
+  }, [messages, isBusy, reduce]);
 
   function submit(event: FormEvent) {
     event.preventDefault();
@@ -173,7 +172,7 @@ export default function Chat() {
 
   return (
     <SiteLayout>
-      <section className="relative overflow-clip bg-mist pb-16 pt-[104px] sm:pb-20 lg:pt-[124px]">
+      <section className="relative overflow-hidden bg-mist pb-16 pt-[104px] sm:pb-20 lg:pt-[124px]">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -right-[10%] -top-[30%] h-[640px] w-[640px] rounded-full bg-white/70 blur-[100px]"
@@ -227,8 +226,8 @@ export default function Chat() {
             </Link>
           </div>
 
-          <div className="overflow-clip rounded-[30px] border border-ink/10 bg-white shadow-[0_40px_100px_-70px_rgba(16,42,56,0.6)]">
-            <div className="sticky top-[calc(79px+var(--safe-top))] z-10 flex items-center gap-3 border-b border-ink/10 bg-mist px-5 py-4 lg:top-[calc(89px+var(--safe-top))]">
+          <div className="overflow-hidden rounded-[30px] border border-ink/10 bg-white shadow-[0_40px_100px_-70px_rgba(16,42,56,0.6)]">
+            <div className="flex items-center gap-3 border-b border-ink/10 bg-mist/50 px-5 py-4">
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-night text-primary">
                 <Sparkles className="h-[18px] w-[18px]" aria-hidden="true" />
               </span>
