@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useReducedMotion } from "motion/react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { formatVnd, WATCH_PRICE_VND } from "@/components/shop/shoppingBag";
 import { SiteLayout } from "@/components/site/SiteLayout";
@@ -12,6 +12,7 @@ import { TiltCard } from "@/components/motion/TiltCard";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { zodiacProducts } from "@/data/zodiac";
+import { collectionVisit } from "@/components/site/collectionVisit";
 import heroWatch from "@/assets/safekid/hero-watch.webp";
 
 function CollectionRail({ stageOwnsTransition, onEditionClick }: { stageOwnsTransition: boolean; onEditionClick: () => void }) {
@@ -145,7 +146,25 @@ function Closing() {
 }
 
 export default function Zodiac() {
-  const [stageOwnsTransition, setStageOwnsTransition] = useState(false);
+  const { key, pathname } = useLocation();
+  const visit = collectionVisit(key, pathname);
+  const [stageOwnsTransition, setStageOwnsTransition] = useState(visit.stageOwnsTransition);
+
+  useLayoutEffect(() => {
+    function rememberScroll() {
+      if (window.history.state?.key === key || (key === "default" && !window.history.state?.key)) {
+        visit.scrollY = window.scrollY;
+      }
+    }
+    window.addEventListener("scroll", rememberScroll, { passive: true });
+    return () => window.removeEventListener("scroll", rememberScroll);
+  }, [key, visit]);
+
+  function chooseTransitionSource(stage: boolean) {
+    visit.scrollY = window.scrollY;
+    visit.stageOwnsTransition = stage;
+    setStageOwnsTransition(stage);
+  }
   usePageTitle(
     "Zodiac Collection | SafeKid",
     "Twelve SafeKid smartwatch concepts inspired by the Vietnamese Zodiac. Explore every edition."
@@ -197,8 +216,14 @@ export default function Zodiac() {
       />
 
       <div id="collection" />
-      <ZodiacStage variant="page" ownsEditionTransition={stageOwnsTransition} onEditionClick={() => setStageOwnsTransition(true)} />
-      <CollectionRail stageOwnsTransition={stageOwnsTransition} onEditionClick={() => setStageOwnsTransition(false)} />
+      <ZodiacStage
+        variant="page"
+        initialIndex={visit.index}
+        onSelectionChange={(index) => { visit.index = index; }}
+        ownsEditionTransition={stageOwnsTransition}
+        onEditionClick={() => chooseTransitionSource(true)}
+      />
+      <CollectionRail stageOwnsTransition={stageOwnsTransition} onEditionClick={() => chooseTransitionSource(false)} />
       <Closing />
     </SiteLayout>
   );
