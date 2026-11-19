@@ -48,7 +48,7 @@ const BOUNDS = WEIGHTS.reduce<number[]>(
   [0]
 );
 const OVERLAP = 0.025;
-const TOTAL_VH = WEIGHT_SUM * 100;
+const TRACK_HEIGHT = 440;
 
 const shortName = (name: string) => name.split(" ").pop() ?? name;
 
@@ -914,7 +914,7 @@ function StageTeam({ members }: { members: TeamMember[] }) {
   }
 
   return (
-    <div ref={trackRef} className="relative" style={{ height: `${TOTAL_VH + 100}vh` }}>
+    <div ref={trackRef} className="relative" style={{ height: `${TRACK_HEIGHT}svh` }}>
       <div className="sticky top-0 h-screen overflow-hidden">
         <SceneShell progress={progress} start={0} end={BOUNDS[1]} position="first">
           <div className="shell w-full">
@@ -1027,7 +1027,7 @@ function FlowTeam({ members }: { members: TeamMember[] }) {
 
 export function TeamStory({ members }: { members: TeamMember[] }) {
   const reduce = useReducedMotion();
-  const roomy = useMediaQuery("(min-width: 1024px) and (min-height: 640px)");
+  const roomy = useMediaQuery("(min-width: 1024px) and (min-height: 650px)");
   const stage = roomy && !reduce;
 
   return (

@@ -141,7 +141,7 @@ function MiniMap({ chapter, height = 164 }: { chapter: number; height?: number }
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground">
             <Check className="h-3 w-3" aria-hidden="true" />
           </span>
-          <span className="text-[11px] font-medium text-ink">Arrived at school</span>
+          <span className="text-[11px] font-medium text-ink">School check-in received</span>
         </motion.div>
       )}
     </div>
@@ -464,7 +464,8 @@ export function StorySequence() {
     const section = sectionRef.current;
     if (!section) return;
     const top = section.getBoundingClientRect().top + window.scrollY;
-    const scrollable = section.offsetHeight - window.innerHeight;
+    const sticky = section.firstElementChild;
+    const scrollable = section.offsetHeight - (sticky?.clientHeight || window.innerHeight);
     window.scrollTo({
       top: top + scrollable * ((index + 0.5) / CHAPTERS.length),
       behavior: "smooth",
@@ -477,7 +478,7 @@ export function StorySequence() {
     <div id="story" className="lg:bg-mist">
       <motion.section
         ref={sectionRef}
-        className="relative hidden bg-night lg:[@media(min-height:650px)]:block"
+        className="relative hidden bg-[radial-gradient(ellipse_at_50%_0%,#19404a_0%,#0b2531_34%,#0a1924_75%)] lg:[@media(min-height:650px)]:block"
         style={{
           height: "265svh",
           borderTopLeftRadius: topRadius,
@@ -579,7 +580,7 @@ export function StorySequence() {
         </div>
       </motion.section>
 
-      <section id="story-mobile" className="bg-night pb-16 lg:[@media(min-height:650px)]:hidden">
+      <section id="story-mobile" className="bg-[linear-gradient(180deg,#173b43,#0a1924_28%)] pb-16 lg:[@media(min-height:650px)]:hidden">
         <div className="shell pt-14">
           <p className="eyebrow eyebrow-inverse">
             <span className="eyebrow-line" />
