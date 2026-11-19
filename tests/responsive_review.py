@@ -44,6 +44,24 @@ with sync_playwright() as driver:
             page.wait_for_function("getComputedStyle(document.body).overflowY !== 'hidden'")
             page.set_viewport_size({"width": width, "height": height})
 
+        if width < 640:
+            for path in ["/", "/zodiac/"]:
+                visit(path)
+                collection = page.locator('[aria-labelledby="collection-heading"]')
+                watch = collection.get_by_role("img", name="SafeKid smartwatch concept in the Mouse edition")
+                collection.scroll_into_view_if_needed()
+                # The outer section clips overflow, so the document width can look correct
+                # even when the whole stage has been pushed off screen by the edition rail.
+                rail = collection.get_by_role("list", name="Zodiac editions")
+                next_edition = collection.get_by_role("button", name="Next edition")
+                for element in (watch, next_edition, rail):
+                    box = element.bounding_box()
+                    assert box and box["x"] >= 0 and box["x"] + box["width"] <= width + 1, (path, width, box)
+                assert watch.evaluate("el => el.decode().then(() => el.naturalWidth > 0)")
+                assert rail.evaluate("el => el.scrollWidth > el.clientWidth")
+                next_edition.click()
+                expect(collection.get_by_role("link", name="Explore this edition")).to_have_attribute("href", "/product/buffalo")
+
         visit("/app/")
         stage = page.locator(".sk-stage__viewport")
         stage.scroll_into_view_if_needed()

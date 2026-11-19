@@ -6,7 +6,7 @@ export type SceneImage = { url: string; purpose: string };
 
 const imageByPath: Record<string, SceneImage> = {
   "/": { url: watch, purpose: "Hero watch and the opening Story scene" },
-  "/zodiac": { url: watch, purpose: "Zodiac hero's lead watch" },
+  "/zodiac": { url: watch, purpose: "First watch in the Zodiac collection" },
   "/app": { url: watch, purpose: "Parent App signal demo watch" },
   "/about": { url: digibabi, purpose: "About hero artwork" },
 };

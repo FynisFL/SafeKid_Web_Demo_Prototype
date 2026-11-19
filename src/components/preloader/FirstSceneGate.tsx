@@ -5,7 +5,8 @@ import { DURATION, EASE } from "@/components/motion/tokens";
 import { FirstSceneContext, type Entrance } from "./firstSceneContext";
 
 const MAX_WAIT_MS = 8_000;
-const FONT_WAIT_MS = 1_200;
+const FONT_WAIT_MS = 160;
+const SHOW_AFTER_MS = 350;
 const SKIP_AFTER_MS = 1_800;
 
 function imageDecoded(url: string) {
@@ -17,7 +18,7 @@ function imageDecoded(url: string) {
 
 async function loadFonts() {
   const stylesheet = document.querySelector<HTMLLinkElement>("#safekid-webfonts");
-  if (!document.fonts || !stylesheet) return;
+  if (!document.fonts || !stylesheet || stylesheet.dataset.fallback === "true") return;
 
   let timer: number | undefined;
   const listener = new AbortController();
@@ -72,6 +73,7 @@ export function FirstSceneGate({ children }: { children: ReactNode }) {
   const [routeReady, setRouteReady] = useState(false);
   const [prepared, setPrepared] = useState(0);
   const [frameReady, setFrameReady] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
   const [showSkip, setShowSkip] = useState(false);
   const bootDone = useRef(plan.bypass);
   const focusOnExit = useRef(false);
@@ -107,10 +109,12 @@ export function FirstSceneGate({ children }: { children: ReactNode }) {
       void imageDecoded(url).then(finishTask, () => { if (active) enter("static"); });
     }
     void loadFonts().then(finishTask);
+    const overlay = window.setTimeout(() => { if (!bootDone.current) setShowOverlay(true); }, SHOW_AFTER_MS);
     const skip = window.setTimeout(() => { if (!bootDone.current) setShowSkip(true); }, SKIP_AFTER_MS);
     const timeout = window.setTimeout(() => enter("static"), MAX_WAIT_MS);
     return () => {
       active = false;
+      window.clearTimeout(overlay);
       window.clearTimeout(skip);
       window.clearTimeout(timeout);
     };
@@ -124,9 +128,8 @@ export function FirstSceneGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!frameReady || phase !== "waiting") return;
-    const timer = window.setTimeout(() => enter("play"), reduced ? 0 : DURATION.feedback * 1000);
-    return () => window.clearTimeout(timer);
-  }, [enter, frameReady, phase, reduced]);
+    enter("play");
+  }, [enter, frameReady, phase]);
 
   useEffect(() => {
     if (phase === "waiting" || !releaseOverlay || !routeReady || !focusOnExit.current) return;
@@ -139,11 +142,11 @@ export function FirstSceneGate({ children }: { children: ReactNode }) {
 
   return (
     <FirstSceneContext.Provider value={{ entrance: phase, ready }}>
-      <div inert={phase === "waiting" ? true : undefined}>{children}</div>
+      <div inert={phase === "waiting" && showOverlay ? true : undefined}>{children}</div>
       <AnimatePresence onExitComplete={() => setReleaseOverlay(true)}>
-        {phase === "waiting" && (
+        {phase === "waiting" && showOverlay && (
           <motion.div key="first-scene" className="first-scene" data-testid="first-scene"
-            exit={{ opacity: 0 }} transition={{ duration: reduced ? 0 : DURATION.feedback, ease: EASE }}>
+            exit={{ opacity: 0, pointerEvents: "none" }} transition={{ duration: reduced ? 0 : DURATION.feedback, ease: EASE }}>
             <div className="first-scene__inner">
               <span className="sr-only" aria-live="polite">Preparing the first scene.</span>
               <div role="progressbar" aria-label="First scene preparation" aria-valuenow={progress}

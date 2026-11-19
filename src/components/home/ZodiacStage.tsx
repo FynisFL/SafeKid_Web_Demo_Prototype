@@ -140,35 +140,43 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
     <section
       className={cn(
         "relative overflow-hidden motion-safe:transition-colors motion-safe:duration-500",
-        variant === "page" ? "py-16 sm:py-20" : "py-20 sm:py-24 lg:py-28"
+        variant === "page" ? "pb-12 pt-5 sm:pb-16 sm:pt-8" : "py-20 sm:py-24 lg:py-28"
       )}
       style={{ backgroundColor: product.tint }}
       aria-labelledby="collection-heading"
+      id={variant === "page" ? "collection" : undefined}
     >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 h-[520px] bg-gradient-to-b from-mist to-transparent"
       />
       <div className="shell relative">
-        <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
-          <div>
-            <p className="eyebrow">
-              <span className="eyebrow-line" />
-              The Vietnamese Zodiac Collection
+        {variant === "page" ? (
+          <h2 id="collection-heading" className="sr-only">Choose a Zodiac edition</h2>
+        ) : (
+          <div className="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div>
+              <p className="eyebrow">
+                <span className="eyebrow-line" />
+                The Vietnamese Zodiac Collection
+              </p>
+              <h2 id="collection-heading" className="display display-lg mt-6 max-w-[16ch]">
+                Twelve characters.
+                <br />
+                One little explorer.
+              </h2>
+            </div>
+            <p className="max-w-[36ch] text-[14px] leading-relaxed text-muted-foreground lg:pb-2">
+              Each edition brings a different character to the same SafeKid watch concept. Choose a
+              favourite to see it up close.
             </p>
-            <h2 id="collection-heading" className="display display-lg mt-6 max-w-[16ch]">
-              Twelve characters.
-              <br />
-              One little explorer.
-            </h2>
           </div>
-          <p className="max-w-[36ch] text-[14px] leading-relaxed text-muted-foreground lg:pb-2">
-            Each edition brings a different character to the same SafeKid watch concept. Choose a
-            favourite to see it up close.
-          </p>
-        </div>
+        )}
 
-        <div className="mt-12 grid gap-10 lg:mt-16 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">
+        <div className={cn(
+          "grid grid-cols-1 gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14",
+          variant === "home" && "mt-12 lg:mt-16"
+        )}>
           <div className="order-2 lg:order-1">
             <div className="flex items-center justify-between border-b border-ink/10 pb-3">
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-deep/50">

@@ -12,7 +12,6 @@ import {
 import { ArrowDown, ArrowUpRight, MoveDown } from "lucide-react";
 import heroWatch from "@/assets/safekid/editions/rat.webp";
 import { useFirstScene } from "@/components/preloader/firstSceneContext";
-import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { DURATION, EASE } from "@/components/motion/tokens";
 
 const ease = EASE;
@@ -92,11 +91,6 @@ export function Hero() {
     offset: ["start start", "end start"],
   });
   const visible = useInView(sectionRef, { once: true });
-  const wide = useMediaQuery("(min-width: 1024px) and (min-height: 650px)");
-  const artY = useTransform(scrollYProgress, [0, 1], [0, 74]);
-  const artX = useTransform(scrollYProgress, [0.15, 0.95], ["0%", "-23%"]);
-  const trail = useTransform(scrollYProgress, [0, 0.8], [0.13, 1]);
-  const artScale = useTransform(scrollYProgress, [0, 1], [1, 0.81]);
   const copyY = useTransform(scrollYProgress, [0, 1], [0, 40]);
   // Starts late on purpose: the CTAs sit about 60-70% down the hero and must stay readable
   // (>= ~0.7 opacity) for as long as they are on screen. See HE-1.
@@ -129,6 +123,7 @@ export function Hero() {
     pointerX.set(0);
     pointerY.set(0);
   }
+
 
   const motionProps = reduce
     ? {}
@@ -174,22 +169,6 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-[7%] hidden w-px bg-ink/[0.05] lg:block"
       />
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-[7%] hidden w-px origin-top bg-primary/35 lg:block"
-        initial={reduce ? false : { scaleY: 0 }}
-        animate={{ scaleY: 1 }}
-        transition={{ duration: 1.8, delay: 0.5, ease }}
-      />
-
-      <svg viewBox="0 0 900 235" preserveAspectRatio="none" aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%] w-full text-primary">
-        <path d="M815 0 C808 76 761 117 700 137 S581 168 524 181 S462 207 450 235"
-          fill="none" stroke="currentColor" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity=".24" />
-        <motion.path d="M815 0 C808 76 761 117 700 137 S581 168 524 181 S462 207 450 235"
-          fill="none" stroke="currentColor" strokeWidth="2" vectorEffect="non-scaling-stroke"
-          strokeLinecap="round" style={reduce ? undefined : { pathLength: trail }} />
-      </svg>
 
       <div className="shell relative grid items-center gap-5 pb-8 pt-2 sm:gap-12 sm:pt-6 lg:grid-cols-[1.02fr_0.98fr] lg:gap-4 lg:pb-12">
         <motion.div
@@ -267,16 +246,13 @@ export function Hero() {
           </motion.div>
         </motion.div>
 
-        <motion.div
-          style={reduce ? undefined : { y: artY, scale: artScale, x: wide ? artX : 0 }}
-          className="relative z-0 flex w-full justify-center lg:justify-end"
-        >
+        <div className="relative z-0 flex w-full justify-center lg:justify-end">
           <motion.div
-            initial={reduce ? undefined : { opacity: 0, scale: 0.94, y: 30 }}
-            animate={waiting && !reduce ? { opacity: 0, scale: 0.94, y: 30 } : { opacity: 1, scale: 1, y: 0 }}
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: waiting && !reduce ? 0 : 1 }}
             transition={{ duration: reduce || waiting ? 0 : DURATION.slow, ease, delay: reduce || waiting ? 0 : 0.12 }}
             className="flex w-full justify-center lg:justify-end"
-            style={{ willChange: waiting && !reduce ? "transform, opacity" : undefined }}
+            style={{ willChange: waiting && !reduce ? "opacity" : undefined }}
           >
           <div
             ref={artRef}
@@ -361,7 +337,7 @@ export function Hero() {
             </p>
           </div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
 
       <div className="shell relative flex items-center justify-between border-t border-ink/[0.07] pt-5">

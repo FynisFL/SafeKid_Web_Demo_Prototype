@@ -321,7 +321,7 @@ src/
 
 ### 8.2. Motion System
 
-Home dùng đường tín hiệu để nối Hero với ba cảnh Story và Parent App. Desktop đủ cao dùng stage sticky, tablet dùng các panel theo luồng đọc, mobile dùng carousel. Watch Passport có sơ đồ tương tác `components/passport/CoreLayers.tsx` dùng dữ liệu minh họa. Zodiac dùng cùng ảnh edition cho các lớp chính và phụ.
+Home dùng thanh tiến độ ở header để định hướng vị trí trên trang. Desktop đủ cao dùng stage sticky, tablet dùng các panel theo luồng đọc, mobile dùng carousel. Watch Passport có sơ đồ tương tác `components/passport/CoreLayers.tsx` dùng dữ liệu minh họa. Zodiac dùng cùng ảnh edition cho các lớp chính và phụ.
 
 
 SafeKid sử dụng bộ quy chuẩn chuyển động chung để các hiệu ứng trên website có cảm giác đồng nhất.
@@ -353,7 +353,13 @@ Các thành phần như Reveal, Stagger, Hero và Watch Passport sử dụng nh�
 
 ### 8.3. Tải cảnh đầu
 
-`FirstSceneGate` bao quanh bộ định tuyến trong Error Boundary. `src/data/firstScene.ts` chọn ảnh theo đường dẫn đi vào. Một phần trăm thể hiện số việc đã sẵn sàng, gồm mã khởi chạy, trang, font hoặc font dự phòng, ảnh cần dùng và khung hình đầu. Khi ảnh lỗi, quá thời hạn hoặc người dùng chọn Skip, cảnh mở đầu hiển thị đơn giản. Các route khác và ảnh ở phần dưới sử dụng cơ chế tải trễ.
+`FirstSceneGate` bao quanh bộ định tuyến trong Error Boundary. `src/data/firstScene.ts` chọn ảnh theo đường dẫn đi vào. Một phần trăm thể hiện số việc đã sẵn sàng, gồm mã khởi chạy, trang, font hoặc font dự phòng, ảnh cần dùng và khung hình đầu. Khi ảnh lỗi, quá thời hạn hoặc người dùng chọn Skip, cảnh mở đầu hiển thị đơn giản. Các route khác và ảnh ở phần dưới sử dụng cơ chế tải trễ. Overlay chỉ hiện nếu chuẩn bị mất hơn 350ms. CSS font ghi nhận lỗi ngay từ HTML để React không đợi lại sự kiện đã xảy ra. Font có ngân sách chờ riêng 160ms, sau đó giữ font dự phòng trong lượt mở. Khi hoàn tất không giữ màn 100% thêm theo timer.
+
+### 8.4. Đoạn kết Home và trang Zodiac
+
+Đoạn kết Home trình bày trực tiếp tiêu đề, mô tả và hai CTA trong HTML. Phần nhấn của tiêu đề dịch nhẹ lần đầu xuất hiện. Nhịp tín hiệu giữa đồng hồ và hình minh họa điện thoại chạy trong khung riêng khi vào viewport, rồi dừng. Reduced motion giữ cảnh tĩnh. Thanh tiến độ trang nằm riêng ở header.
+
+Trang Zodiac dùng phần giới thiệu ngắn rồi vào ngay `ZodiacStage`. Anchor `#collection` trỏ tới vùng chọn edition. Giữ cột mobile của stage theo chiều rộng vùng chứa để dải edition cuộn bên trong mà ảnh và nút đổi mẫu vẫn nằm trong viewport. Cả Home và trang Zodiac dùng chung sân khấu.
 
 ## 9. Quy định cập nhật tài liệu
 

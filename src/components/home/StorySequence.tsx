@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useId } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   AnimatePresence,
@@ -8,7 +8,6 @@ import {
   useScroll,
   useSpring,
   useTransform,
-  type MotionValue,
 } from "motion/react";
 import { ArrowUpRight, Check, MapPin, Phone } from "lucide-react";
 import heroWatch from "@/assets/safekid/editions/rat.webp";
@@ -282,27 +281,6 @@ function ChapterCopy({ chapter, direction }: { chapter: number; direction: 1 | -
   );
 }
 
-function Thread({ progress }: { progress: MotionValue<number> }) {
-  const gradient = useId();
-  return (
-    <svg aria-hidden="true" viewBox="0 0 1000 500" preserveAspectRatio="none"
-      className="pointer-events-none absolute inset-0 h-full w-full overflow-visible">
-      <defs>
-        <linearGradient id={gradient}>
-          <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity=".16" />
-          <stop offset="55%" stopColor="hsl(var(--primary))" />
-          <stop offset="100%" stopColor="#d7ffff" />
-        </linearGradient>
-      </defs>
-      <path d="M240 240 C326 242 324 332 430 325 S534 163 620 193 S679 266 785 245"
-        fill="none" stroke="hsl(var(--primary) / .22)" strokeWidth="2" strokeDasharray="3 7" />
-      <motion.path d="M240 240 C326 242 324 332 430 325 S534 163 620 193 S679 266 785 245"
-        fill="none" stroke={`url(#${gradient})`} strokeWidth="3" strokeLinecap="round"
-        className="drop-shadow-[0_0_7px_#00c7ca]" style={{ pathLength: progress }} />
-    </svg>
-  );
-}
-
 function StaticStory() {
   return (
     <section id="story" className="relative overflow-hidden bg-night py-20">
@@ -458,7 +436,6 @@ export function StorySequence() {
   const watchX = useTransform(progress, [0, 1], [-26, 0]);
   const appX = useTransform(progress, [0, 1], [46, 0]);
   const appScale = useTransform(progress, [0, 0.6, 1], [0.88, 0.97, 1]);
-  const signal = useTransform(progress, [0.16, 0.8], [0, 1]);
 
   function goTo(index: number) {
     const section = sectionRef.current;
@@ -521,8 +498,6 @@ export function StorySequence() {
             </div>
 
             <div className="relative grid h-[clamp(320px,53svh,560px)] w-full grid-cols-[44%_12%_44%] items-center">
-              <Thread progress={signal} />
-
               <motion.div
                 style={{ x: watchX }}
                 className="col-start-1 flex h-full min-w-0 items-center justify-center"

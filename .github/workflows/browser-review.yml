@@ -25,7 +25,7 @@ jobs:
       - run: npm run check
       - run: npm run build
       - run: python -m pip install playwright==1.62.0
-      - run: python -m playwright install --with-deps chromium firefox
+      - run: python -m playwright install --with-deps chromium firefox webkit
       - name: Test production preview
         run: |
           npm run preview -- --host 127.0.0.1 > /tmp/safekid-preview.log 2>&1 &
@@ -35,4 +35,7 @@ jobs:
           python tests/collection_navigation.py
           python tests/connected_scenes.py
           python tests/first_scene.py
+          python tests/reading_layout.py
           SAFEKID_BROWSER=firefox python tests/collection_navigation.py
+          SAFEKID_BROWSER=firefox python tests/reading_layout.py
+          SAFEKID_BROWSER=webkit python tests/reading_layout.py
