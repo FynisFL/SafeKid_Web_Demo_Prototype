@@ -38,6 +38,8 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const menuTrigger = useRef<HTMLButtonElement>(null);
+  const searchReturn = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll();
   const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 26, mass: 0.3 });
@@ -60,6 +62,7 @@ export function SiteHeader() {
   }, [desktop]);
 
   return (
+    <>
     <Dialog.Root open={menuOpen && !desktop} onOpenChange={setMenuOpen}>
       <header
         className={cn(
@@ -133,7 +136,10 @@ export function SiteHeader() {
             </Link>
             <button
               type="button"
-              onClick={() => setSearchOpen(true)}
+              onClick={(event) => {
+                searchReturn.current = event.currentTarget;
+                setSearchOpen(true);
+              }}
               aria-label="Search the 12 editions"
               className="hidden h-10 w-10 items-center justify-center rounded-full text-deep/70 transition-colors hover:bg-mist hover:text-ink sm:inline-flex"
             >
@@ -149,6 +155,7 @@ export function SiteHeader() {
             <Dialog.Trigger asChild>
               <button
                 type="button"
+                ref={menuTrigger}
                 aria-label="Open menu"
                 className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/12 text-ink transition-colors hover:bg-mist lg:hidden"
               >
@@ -222,6 +229,7 @@ export function SiteHeader() {
               <button
                 type="button"
                 onClick={() => {
+                  searchReturn.current = menuTrigger.current;
                   setMenuOpen(false);
                   setSearchOpen(true);
                 }}
@@ -240,7 +248,8 @@ export function SiteHeader() {
         </Dialog.Content>
       </Dialog.Portal>
 
-      <EditionSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
     </Dialog.Root>
+    <EditionSearch open={searchOpen} onClose={() => setSearchOpen(false)} returnFocus={searchReturn} />
+    </>
   );
 }
