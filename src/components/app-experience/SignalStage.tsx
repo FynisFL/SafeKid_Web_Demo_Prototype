@@ -3,7 +3,7 @@ import { motion, useAnimate } from "motion/react";
 import { Fragment, useEffect } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 
-import watch from "@/assets/safekid/hero-watch.webp";
+import watch from "@/assets/safekid/editions/rat.webp";
 import { EASE } from "@/components/motion/tokens";
 
 import { signalArrival, signalStart, travelDuration, type Scene } from "./scenes";

@@ -13,7 +13,7 @@ import { Magnetic } from "@/components/motion/Magnetic";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { zodiacProducts } from "@/data/zodiac";
 import { collectionVisit } from "@/components/site/collectionVisit";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
+import heroWatch from "@/assets/safekid/editions/rat.webp";
 
 function CollectionRail({ stageOwnsTransition, onEditionClick }: { stageOwnsTransition: boolean; onEditionClick: () => void }) {
   const reduce = useReducedMotion();

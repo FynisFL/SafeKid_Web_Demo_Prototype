@@ -18,7 +18,7 @@ import { TeamStory } from "@/components/about/TeamStory";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import digibabi from "@/assets/digibabi/logo-digibabi.webp";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
+import heroWatch from "@/assets/safekid/editions/rat.webp";
 import duy from "@/assets/digibabi/duy.webp";
 import linh from "@/assets/digibabi/linh.webp";
 import nhan from "@/assets/digibabi/nhan.webp";
@@ -384,7 +384,7 @@ export default function About() {
             <div aria-hidden="true" className="absolute inset-[13%] rounded-full border border-primary/20" />
             <img
               src={digibabi}
-              alt="SafeKid Mouse edition smartwatch concept"
+              alt="DigiBabi logo"
               className="absolute inset-0 m-auto h-[75%] w-[75%] object-contain drop-shadow-[0_40px_70px_rgba(16,42,56,0.15)]"
             />
             <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/80 bg-white/80 px-3 py-1.5 text-[10px] uppercase tracking-[0.18em] text-deep/65 backdrop-blur">

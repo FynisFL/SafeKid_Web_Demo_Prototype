@@ -15,7 +15,7 @@ import { PrivacyTrust } from "@/components/passport/PrivacyTrust";
 import { useSectionProgress } from "@/components/passport/useSectionProgress";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { DEMO_LABEL, SAMPLE_DEVICE_ID } from "@/data/watchPassport";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
+import heroWatch from "@/assets/safekid/editions/rat.webp";
 
 function PassportHeroArt() {
   const ref = useRef<HTMLDivElement>(null);
