@@ -76,7 +76,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="SafeKid on Facebook"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="flex size-11 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <Facebook className="h-[15px] w-[15px]" aria-hidden="true" />
               </a>
@@ -85,7 +85,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="View the SafeKid open-source repository on GitHub"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="flex size-11 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <Github className="h-[15px] w-[15px]" aria-hidden="true" />
               </a>
@@ -104,12 +104,12 @@ export function SiteFooter() {
             <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50">
               Explore
             </h3>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-5 space-y-0">
               {explore.map((item) => (
                 <li key={item.label}>
                   <Link
                     to={item.to}
-                    className="text-sm text-white/70 transition-colors hover:text-primary"
+                    className="inline-flex min-h-11 items-center text-sm text-white/70 transition-colors hover:text-primary"
                   >
                     {item.label}
                   </Link>
@@ -122,12 +122,12 @@ export function SiteFooter() {
             <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50">
               Support
             </h3>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-5 space-y-0">
               {support.map((item) => (
                 <li key={item.label}>
                   <Link
                     to={item.to}
-                    className="text-sm text-white/70 transition-colors hover:text-primary"
+                    className="inline-flex min-h-11 items-center text-sm text-white/70 transition-colors hover:text-primary"
                   >
                     {item.label}
                   </Link>
@@ -140,11 +140,11 @@ export function SiteFooter() {
             <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50">
               Get in touch
             </h3>
-            <ul className="mt-5 space-y-3 text-sm text-white/70">
+            <ul className="mt-5 space-y-0 text-sm text-white/70">
               <li>
                 <a
                   href="mailto:safekid.digibabi@gmail.com"
-                  className="inline-flex items-center gap-2.5 transition-colors hover:text-primary"
+                  className="inline-flex min-h-11 items-center gap-2.5 transition-colors hover:text-primary"
                 >
                   <Mail className="h-4 w-4 text-primary/80" aria-hidden="true" />
                   safekid.digibabi@gmail.com
@@ -153,7 +153,7 @@ export function SiteFooter() {
               <li>
                 <a
                   href="tel:+84377430400"
-                  className="inline-flex items-center gap-2.5 transition-colors hover:text-primary"
+                  className="inline-flex min-h-11 items-center gap-2.5 transition-colors hover:text-primary"
                 >
                   <Phone className="h-4 w-4 text-primary/80" aria-hidden="true" />
                   0377 430 400
@@ -170,7 +170,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-white/10 py-6 text-[11px] text-white/55 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 border-t border-white/10 pt-6 pb-[calc(1.5rem+var(--safe-bottom))] text-[11px] text-white/55 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} SafeKid · Store preview & Parent App testing</p>
           <p>
             Developed by <span className="text-white/65">DigiBabi</span>

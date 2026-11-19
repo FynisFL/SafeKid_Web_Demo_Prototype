@@ -2,9 +2,11 @@
 import os
 from playwright.sync_api import expect, sync_playwright
 
+engine = os.getenv("SAFEKID_BROWSER", "chromium")
+
 base = os.getenv("SAFEKID_BASE_URL", "http://localhost:4173").rstrip("/")
 with sync_playwright() as driver:
-    browser = driver.chromium.launch(executable_path=os.getenv("SAFEKID_CHROMIUM"))
+    browser = getattr(driver, engine).launch(executable_path=os.getenv(f"SAFEKID_{engine.upper()}"))
     for width, height in [(320, 640), (390, 844), (768, 1024), (844, 390), (1024, 768), (1440, 900)]:
         page = browser.new_page(viewport={"width": width, "height": height})
         page.route("https://fonts.googleapis.com/**", lambda route: route.fulfill(body="", content_type="text/css"))

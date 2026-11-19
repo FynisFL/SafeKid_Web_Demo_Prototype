@@ -1,3 +1,5 @@
+import { MEDIA } from "@/lib/breakpoints";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import {
   animate,
@@ -54,21 +56,6 @@ const shortName = (name: string) => name.split(" ").pop() ?? name;
 
 /* ------------------------------ small hooks -------------------------------- */
 
-function useMediaQuery(query: string) {
-  const [match, setMatch] = useState(
-    () => typeof window !== "undefined" && window.matchMedia(query).matches
-  );
-  useEffect(() => {
-    const mq = window.matchMedia(query);
-    const update = () => setMatch(mq.matches);
-    update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
-  }, [query]);
-  return match;
-}
-
-/** 0 → 1 over time, started once the element scrolls into view. Instant when motion is reduced. */
 function useInViewProgress(
   ref: RefObject<Element | null>,
   { duration = 1.2, delay = 0, amount = 0.3 } = {}
@@ -544,7 +531,7 @@ function ProfileScene({ member, index, total, kind, flip, enter, hold, depth }: 
     <div className="grid w-full items-center gap-10 lg:grid-cols-12 lg:gap-x-14">
       <div
         className={cn(
-          "w-full max-w-[min(420px,calc((100vh_-_17rem)_*_0.8))] lg:row-start-1",
+          "w-full max-w-[min(420px,calc((100svh_-_17rem)_*_0.8))] lg:row-start-1",
           flip ? "lg:col-span-5 lg:col-start-8 lg:ml-auto" : "lg:col-span-5 lg:col-start-1"
         )}
       >
@@ -915,7 +902,7 @@ function StageTeam({ members }: { members: TeamMember[] }) {
 
   return (
     <div ref={trackRef} className="relative" style={{ height: `${TRACK_HEIGHT}svh` }}>
-      <div className="sticky top-0 h-screen overflow-hidden">
+      <div className="sticky top-0 h-screen supports-[height:100svh]:h-[100svh] overflow-hidden">
         <SceneShell progress={progress} start={0} end={BOUNDS[1]} position="first">
           <div className="shell w-full">
             <IntroContent progress={rise} />
@@ -1027,7 +1014,7 @@ function FlowTeam({ members }: { members: TeamMember[] }) {
 
 export function TeamStory({ members }: { members: TeamMember[] }) {
   const reduce = useReducedMotion();
-  const roomy = useMediaQuery("(min-width: 1024px) and (min-height: 650px)");
+  const roomy = useMediaQuery(MEDIA.desktopStage);
   const stage = roomy && !reduce;
 
   return (

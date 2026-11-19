@@ -56,7 +56,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <SiteHeader />
       <motion.main
         id="main"
-        className="flex-1"
+        className="flex-1 pt-[var(--safe-top)]"
         tabIndex={-1}
         initial={reduce ? false : { opacity: 0.88 }}
         animate={{ opacity: 1 }}

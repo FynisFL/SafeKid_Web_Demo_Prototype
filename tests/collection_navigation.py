@@ -4,15 +4,16 @@ import re
 
 from playwright.sync_api import expect, sync_playwright
 
-base = os.getenv("SAFEKID_BASE_URL", "http://127.0.0.1:4173").rstrip("/")
 engine = os.getenv("SAFEKID_BROWSER", "chromium")
+
+base = os.getenv("SAFEKID_BASE_URL", "http://127.0.0.1:4173").rstrip("/")
 
 def settle_transition(page):
     page.wait_for_function("""() => !document.getAnimations().some(animation =>
       animation.effect?.pseudoElement?.startsWith('::view-transition'))""")
 
 with sync_playwright() as driver:
-    browser = getattr(driver, engine).launch(executable_path=os.getenv("SAFEKID_CHROMIUM"))
+    browser = getattr(driver, engine).launch(executable_path=os.getenv(f"SAFEKID_{engine.upper()}"))
     for preference in ("no-preference", "reduce"):
         page = browser.new_page(viewport={"width": 1363, "height": 936}, reduced_motion=preference)
         page.route("https://fonts.googleapis.com/**", lambda route: route.fulfill(body="", content_type="text/css"))

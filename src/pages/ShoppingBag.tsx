@@ -227,11 +227,11 @@ export default function ShoppingBag({ checkout = false }: { checkout?: boolean }
           </motion.section>
         </AnimatePresence>
       </div>
-      {count > 0 && <div className="h-[calc(5rem+env(safe-area-inset-bottom))] lg:hidden" aria-hidden="true" />}
+      {count > 0 && <div className="h-[calc(5rem+var(--safe-bottom))] lg:hidden" aria-hidden="true" />}
       {count > 0 && createPortal(
         <motion.aside
           aria-label="Quick bag total"
-          className="fixed inset-x-0 bottom-0 z-[60] border-t border-border bg-white px-5 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-6px_24px_#172b350d] lg:hidden"
+          className="fixed inset-x-0 bottom-0 z-[60] border-t border-border bg-white pl-[max(1.25rem,var(--safe-left))] pr-[max(1.25rem,var(--safe-right))] pb-[calc(0.75rem+var(--safe-bottom))] pt-3 shadow-[0_-6px_24px_#172b350d] lg:hidden"
           initial={reduce ? false : { y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}

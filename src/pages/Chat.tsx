@@ -163,6 +163,10 @@ export default function Chat() {
     }
   }
 
+  function focusComposer() {
+    document.getElementById("chat-input")?.focus();
+  }
+
   const fresh = messages.length === 1 && !isBusy;
   const status = layer === "assistant" ? "Demo assistant" : layer === "handoff" ? "Handoff preview" : "Demo agent";
 
@@ -188,6 +192,14 @@ export default function Chat() {
               A local, scripted preview of how a SafeKid support conversation could feel. It answers
               only from information shown on this concept site.
             </p>
+
+            <button
+              type="button"
+              onClick={focusComposer}
+              className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-white lg:hidden"
+            >
+              Open the demo chat
+            </button>
 
             <ul className="mt-7 space-y-3 border-t border-ink/10 pt-6">
               {[
@@ -244,7 +256,7 @@ export default function Chat() {
             <motion.div
               ref={listRef}
               layoutScroll
-              className="h-[clamp(280px,38vh,400px)] space-y-4 overflow-y-auto bg-white px-4 py-5 sm:px-5"
+              className="h-[clamp(280px,38vh,400px)] supports-[height:100dvh]:h-[clamp(200px,38dvh,400px)] space-y-4 overflow-y-auto bg-white px-4 py-5 sm:px-5"
               role="log"
               aria-live="polite"
               aria-label="Conversation"
@@ -294,7 +306,7 @@ export default function Chat() {
                   onKeyDown={onComposerKeyDown}
                   rows={1}
                   placeholder="Ask about SafeKid…"
-                  className="field-motion max-h-24 min-h-[44px] flex-1 resize-none rounded-2xl border border-ink/12 bg-white px-4 py-3 text-[13px] text-ink outline-none transition-colors placeholder:text-deep/45 focus:border-primary focus:ring-2 focus:ring-primary/15"
+                  className="field-motion max-h-24 min-h-11 min-w-0 flex-1 resize-none rounded-2xl border border-ink/12 bg-white px-4 py-3 text-base text-ink outline-none transition-colors placeholder:text-deep/45 focus:border-primary focus:ring-2 focus:ring-primary/15"
                 />
                 {isBusy ? (
                   <button

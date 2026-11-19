@@ -205,7 +205,7 @@ export default function Support() {
             </p>
             <Link
               to="/contact"
-              className="group mt-6 inline-flex items-center gap-2 text-[13px] font-medium text-ink"
+              className="group mt-6 inline-flex min-h-11 items-center gap-2 text-[13px] font-medium text-ink"
             >
               Still have a question?
               <ArrowUpRight

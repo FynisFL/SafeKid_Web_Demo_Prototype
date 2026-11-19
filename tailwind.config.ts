@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import { BREAKPOINT, MIN_STAGE_HEIGHT } from "./src/lib/breakpoints";
 import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
@@ -11,6 +12,17 @@ export default {
   ],
   prefix: "",
   theme: {
+    screens: {
+      phone: `${BREAKPOINT.phone}px`,
+      "phone-lg": `${BREAKPOINT.phoneLarge}px`,
+      sm: `${BREAKPOINT.tablet}px`,
+      md: `${BREAKPOINT.portraitTablet}px`,
+      lg: `${BREAKPOINT.laptop}px`,
+      xl: `${BREAKPOINT.desktop}px`,
+      wide: `${BREAKPOINT.wide}px`,
+      "2xl": `${BREAKPOINT.extraWide}px`,
+      "desktop-stage": { raw: `(min-width: ${BREAKPOINT.laptop}px) and (min-height: ${MIN_STAGE_HEIGHT}px)` },
+    },
     container: {
       center: true,
       padding: "2rem",
