@@ -27,6 +27,7 @@ with sync_playwright() as driver:
         assert y > 0
         stage_link.click()
         expect(page).to_have_url(re.compile(r"/product/dragon/?$"))
+        expect(page.get_by_role("heading", name="Dragon little explorer.")).to_be_visible()
         settle_transition(page)
         page.go_back()
         expect(dragon).to_have_attribute("aria-pressed", "true")
@@ -34,6 +35,7 @@ with sync_playwright() as driver:
         page.wait_for_function("expected => Math.abs(scrollY - expected) <= 3", arg=y)
         page.go_forward()
         expect(page).to_have_url(re.compile(r"/product/dragon/?$"))
+        expect(page.get_by_role("heading", name="Dragon little explorer.")).to_be_visible()
         settle_transition(page)
         page.go_back()
         expect(dragon).to_have_attribute("aria-pressed", "true")
@@ -41,12 +43,14 @@ with sync_playwright() as driver:
 
         rail = page.get_by_role("region", name="All twelve editions")
         mouse = rail.get_by_role("link", name=re.compile(r"Mouse edition"))
-        mouse.scroll_into_view_if_needed()
-        mouse.evaluate("el => el.addEventListener('click', () => { window.railDepartureY = scrollY; }, { once: true })")
+        page.evaluate("""() => document.addEventListener('click', event => {
+          if (event.target.closest('a[href="/product/rat"]')) window.railDepartureY = scrollY;
+        }, { capture: true, once: true })""")
         mouse.click()
         y = page.evaluate("window.railDepartureY")
         assert y > 0
         expect(page).to_have_url(re.compile(r"/product/rat/?$"))
+        expect(page.get_by_role("heading", name="Mouse little explorer.")).to_be_visible()
         settle_transition(page)
         page.go_back()
         expect(dragon).to_have_attribute("aria-pressed", "true")
