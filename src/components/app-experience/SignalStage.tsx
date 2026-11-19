@@ -1,3 +1,4 @@
+import { useEnhancedMotion } from "@/components/motion/useEnhancedMotion";
 import { BellRing, Check, RotateCcw, ShieldCheck, Signal, Zap } from "lucide-react";
 import { motion, useAnimate } from "motion/react";
 import { Fragment, useEffect } from "react";
@@ -147,7 +148,8 @@ export function SignalStage({
   const signalDelay = signalStart(intro);
   const arrival = signalArrival(intro);
   const [rig, animateRig] = useAnimate<HTMLDivElement>();
-  const { canvasRef, spark } = useClickSpark(reduce, scene.accent);
+  const enhanced = useEnhancedMotion();
+  const { canvasRef, spark } = useClickSpark(reduce || !enhanced, scene.accent);
 
   useEffect(() => {
     const element = rig.current;
@@ -232,6 +234,13 @@ export function SignalStage({
               </div>
               <svg className="sk-stage__signal" viewBox={`0 0 ${stageSize.width} ${stageSize.height}`} aria-hidden="true" preserveAspectRatio="none" fill="none">
                 <path d={signalPath} stroke={scene.accent} strokeOpacity=".58" strokeWidth="2" strokeDasharray="2 6" strokeLinecap="round" />
+                <path d={`M${stageSize.width * .12} ${stageSize.height * .76}Q${stageSize.width * .5} ${stageSize.height * .53} ${stageSize.width * .88} ${stageSize.height * .73}`}
+                  fill="none" stroke={scene.accent} strokeOpacity=".26" strokeDasharray="3 9" />
+                {!reduce && enhanced && [0, 1].map(index => (
+                  <motion.circle key={index} cx={receiver.x} cy={receiver.y} fill="none" stroke={scene.accent} strokeWidth="1.5"
+                    initial={{ r: 8, opacity: 0 }} animate={{ r: [8, 15, 44], opacity: [0, .7, 0] }}
+                    transition={{ duration: DURATION.base, delay: arrival + index * DURATION.feedback, ease: EASE }} />
+                ))}
                 <circle cx={emitter.x} cy={emitter.y} r="3" fill={scene.accent} />
                 <circle cx={receiver.x} cy={receiver.y} r="5" fill="white" stroke={scene.accent} strokeWidth="2" />
                 {!reduce && <SignalBurst scene={scene} delay={signalDelay} />}
@@ -251,7 +260,7 @@ export function SignalStage({
             </motion.button>
           </div>
         </div>
-        {!reduce && <canvas ref={canvasRef} className="sk-stage__sparks" aria-hidden="true" />}
+        {!reduce && enhanced && <canvas ref={canvasRef} className="sk-stage__sparks" aria-hidden="true" />}
       </motion.div>
       <figcaption className="sk-stage__caption">
         <span aria-hidden="true">SafeKid Watch</span>

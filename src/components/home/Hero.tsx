@@ -1,4 +1,8 @@
-import { useEffect, useRef, type PointerEvent } from "react";
+import { CountUp } from "@/components/motion/reactbits/CountUp";
+import { ErrorBoundary } from "react-error-boundary";
+import { SET_PIECES } from "@/components/motion/setPieces";
+import { useEnhancedMotion } from "@/components/motion/useEnhancedMotion";
+import { lazy, Suspense, useEffect, useRef, useState, type PointerEvent } from "react";
 import { Link } from "react-router-dom";
 import {
   motion,
@@ -15,6 +19,7 @@ import { useFirstScene } from "@/components/preloader/firstSceneContext";
 import { DURATION, EASE } from "@/components/motion/tokens";
 
 const ease = EASE;
+const HeroSignal = lazy(() => import("./HeroSignal"));
 
 function OrbitTicks() {
   const reduce = useReducedMotion();
@@ -90,7 +95,14 @@ export function Hero() {
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const visible = useInView(sectionRef, { once: true });
+  const visible = useInView(sectionRef);
+  const enhanced = useEnhancedMotion();
+  const [signalReady, setSignalReady] = useState(false);
+  useEffect(() => {
+    if (waiting || reduce || !enhanced || !visible || !SET_PIECES.heroSignal) return;
+    const timer = window.setTimeout(() => setSignalReady(true), 420);
+    return () => window.clearTimeout(timer);
+  }, [enhanced, reduce, visible, waiting]);
   const copyY = useTransform(scrollYProgress, [0, 1], [0, 40]);
   // Starts late on purpose: the CTAs sit about 60-70% down the hero and must stay readable
   // (>= ~0.7 opacity) for as long as they are on screen. See HE-1.
@@ -242,7 +254,7 @@ export function Hero() {
             <span className="h-3 w-px bg-ink/10" />
             <span>No device connected</span>
             <span className="h-3 w-px bg-ink/10" />
-            <span>12 editions</span>
+            <span><CountUp value={12} /> editions</span>
           </motion.div>
         </motion.div>
 
@@ -260,6 +272,11 @@ export function Hero() {
             onPointerLeave={resetTilt}
             className="perspective-1200 relative aspect-square w-full max-w-[320px] sm:max-w-[520px] lg:max-w-[580px]"
           >
+            {signalReady && enhanced && visible && !reduce && (
+              <ErrorBoundary fallback={null}>
+                <Suspense fallback={null}><HeroSignal /></Suspense>
+              </ErrorBoundary>
+            )}
             <motion.div
               aria-hidden="true"
               className="stage-glow absolute inset-[2%] rounded-full"

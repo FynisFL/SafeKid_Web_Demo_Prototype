@@ -1,3 +1,5 @@
+import { SlideCommit } from "@/components/motion/reactbits/SlideCommit";
+import { SET_PIECES } from "@/components/motion/setPieces";
 import { useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -61,6 +63,12 @@ export default function Contact() {
     )}&body=${encodeURIComponent(body)}`;
   }
 
+  function slideToDraft() {
+    const form = document.getElementById("contact-draft");
+    if (!(form instanceof HTMLFormElement) || !form.reportValidity()) return false;
+    form.requestSubmit();
+  }
+
   const fieldClass =
     "field-motion mt-2 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 font-sans text-base text-ink outline-none transition-colors placeholder:text-deep/45 focus:border-primary focus:ring-2 focus:ring-primary/20";
 
@@ -113,7 +121,7 @@ export default function Contact() {
       <section className="bg-white py-16 sm:py-20">
         <div className="shell grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14">
           <Reveal variant="soft" className="min-w-0">
-            <form onSubmit={openEmailDraft} onChange={() => setDraftOpened(false)} className="rounded-[28px] border border-ink/10 bg-mist/40 p-6 sm:p-8">
+            <form id="contact-draft" onSubmit={openEmailDraft} onChange={() => setDraftOpened(false)} className="rounded-[28px] border border-ink/10 bg-mist/40 p-6 sm:p-8">
               <div className="flex items-end justify-between gap-4 border-b border-ink/10 pb-5">
                 <div>
                   <p className="text-[9.5px] uppercase tracking-[0.2em] text-primary">
@@ -192,6 +200,11 @@ export default function Contact() {
                 </p>
               </div>
 
+              {SET_PIECES.slideCommit && (
+                <div className="mt-4">
+                  <SlideCommit label="Slide to open draft" doneLabel="Draft requested" onConfirm={slideToDraft} completed={draftOpened} />
+                </div>
+              )}
               <div aria-live="polite" className="mt-5">
                 <AnimatePresence initial={false}>
                   {draftOpened && (

@@ -25,7 +25,7 @@ const routes = [
 const samples = process.env.SAFEKID_QA_QUICK ? [[320, 568], [390, 844], [844, 390], [1440, 900]] : widths;
 const summary = { engine, samples: [], regressions: [], axe: [], axeErrors: [] };
 await mkdir(output, { recursive: true });
-const browser = await browsers[engine].launch();
+const browser = await browsers[engine].launch({ executablePath: process.env[`SAFEKID_${engine.toUpperCase()}`] });
 summary.version = browser.version();
 
 for (const [width, height] of samples) {
@@ -34,7 +34,7 @@ for (const [width, height] of samples) {
     viewport: { width, height }, hasTouch: touch, deviceScaleFactor: touch ? 2 : 1,
     ...(engine === "firefox" ? {} : { isMobile: touch }),
   });
-  await context.route("https://fonts.googleapis.com/**", route => route.abort());
+  await context.route("https://fonts.googleapis.com/**", route => route.fulfill({ body: "", contentType: "text/css", headers: { "access-control-allow-origin": "*" } }));
   const page = await context.newPage();
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
@@ -85,7 +85,7 @@ for (const [width, height] of samples) {
       if (cta) {
         const target = page.getByRole("link", { name: cta, exact: true })
           .or(page.getByRole("button", { name: cta, exact: true })).first();
-        const box = await target.boundingBox();
+        const box = await target.boundingBox({ timeout: 500 }).catch(() => null);
         ctaInFirstScreen = box ? box.y >= 0 && box.y + box.height <= height : false;
         // The product purchase action follows the inspectable gallery on small displays.
         if (width <= 430 && height >= 640 && !path.startsWith("/product/") && !ctaInFirstScreen) failures.push(`CTA below first screen: ${cta}`);

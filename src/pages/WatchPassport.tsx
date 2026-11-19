@@ -1,3 +1,5 @@
+import { ScrollFloat } from "@/components/motion/reactbits/ScrollFloat";
+import { ScrollReveal } from "@/components/motion/reactbits/ScrollReveal";
 import { Link } from "react-router-dom";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
@@ -52,12 +54,12 @@ export default function WatchPassport() {
               Digital passport
             </p>
             <h2 className="display display-lg mt-6 max-w-[16ch]">
-              One record. <span className="text-aqua-ink">Every chapter.</span>
+              One record. <ScrollFloat className="text-aqua-ink">Every chapter.</ScrollFloat>
             </h2>
-            <p className="lede mt-6 max-w-[54ch]">
+            <ScrollReveal className="lede mt-6 max-w-[54ch]">
               Pick a chapter to see how a sample passport changes: Device ID, condition, service history,
               warranty eligibility and lifecycle status.
-            </p>
+            </ScrollReveal>
           </Reveal>
           <Reveal delay={0.06} className="mt-12">
             <PassportDemo />

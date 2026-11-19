@@ -426,3 +426,8 @@ ghi URL nguồn và dùng giấy phép ở `public/licenses/react-bits.txt`. `An
 là wrapper vào cảnh. `ScrollFloat` và `ScrollReveal` giữ nguyên phần tử ngữ nghĩa, ưu tiên
 tiêu đề phụ và đoạn giới thiệu. `setPieces.ts` điều phối các lớp tăng cường. Lớp minh họa dài
 tuân thủ `prefers-reduced-motion`, Save-Data, vùng nhìn thấy và trạng thái tab.
+
+Cảnh Home `HeroSignal` là chunk lazy. Canvas giới hạn DPR, số hạt và thời gian hoạt
+động, giảm chất lượng sau chuỗi khung hình chậm, có kiểm tra pin nơi hỗ trợ. Orbit
+trong Zodiac dùng chính state của dial và rail. Trang có biểu tượng tín hiệu trong
+hero riêng. Contact và SOS dùng `SlideCommit` như phương án bổ sung cho thao tác chuẩn.

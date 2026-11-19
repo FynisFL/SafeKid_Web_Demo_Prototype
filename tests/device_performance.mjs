@@ -7,7 +7,7 @@ const output = process.env.SAFEKID_QA_OUTPUT ?? ".qa-output";
 const launchArgs = ["--no-sandbox", "--disable-dev-shm-usage", "--disable-gpu"];
 const variants = [
   { name: "baseline", origin: process.env.SAFEKID_BASELINE_URL ?? "http://127.0.0.1:4174", dist: process.env.SAFEKID_BASELINE_DIST ?? ".qa-baseline/dist" },
-  { name: "candidate", origin: process.env.SAFEKID_BASE_URL ?? "http://127.0.0.1:4173", dist: "dist" },
+  { name: "candidate", origin: process.env.SAFEKID_BASE_URL ?? "http://127.0.0.1:4173", dist: process.env.SAFEKID_CANDIDATE_DIST ?? "dist" },
 ];
 const profiles = [
   { name: "normal", latency: 0, downloadThroughput: -1, uploadThroughput: -1 },
@@ -25,7 +25,7 @@ const median = values => {
   return valid.length % 2 ? valid[middle] : (valid[middle - 1] + valid[middle]) / 2;
 };
 const results = Object.fromEntries(variants.map(({ name }) => [name, { profiles: {}, scroll: {} }]));
-const browser = await chromium.launch({ args: launchArgs });
+const browser = await chromium.launch({ args: launchArgs, executablePath: process.env.SAFEKID_CHROMIUM });
 
 async function open(variant, device, { network, cpu } = {}) {
   const { viewport, deviceScaleFactor, isMobile, hasTouch } = device;

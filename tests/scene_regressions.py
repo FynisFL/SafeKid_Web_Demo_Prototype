@@ -1,0 +1,75 @@
+"""SafeKid page scenes retain native content and input alternatives."""
+import os
+import re
+
+from playwright.sync_api import expect, sync_playwright
+
+origin = os.getenv("SAFEKID_BASE_URL", "http://127.0.0.1:4173").rstrip("/")
+engine = os.getenv("SAFEKID_BROWSER", "chromium")
+
+
+def visit(page, route):
+    page.goto(origin + route, wait_until="domcontentloaded")
+    expect(page.locator("main h1").first).to_be_visible()
+    expect(page.get_by_test_id("first-scene")).to_have_count(0, timeout=12000)
+    expect(page.locator("main[data-animated-content]")).to_have_count(1)
+
+
+with sync_playwright() as driver:
+    browser = getattr(driver, engine).launch(executable_path=os.getenv(f"SAFEKID_{engine.upper()}"))
+    page = browser.new_page(viewport={"width": 390, "height": 844}, has_touch=True)
+    page.route("https://fonts.googleapis.com/**", lambda route: route.fulfill(body="", content_type="text/css"))
+    visit(page, "/")
+    signal = page.locator("[data-hero-signal]")
+    expect(signal).to_have_count(1, timeout=6000)
+    page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+    expect(signal).to_have_count(0)
+    page.evaluate("window.scrollTo(0, 0)")
+    expect(signal).to_have_count(1)
+    page.evaluate("""() => {
+      Object.defineProperty(document, 'hidden', { configurable: true, value: true });
+      document.dispatchEvent(new Event('visibilitychange'));
+    }""")
+    expect(signal).to_have_count(0)
+    page.close()
+
+    for restriction in ("reduce", "save-data"):
+        page = browser.new_page(viewport={"width": 390, "height": 844},
+                                reduced_motion="reduce" if restriction == "reduce" else "no-preference")
+        if restriction == "save-data":
+            page.add_init_script("""Object.defineProperty(navigator, 'connection', {
+              configurable: true, value: Object.assign(new EventTarget(), { saveData: true })
+            })""")
+        visit(page, "/")
+        expect(page.get_by_role("link", name="Discover SafeKid", exact=True)).to_be_enabled()
+        page.wait_for_timeout(600)
+        expect(page.locator("[data-hero-signal]")).to_have_count(0)
+        page.close()
+
+    for width, count in [(390, 5), (768, 12), (1440, 12)]:
+        page = browser.new_page(viewport={"width": width, "height": 900}, reduced_motion="reduce")
+        visit(page, "/zodiac/")
+        orbit = page.locator("[data-orbit-images]")
+        expect(orbit.get_by_role("button")).to_have_count(count)
+        next_edition = orbit.get_by_role("button", name=re.compile("Select Buffalo"))
+        next_edition.click()
+        expect(next_edition).to_have_attribute("aria-pressed", "true")
+        page.get_by_role("link", name="Explore this edition", exact=True).click()
+        expect(page).to_have_url(re.compile("/product/buffalo/?$"))
+        page.go_back()
+        expect(next_edition).to_have_attribute("aria-pressed", "true")
+        page.close()
+
+    page = browser.new_page(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
+    visit(page, "/sos/")
+    slider = page.get_by_role("button", name="Slide to preview SOS")
+    slider.press("Enter")
+    expect(page.get_by_role("status")).to_contain_text("No alert was sent")
+    page.get_by_role("button", name="Reset demo").click()
+    expect(slider).to_be_enabled()
+    visit(page, "/contact/")
+    page.get_by_role("button", name="Slide to open draft").press("Enter")
+    assert not page.locator("#contact-draft").evaluate("form => form.checkValidity()")
+    expect(page.get_by_role("button", name="Open email draft", exact=True)).to_be_enabled()
+    browser.close()
+    print(f"PASS {engine} scene lifecycle, reduced motion, Save-Data, Orbit/Back, SOS and Contact keyboard paths")

@@ -1,3 +1,5 @@
+import { OrbitImages } from "@/components/motion/reactbits/OrbitImages";
+import { SET_PIECES } from "@/components/motion/setPieces";
 import { useEffect, useId, useRef, useState } from "react";
 import { Link, useViewTransitionState } from "react-router-dom";
 import {
@@ -266,6 +268,9 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                 className="absolute inset-[17%] rounded-full border border-dashed border-primary/25"
               />
 
+              {variant === "page" && SET_PIECES.zodiacOrbit ? (
+                <OrbitImages items={zodiacProducts} active={index} select={pick} />
+              ) : (
               <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 inset-y-[15%] flex items-center justify-between">
                 {[previous, next].map((neighbor, side) => (
                   <motion.div key={side} className="w-[31%]" initial={false}
@@ -280,6 +285,8 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                   </motion.div>
                 ))}
               </div>
+
+              )}
 
               {/* Dial: 12 stations, one per edition, and a marker that turns to the chosen one. */}
               <div aria-hidden="true" className="pointer-events-none absolute inset-[9%]">

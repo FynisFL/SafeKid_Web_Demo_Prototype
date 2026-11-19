@@ -1,3 +1,5 @@
+import { SlideCommit } from "@/components/motion/reactbits/SlideCommit";
+import { SET_PIECES } from "@/components/motion/setPieces";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
@@ -211,6 +213,9 @@ export default function Sos() {
 
                 </div>
                 <div className="min-h-32 pt-2 text-center">
+                  {SET_PIECES.slideCommit && <div className="mx-auto my-4 max-w-72">
+                    <SlideCommit label="Slide to preview SOS" doneLabel="Simulation acknowledged" onConfirm={finish} completed={acknowledged} />
+                  </div>}
                   <p className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.06] px-4 py-2 text-[10px] uppercase tracking-[0.16em] text-white/55">
                     <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
                     Local demo only
@@ -229,7 +234,7 @@ export default function Sos() {
                       initial={reduce ? false : { opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
-                      className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-[11px] text-white/70 transition-colors hover:border-primary/50 hover:text-white"
+                      className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full border border-white/20 px-4 py-2 text-[11px] text-white/70 transition-colors hover:border-primary/50 hover:text-white"
                     >
                       <RotateCcw className="h-3 w-3" aria-hidden="true" />
                       Reset demo

@@ -108,6 +108,12 @@ export default function Product() {
             </div>
             <div className="relative lg:col-start-1 lg:row-start-1 lg:row-span-2">
               <div className="relative mx-auto aspect-square w-full max-w-[540px]">
+                <motion.div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute inset-[7%] rounded-[34%] border border-primary/40 bg-[conic-gradient(from_40deg,transparent,hsl(var(--primary)/0.16)_28%,transparent_42%,hsl(var(--aqua-ink)/0.11)_72%,transparent)]"
+                  initial={false}
+                  animate={reduce ? { scale: 1, rotate: 0 } : { scale: [.88, 1.06, 1], rotate: [-13, 8, 0] }}
+                  transition={{ duration: reduce ? 0 : DURATION.slow, ease: EASE }} />
                 <div aria-hidden="true" className="stage-glow absolute inset-[2%] rounded-full" />
                 <div aria-hidden="true" className="absolute inset-[10%] rounded-full border border-primary/20" />
                 <div
