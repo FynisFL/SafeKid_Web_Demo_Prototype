@@ -418,3 +418,11 @@ nhạy với thanh địa chỉ, với khai báo `vh` dự phòng trước.
 CI browser thông thường kiểm tra luồng chính. `device-matrix.yml` lưu báo cáo theo engine,
 ảnh và số đo đối chứng trên cùng runner. Chạy `tests/device_regressions.py` khi sửa mục tiêu
 chạm, trường nhập hoặc đường tắt tới ô chat.
+
+### Motion Kit
+
+`src/components/motion/reactbits/` lưu các component React Bits đã điều chỉnh. Mỗi tệp
+ghi URL nguồn và dùng giấy phép ở `public/licenses/react-bits.txt`. `AnimatedContent`
+là wrapper vào cảnh. `ScrollFloat` và `ScrollReveal` giữ nguyên phần tử ngữ nghĩa, ưu tiên
+tiêu đề phụ và đoạn giới thiệu. `setPieces.ts` điều phối các lớp tăng cường. Lớp minh họa dài
+tuân thủ `prefers-reduced-motion`, Save-Data, vùng nhìn thấy và trạng thái tab.

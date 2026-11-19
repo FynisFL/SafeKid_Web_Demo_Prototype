@@ -1,9 +1,9 @@
+import { AnimatedContent } from "@/components/motion/reactbits/AnimatedContent";
 import { useEffect, useLayoutEffect, useRef, type ReactNode } from "react";
 import { useLocation, useNavigate, useNavigationType } from "react-router-dom";
 import { SiteHeader } from "./SiteHeader";
 import { SiteFooter } from "./SiteFooter";
-import { motion, useReducedMotion } from "motion/react";
-import { DURATION, EASE } from "@/components/motion/tokens";
+import { useReducedMotion } from "motion/react";
 import { collectionVisit } from "./collectionVisit";
 import { ScrollProgress } from "@/components/motion/ScrollProgress";
 
@@ -54,16 +54,18 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       </a>
       <ScrollProgress />
       <SiteHeader />
-      <motion.main
+      <AnimatedContent
+        key={location.pathname.split("/")[1]}
+        as="main"
+        trigger="mount"
+        distance={8}
+        duration={0.46}
         id="main"
         className="flex-1 pt-[var(--safe-top)]"
         tabIndex={-1}
-        initial={reduce ? false : { opacity: 0.88 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
       >
         {children}
-      </motion.main>
+      </AnimatedContent>
       <SiteFooter />
     </div>
   );
