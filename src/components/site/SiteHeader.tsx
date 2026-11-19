@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ArrowUpRight, Menu, Search, ShoppingBag, X } from "lucide-react";
@@ -41,8 +41,6 @@ export function SiteHeader() {
   const menuTrigger = useRef<HTMLButtonElement>(null);
   const searchReturn = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll();
-  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 26, mass: 0.3 });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -72,11 +70,6 @@ export function SiteHeader() {
             : "border-b border-ink/[0.05] bg-white/85 backdrop-blur-md"
         )}
       >
-        <motion.span
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-px origin-left bg-primary/70"
-          style={{ scaleX: progress }}
-        />
         <div className="shell flex items-center justify-between gap-6">
           <div
             className={cn(

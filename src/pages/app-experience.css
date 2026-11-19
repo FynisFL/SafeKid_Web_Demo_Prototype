@@ -20,7 +20,7 @@
   width: clamp(28rem, 76vw, 69rem);
   aspect-ratio: 1.35;
   border-radius: 50%;
-  animation: sk-app-drift 22s ease-in-out infinite alternate;
+  animation: sk-app-drift 2.4s ease-out 1 both;
 }
 
 .sk-app__backdrop span:nth-child(1) {

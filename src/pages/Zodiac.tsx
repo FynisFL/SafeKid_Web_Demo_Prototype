@@ -178,7 +178,7 @@ export default function Zodiac() {
           <>
             Twelve little
             <br />
-            <span className="text-primary">explorers.</span>
+            <span className="text-aqua-ink">explorers.</span>
           </>
         }
         intro="Meet the SafeKid collection: playful Zodiac-inspired designs imagined for the curious little people finding their way in the world."
@@ -195,15 +195,15 @@ export default function Zodiac() {
         art={
           <div className="relative mx-auto aspect-square w-full max-w-[440px]">
             <div aria-hidden="true" className="stage-glow absolute inset-[4%] rounded-full" />
-            <div aria-hidden="true" className="absolute inset-[12%] rounded-full border border-primary/20" />
+            <div aria-hidden="true" className="absolute inset-x-[5%] bottom-[11%] h-[18%] rounded-[50%] border border-primary/30 bg-primary/10" />
             <div
               aria-hidden="true"
-              className="absolute inset-[20%] rounded-full border border-dashed border-primary/25 animate-sk-spin"
+              className="absolute inset-x-[13%] bottom-[6%] h-[20%] rounded-[50%] border border-dashed border-primary/35"
             />
             <img
               src={heroWatch}
               alt="SafeKid Mouse edition smartwatch concept"
-              className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_40px_70px_rgba(16,42,56,0.16)]"
+              className="absolute inset-0 h-full w-full -rotate-6 object-contain drop-shadow-[0_40px_70px_rgba(16,42,56,0.16)]"
             />
             <span className="absolute left-0 top-6 rounded-full border border-white/80 bg-white/80 px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.18em] text-deep/60 backdrop-blur">
               12 editions

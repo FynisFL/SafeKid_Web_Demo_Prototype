@@ -15,7 +15,8 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { useCanHover } from "@/hooks/useCanHover";
-import heroWatch from "@/assets/safekid/editions/rat.webp";
+import logo from "@/assets/safekid/logo.webp";
+import { DURATION } from "@/components/motion/tokens";
 
 /* -------------------------------------------------------------------------- */
 /*  One timeline, one trigger.                                                */
@@ -44,7 +45,7 @@ function useRevealProgress(ref: RefObject<Element | null>) {
       return;
     }
     if (!inView) return;
-    const controls = animate(p, 1, { duration: 2.4, ease: "linear" });
+    const controls = animate(p, 1, { duration: DURATION.slow, ease: "linear" });
     return () => controls.stop();
   }, [inView, reduce, p]);
 
@@ -158,22 +159,21 @@ export function Closing() {
             className="pointer-events-none absolute left-[8%] top-1/2 hidden h-[300px] w-px -translate-y-1/2 bg-gradient-to-b from-transparent via-primary/45 to-transparent lg:block"
             style={{ clipPath: ruleClip }}
           />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-10 bottom-0 hidden w-[42%] max-w-[440px] lg:block"
-          >
-            <motion.div className="relative" style={reduce ? undefined : { y: watchY, rotate: watchRotate }}>
-              <div className="absolute inset-[8%] rounded-full bg-primary/15 blur-[60px]" />
-              <img
-                src={heroWatch}
-                alt=""
-                className="relative h-full w-full object-contain drop-shadow-[0_50px_80px_rgba(0,0,0,0.45)]"
-                loading="lazy"
-              />
+          <div aria-hidden="true" className="pointer-events-none relative mb-8 ml-auto grid size-32 place-items-center sm:size-40 lg:absolute lg:inset-y-0 lg:right-[7%] lg:my-auto lg:size-60">
+            <motion.div className="absolute inset-0 grid place-items-center"
+              style={reduce ? undefined : { y: watchY, rotate: watchRotate }}>
+              <svg viewBox="0 0 240 240" className="absolute inset-0 size-full text-primary">
+                <path d="M0 173C37 177 40 125 55 90C73 48 99 38 120 32C142 38 171 49 185 64C184 130 170 163 120 201C73 165 57 139 55 90"
+                  fill="none" stroke="currentColor" strokeWidth="1.2" opacity=".3" />
+                <motion.path d="M0 173C37 177 40 125 55 90C73 48 99 38 120 32C142 38 171 49 185 64C184 130 170 163 120 201C73 165 57 139 55 90"
+                  fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                  style={{ pathLength: rule }} />
+              </svg>
+              <img src={logo} alt="" width={256} height={256} loading="lazy" className="relative size-[37%] rounded-[22%] bg-white/95 p-1 object-contain" />
             </motion.div>
           </div>
 
-          <div ref={copyRef} className="relative max-w-[720px]">
+          <div ref={copyRef} className="relative max-w-[720px] lg:max-w-[65%]">
             <Step p={p} from={0} to={0.12} lift={8}>
               <p className="eyebrow eyebrow-inverse">
                 <span className="eyebrow-line" />
@@ -201,7 +201,7 @@ export function Closing() {
               </p>
             </Step>
 
-            <Step p={p} from={0.66} to={0.86}>
+            <Step p={p} from={0.4} to={0.64}>
               <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
                 <Magnetic>
                   <Link
@@ -215,10 +215,10 @@ export function Closing() {
                   </Link>
                 </Magnetic>
                 <Link
-                  to="/contact"
+                  to="/app"
                   className="group press inline-flex items-center gap-2 text-[14px] font-medium text-white/75 transition-colors hover:text-white"
                 >
-                  Let's talk about SafeKid
+                  Try the Parent App
                   <ArrowUpRight
                     className="h-4 w-4 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
                     aria-hidden="true"

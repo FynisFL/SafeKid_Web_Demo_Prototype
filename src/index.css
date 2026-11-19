@@ -15,6 +15,7 @@
 
     /* SafeKid turquoise */
     --primary: 181 100% 40%;
+    --aqua-ink: 182 100% 24%;
     --primary-foreground: 197 60% 10%;
 
     --secondary: 178 62% 92%;
@@ -392,3 +393,6 @@
     animation: 150ms ease-in product-image-dialog-in reverse both;
   }
 }
+
+.text-aqua-ink { color: hsl(var(--aqua-ink)); }
+

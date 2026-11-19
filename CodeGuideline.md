@@ -320,6 +320,9 @@ src/
 
 ### 8.2. Motion System
 
+Home dùng đường tín hiệu để nối Hero với ba cảnh Story và Parent App. Desktop đủ cao dùng stage sticky, tablet dùng các panel theo luồng đọc, mobile dùng carousel. Watch Passport có sơ đồ tương tác `components/passport/CoreLayers.tsx` dùng dữ liệu minh họa. Zodiac dùng cùng ảnh edition cho các lớp chính và phụ.
+
+
 SafeKid sử dụng bộ quy chuẩn chuyển động chung để các hiệu ứng trên website có cảm giác đồng nhất.
 
 File quan trọng:
@@ -331,7 +334,7 @@ src/components/motion/tokens.ts
 File này quản lý:
 
 - `EASE`: Đường cong chuyển động.
-- `DURATION`: Thời lượng animation.
+- `DURATION`: Phản hồi thao tác, đổi nội dung, vào cảnh và cảnh mở đầu.
 - `DISTANCE`: Khoảng cách di chuyển của phần tử.
 - `SCROLL_SPRING`: Thông số làm mượt chuyển động theo cuộn trang.
 

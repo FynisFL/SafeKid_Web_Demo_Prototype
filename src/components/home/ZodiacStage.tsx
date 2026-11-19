@@ -11,6 +11,8 @@ import {
 } from "motion/react";
 import { ArrowLeft, ArrowRight, ArrowUpRight, MoveHorizontal } from "lucide-react";
 import { zodiacProducts } from "@/data/zodiac";
+import { DURATION, EASE } from "@/components/motion/tokens";
+import { TiltCard } from "@/components/motion/TiltCard";
 import { cn } from "@/lib/utils";
 
 type ZodiacStageProps = {
@@ -66,6 +68,8 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
   // Always the latest selection, so rapid inputs never compute from a stale render.
   const indexRef = useRef(initialIndex);
   const product = zodiacProducts[index];
+  const previous = zodiacProducts[(index + COUNT - 1) % COUNT];
+  const next = zodiacProducts[(index + 1) % COUNT];
   const editionPath = `/product/${product.id}`;
   const transitioning = useViewTransitionState(editionPath);
 
@@ -101,12 +105,13 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
 
     event.preventDefault();
     step(forward ? 1 : -1);
-    itemRefs.current[indexRef.current]?.focus();
+    itemRefs.current[indexRef.current]?.focus({ preventScroll: true });
+    itemRefs.current[indexRef.current]?.scrollIntoView({ block: "nearest", inline: "nearest", behavior: "instant" });
   }
 
   // Reduced motion: every swap, pill move and dial turn is immediate.
   const instant = { duration: 0 };
-  const imageTransition = reduce ? instant : { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const };
+  const imageTransition = reduce ? instant : { duration: DURATION.quick, ease: EASE };
   // The old image leaves while the new one arrives (about 0.6 s). The dial spring settles in a similar time.
   const dialTransition = reduce ? instant : { type: "spring" as const, stiffness: 70, damping: 16 };
   const pillTransition = reduce ? instant : { type: "spring" as const, stiffness: 420, damping: 36 };
@@ -121,7 +126,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
       x: dir > 0 ? -56 : 56,
       rotate: dir > 0 ? -4 : 4,
       scale: 0.95,
-      transition: reduce ? instant : { duration: 0.38, ease: [0.22, 1, 0.36, 1] as const },
+      transition: reduce ? instant : { duration: DURATION.quick, ease: EASE },
     }),
   };
 
@@ -175,13 +180,13 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
             </div>
 
             <ul
-              className="mt-2 grid grid-cols-2 gap-x-4 sm:grid-cols-3 lg:grid-cols-2"
+              className="mt-2 flex snap-x snap-mandatory gap-2 overflow-x-auto pb-2 sm:grid sm:grid-cols-3 sm:gap-x-4 sm:overflow-visible lg:grid-cols-2"
               aria-label="Zodiac editions"
             >
               {zodiacProducts.map((item, itemIndex) => {
                 const selected = itemIndex === index;
                 return (
-                  <li key={item.id}>
+                  <li key={item.id} className="min-w-[8.5rem] snap-start sm:min-w-0">
                     <button
                       ref={(node) => {
                         itemRefs.current[itemIndex] = node;
@@ -207,7 +212,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                       <span
                         className={cn(
                           "text-[9px] tabular-nums tracking-[0.12em] transition-colors",
-                          selected ? "text-primary" : "text-deep/45"
+                          selected ? "text-aqua-ink" : "text-deep/80"
                         )}
                       >
                         {String(itemIndex + 1).padStart(2, "0")}
@@ -218,7 +223,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                       <span
                         className={cn(
                           "text-[11px] transition-colors",
-                          selected ? "text-primary" : "text-deep/45"
+                          selected ? "text-aqua-ink" : "text-deep/80"
                         )}
                       >
                         {item.animal}
@@ -252,6 +257,21 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                 aria-hidden="true"
                 className="absolute inset-[17%] rounded-full border border-dashed border-primary/25"
               />
+
+              <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 inset-y-[15%] flex items-center justify-between">
+                {[previous, next].map((neighbor, side) => (
+                  <motion.div key={side} className="w-[31%]" initial={false}
+                    animate={{ x: side === 0 ? "-4%" : "4%" }} transition={{ duration: DURATION.quick, ease: EASE }}>
+                    <AnimatePresence initial={false} mode="popLayout">
+                      <motion.img key={neighbor.id} src={neighbor.image} width={620} height={620} loading="lazy"
+                        alt="" initial={reduce ? false : { opacity: 0, scale: .91 }}
+                        animate={{ opacity: .38, scale: 1 }} exit={{ opacity: 0 }}
+                        transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+                        className="aspect-square w-full object-contain drop-shadow-[0_12px_16px_#102a3833]" />
+                    </AnimatePresence>
+                  </motion.div>
+                ))}
+              </div>
 
               {/* Dial: 12 stations, one per edition, and a marker that turns to the chosen one. */}
               <div aria-hidden="true" className="pointer-events-none absolute inset-[9%]">
@@ -305,45 +325,47 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                 </AnimatePresence>
               </motion.div>
 
-              <motion.div
-                drag={reduce ? false : "x"}
-                dragConstraints={{ left: 0, right: 0 }}
-                dragElastic={0.08}
-                style={{ x: dragX }}
-                onPointerDown={() => {
-                  hintRef.current?.stop();
-                  hintRef.current = null;
-                }}
-                onDragEnd={(_, info) => {
-                  if (info.offset.x < -48 || info.velocity.x < -320) step(1);
-                  else if (info.offset.x > 48 || info.velocity.x > 320) step(-1);
-                }}
-                className="absolute inset-0 cursor-grab touch-pan-y active:cursor-grabbing"
-              >
-                <AnimatePresence custom={direction} initial={false}>
-                  <motion.img
-                    key={product.id}
-                    style={transitioning && ownsEditionTransition ? { viewTransitionName: `edition-${product.id}` } : undefined}
-                    src={product.image}
-                    alt={`SafeKid smartwatch concept in the ${product.label} edition, Vietnamese Zodiac ${product.animal}`}
-                    custom={direction}
-                    variants={slide}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    transition={imageTransition}
-                    className="absolute inset-0 h-full w-full select-none object-contain drop-shadow-[0_40px_60px_rgba(16,42,56,0.14)]"
-                    draggable={false}
-                  />
-                </AnimatePresence>
-              </motion.div>
+              <TiltCard className="absolute inset-[8%] rounded-full" max={4} spotlight={false}>
+                <motion.div
+                  drag={reduce ? false : "x"}
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.08}
+                  style={{ x: dragX }}
+                  onPointerDown={() => {
+                    hintRef.current?.stop();
+                    hintRef.current = null;
+                  }}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -48 || info.velocity.x < -320) step(1);
+                    else if (info.offset.x > 48 || info.velocity.x > 320) step(-1);
+                  }}
+                  className="absolute inset-0 cursor-grab touch-pan-y active:cursor-grabbing"
+                >
+                  <AnimatePresence custom={direction} initial={false}>
+                    <motion.img
+                      key={product.id}
+                      style={transitioning && ownsEditionTransition ? { viewTransitionName: `edition-${product.id}` } : undefined}
+                      src={product.image}
+                      alt={`SafeKid smartwatch concept in the ${product.label} edition, Vietnamese Zodiac ${product.animal}`}
+                      custom={direction}
+                      variants={slide}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      transition={imageTransition}
+                      className="absolute inset-0 h-full w-full select-none object-contain drop-shadow-[0_40px_60px_rgba(16,42,56,0.14)]"
+                      draggable={false}
+                    />
+                  </AnimatePresence>
+                </motion.div>
+              </TiltCard>
 
               <div className="absolute right-0 top-2 flex items-center gap-1.5">
                 <button
                   type="button"
                   onClick={() => step(-1)}
                   aria-label="Previous edition"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/10 bg-white/70 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-white/70 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
                 >
                   <ArrowLeft className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -351,7 +373,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                   type="button"
                   onClick={() => step(1)}
                   aria-label="Next edition"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/10 bg-white/70 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
+                  className="flex h-11 w-11 items-center justify-center rounded-full border border-ink/10 bg-white/70 text-deep/60 backdrop-blur transition-colors hover:border-primary/40 hover:text-ink"
                 >
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </button>
@@ -365,7 +387,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
 
             <div className="mt-4 flex flex-col gap-4 rounded-[24px] border border-ink/[0.08] bg-white/70 p-4 backdrop-blur sm:flex-row sm:items-center sm:justify-between sm:p-5">
               <div className="min-w-0">
-                <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-primary">
+                <p className="text-[9.5px] font-semibold uppercase tracking-[0.22em] text-aqua-ink">
                   Vietnamese Zodiac / {product.animal}
                 </p>
                 <AnimatePresence mode="wait" initial={false} custom={direction}>
