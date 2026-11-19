@@ -9,7 +9,7 @@ import {
   useTransform,
 } from "motion/react";
 import { ArrowDown, ArrowUpRight, MoveDown } from "lucide-react";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
+import heroWatch from "@/assets/safekid/editions/rat.webp";
 import { EASE } from "@/components/motion/tokens";
 
 const ease = EASE;

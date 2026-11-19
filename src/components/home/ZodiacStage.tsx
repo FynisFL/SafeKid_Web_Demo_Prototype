@@ -17,16 +17,18 @@ type ZodiacStageProps = {
   variant?: "home" | "page";
   ownsEditionTransition?: boolean;
   onEditionClick?: () => void;
+  initialIndex?: number;
+  onSelectionChange?: (index: number) => void;
 };
 
 const COUNT = zodiacProducts.length;
 const DEGREES_PER_STEP = 360 / COUNT;
 
-export function ZodiacStage({ variant = "home", ownsEditionTransition = false, onEditionClick }: ZodiacStageProps) {
-  const [index, setIndex] = useState(0);
+export function ZodiacStage({ variant = "home", ownsEditionTransition = false, onEditionClick, initialIndex = 0, onSelectionChange }: ZodiacStageProps) {
+  const [index, setIndex] = useState(initialIndex);
   const [direction, setDirection] = useState<1 | -1>(1);
   // Cumulative dial angle in degrees. Invariant: dial is congruent to index * 30 (mod 360).
-  const [dial, setDial] = useState(0);
+  const [dial, setDial] = useState(initialIndex * DEGREES_PER_STEP);
   const reduce = useReducedMotion();
   const pillId = useId();
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -62,7 +64,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
     animate(dragX, 0, { duration: 0.25 });
   }
   // Always the latest selection, so rapid inputs never compute from a stale render.
-  const indexRef = useRef(0);
+  const indexRef = useRef(initialIndex);
   const product = zodiacProducts[index];
   const editionPath = `/product/${product.id}`;
   const transitioning = useViewTransitionState(editionPath);
@@ -75,6 +77,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
     settleHint();
     setDirection(dir);
     setIndex(next);
+    onSelectionChange?.(next);
     setSwaps((count) => count + 1);
     setDial((angle) => angle + dir * steps * DEGREES_PER_STEP);
   }

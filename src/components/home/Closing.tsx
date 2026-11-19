@@ -15,7 +15,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { useCanHover } from "@/hooks/useCanHover";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
+import heroWatch from "@/assets/safekid/editions/rat.webp";
 
 /* -------------------------------------------------------------------------- */
 /*  One timeline, one trigger.                                                */

@@ -11,7 +11,7 @@ import {
   type MotionValue,
 } from "motion/react";
 import { ArrowUpRight, Check, MapPin, Phone } from "lucide-react";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
+import heroWatch from "@/assets/safekid/editions/rat.webp";
 import { sosDisclosure } from "@/data/zodiac";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
 import { DURATION, EASE } from "@/components/motion/tokens";
