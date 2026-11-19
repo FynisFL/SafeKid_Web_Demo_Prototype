@@ -19,6 +19,21 @@ import { DURATION, EASE, SCROLL_SPRING } from "@/components/motion/tokens";
 const PILLARS = ["Core + Skin + Skill", "Trade-in", "Refurbishment", "Watch Passport"];
 const LIVES = LIFE_STAGES.slice(0, 3);
 
+function LifeSummary({ stage }: { stage: (typeof LIFE_STAGES)[number] }) {
+  const wipeCount = wipeEventsAt(stage.id).length;
+  return (
+    <>
+      <p className="text-[10px] uppercase tracking-[0.2em] text-deep/75">{stage.eyebrow}</p>
+      <p className="mt-1 font-display text-[1.5rem] font-medium leading-tight tracking-[-0.04em] text-ink">
+        {stage.title}
+      </p>
+      <p className="mt-2 text-[13px] text-deep/85">
+        {wipeCount} Certified Data Wipe record{wipeCount === 1 ? "" : "s"} · {stage.status.split(" · ")[1]}
+      </p>
+    </>
+  );
+}
+
 /**
  * Homepage teaser. One scroll-linked idea: as the section passes, the sample
  * passport moves from Life 1 to Life 3. The dedicated page holds the full demo.
@@ -27,6 +42,7 @@ export function WatchPassportSection() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const [active, setActive] = useState(reduce ? 2 : 0);
+  const activeLife = useRef(active);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 75%", "end 55%"] });
   const smooth = useSpring(scrollYProgress, SCROLL_SPRING);
@@ -37,12 +53,14 @@ export function WatchPassportSection() {
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     if (reduce) return;
-    setActive(v < 0.4 ? 0 : v < 0.8 ? 1 : 2);
+    const next = v < 0.4 ? 0 : v < 0.8 ? 1 : 2;
+    if (next === activeLife.current) return;
+    activeLife.current = next;
+    setActive(next);
   });
 
   const shown = reduce ? LIVES.length - 1 : active;
   const stage = LIVES[shown];
-  const wipeCount = wipeEventsAt(stage.id).length;
 
   return (
     <section ref={ref} className="relative overflow-hidden bg-mist py-20 sm:py-28 lg:py-32">
@@ -133,24 +151,26 @@ export function WatchPassportSection() {
                   </div>
                 </div>
 
-                <div className="mt-7 min-h-[92px]" aria-live="polite">
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                      key={stage.id}
-                      initial={reduce ? false : { opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={reduce ? undefined : { opacity: 0, y: -6 }}
-                      transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
-                    >
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-deep/55">{stage.eyebrow}</p>
-                      <p className="mt-1 font-display text-[1.5rem] font-medium leading-tight tracking-[-0.04em] text-ink">
-                        {stage.title}
-                      </p>
-                      <p className="mt-2 text-[13px] text-deep/65">
-                        {wipeCount} Certified Data Wipe record{wipeCount === 1 ? "" : "s"} · {stage.status.split(" · ")[1]}
-                      </p>
-                    </motion.div>
-                  </AnimatePresence>
+                <div className="mt-7 grid min-h-[92px]">
+                  {/* Keep the tallest chapter in flow at the actual width and text size. */}
+                  {LIVES.map(life => (
+                    <div key={life.id} aria-hidden="true" className="invisible col-start-1 row-start-1 select-none">
+                      <LifeSummary stage={life} />
+                    </div>
+                  ))}
+                  <div className="col-start-1 row-start-1" aria-live="polite">
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.div
+                        key={stage.id}
+                        initial={reduce ? false : { opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={reduce ? undefined : { opacity: 0, y: -6 }}
+                        transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+                      >
+                        <LifeSummary stage={stage} />
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
                 </div>
               </div>
             </div>

@@ -63,6 +63,17 @@ with sync_playwright() as driver:
     expect(page.locator("[data-hero-signal]")).to_have_count(1)
     page.close()
 
+    page = browser.new_page(viewport={"width": 390, "height": 844})
+    page.route("https://fonts.googleapis.com/**", lambda route: route.fulfill(body="", content_type="text/css"))
+    visit(page, "/")
+    passport = page.locator("section").filter(has=page.get_by_role("heading", name=re.compile("One Core.*More than one chapter")))
+    initial = passport.evaluate("section => ({height: section.offsetHeight, zodiacTop: section.nextElementSibling.offsetTop})")
+    passport.evaluate("section => scrollTo(0, section.offsetTop + section.offsetHeight - innerHeight * .35)")
+    page.wait_for_timeout(900)
+    final = passport.evaluate("section => ({height: section.offsetHeight, zodiacTop: section.nextElementSibling.offsetTop})")
+    assert initial == final, (initial, final)
+    page.close()
+
     for restriction in ("reduce", "save-data"):
         page = browser.new_page(viewport={"width": 390, "height": 844},
                                 reduced_motion="reduce" if restriction == "reduce" else "no-preference")
