@@ -188,7 +188,7 @@ export default function Chat() {
               <br />
               <span className="text-aqua-ink">close at hand.</span>
             </h1>
-            <p className="lede mt-5 max-w-[40ch]">
+            <p className="lede mt-5 max-w-[40ch] text-deep">
               A local, scripted preview of how a SafeKid support conversation could feel. It answers
               only from information shown on this concept site.
             </p>

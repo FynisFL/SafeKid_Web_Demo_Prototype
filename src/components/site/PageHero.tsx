@@ -52,9 +52,9 @@ export function PageHero({ eyebrow, title, intro, actions, art, meta, compact }:
             </motion.span>
           </h1>
           <motion.p
-            className="lede mt-6 max-w-[46ch]"
-            initial={reduce ? false : { opacity: 0.65, y: 8, filter: "blur(3px)" }}
-            animate={waiting ? { opacity: 0.65, y: 8, filter: "blur(3px)" } : { opacity: 1, y: 0, filter: "blur(0px)" }}
+            className="lede mt-6 max-w-[46ch] text-deep"
+            initial={reduce ? false : { y: 8 }}
+            animate={{ y: waiting ? 8 : 0 }}
             transition={{ duration: reduce ? 0 : 0.55, delay: reduce ? 0 : 0.09, ease: EASE }}
           >
             {intro}

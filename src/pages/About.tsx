@@ -130,7 +130,6 @@ function JourneyStep({
 }) {
   const at = index / JOURNEY.length;
   const active = useTransform(progress, [at - 0.08, at + 0.05], [0, 1]);
-  const textOpacity = useTransform(active, [0, 1], [0.38, 1]);
   const titleY = useTransform(active, [0, 1], [10, 0]);
   const ghostOpacity = useTransform(active, [0, 1], [0.03, 0.08]);
 
@@ -152,8 +151,8 @@ function JourneyStep({
       >
         {step.number}
       </motion.span>
-      <motion.div className="relative" style={reduce ? undefined : { opacity: textOpacity }}>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-deep/80">
+      <div className="relative">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-deep">
           <span className="text-aqua-ink">{step.number}</span> · {step.verb}
         </p>
         <motion.h3
@@ -163,7 +162,7 @@ function JourneyStep({
           {step.title}
         </motion.h3>
         <p className="mt-3 max-w-[48ch] text-[14.5px] leading-[1.75] text-deep">{step.body}</p>
-      </motion.div>
+      </div>
     </li>
   );
 }
