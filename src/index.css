@@ -429,3 +429,21 @@
 
 .text-aqua-ink { color: hsl(var(--aqua-ink)); }
 
+
+.sk-page-signature {
+  position: absolute;
+  z-index: 1;
+  top: calc(5.1rem + var(--safe-top));
+  right: max(1rem, var(--safe-right));
+  width: clamp(2.7rem, 8vw, 5.5rem);
+  color: hsl(var(--aqua-ink));
+}
+
+.sk-page-signature[data-scene-signature="sos"] {
+  color: #6df0db;
+}
+
+.sk-app-signature {
+  width: clamp(3rem, 6vw, 5rem);
+  color: #63e7dc;
+}

@@ -1,3 +1,4 @@
+import { GradualBlur } from "@/components/motion/reactbits/GradualBlur";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
@@ -11,7 +12,7 @@ export default function NotFound() {
 
   return (
     <SiteLayout>
-      <section className="relative flex min-h-[78vh] supports-[height:100svh]:min-h-[78svh] items-center overflow-hidden bg-mist pb-16 pt-[120px]">
+      <section className="relative isolate flex min-h-[78vh] supports-[height:100svh]:min-h-[78svh] items-center overflow-hidden bg-mist pb-16 pt-[120px]">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -right-[10%] top-0 h-[560px] w-[560px] rounded-full bg-white/70 blur-[90px]"
@@ -67,6 +68,7 @@ export default function NotFound() {
             </motion.p>
           </div>
         </div>
+        <GradualBlur className="pointer-events-none absolute inset-x-0 bottom-0 h-8" />
       </section>
     </SiteLayout>
   );

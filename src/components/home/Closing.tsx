@@ -1,3 +1,7 @@
+import { SET_PIECES } from "@/components/motion/setPieces";
+import { useEnhancedMotion } from "@/components/motion/useEnhancedMotion";
+import { ScrollFloat } from "@/components/motion/reactbits/ScrollFloat";
+import { ScrollReveal } from "@/components/motion/reactbits/ScrollReveal";
 import { useRef } from "react";
 import { ArrowRight, ArrowUpRight, Radio } from "lucide-react";
 import { motion, useInView, useReducedMotion, type Variants } from "motion/react";
@@ -20,7 +24,8 @@ const pulse: Variants = {
 function ClosingSignal({ ready, reduce }: { ready: boolean; reduce: boolean }) {
   const stage = useRef<HTMLDivElement>(null);
   const inView = useInView(stage, { amount: 0.42 });
-  const active = ready && !reduce && inView;
+  const motionAllowed = useEnhancedMotion();
+  const active = ready && !reduce && inView && motionAllowed;
 
   return (
     <motion.div
@@ -32,6 +37,16 @@ function ClosingSignal({ ready, reduce }: { ready: boolean; reduce: boolean }) {
       className="relative isolate aspect-[2/1] min-h-36 w-full overflow-hidden rounded-[22px] border border-white/10 bg-night md:aspect-[1.4/1] md:rounded-[28px]"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_33%_44%,hsl(var(--primary)/0.26),transparent_62%)]" />
+      {SET_PIECES.closingShield && (
+        <motion.svg viewBox="0 0 120 104" className="pointer-events-none absolute left-[53%] top-1/2 h-full w-[48%] -translate-x-1/2 -translate-y-1/2"
+          variants={{ rest: { opacity: .34 }, arrive: { opacity: [.34, .94, .62], transition: { duration: 1.24, ease: EASE } } }}>
+          <motion.path d="M60 6L101 23v20c0 25-17 43-41 55-24-12-41-30-41-55V23Z"
+            fill="none" stroke="#52f4e0" strokeWidth="1.4"
+            variants={{ rest: { pathLength: 1 }, arrive: { pathLength: [.07, 1], transition: { duration: 1.18, ease: EASE } } }} />
+          <motion.path d="m46 51 10 10 19-23" fill="none" stroke="#52f4e0" strokeWidth="1.8" strokeLinecap="round"
+            variants={{ rest: { opacity: .42 }, arrive: { opacity: [.16, 1, .66], transition: { duration: 1.3, ease: EASE } } }} />
+        </motion.svg>
+      )}
       <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(hsl(var(--primary)/0.65)_1px,transparent_1px)] [background-size:15px_15px]" />
 
       <div className="absolute left-[33%] top-1/2 grid w-[42%] -translate-x-1/2 -translate-y-1/2 place-items-center">
@@ -74,8 +89,6 @@ function ClosingSignal({ ready, reduce }: { ready: boolean; reduce: boolean }) {
 }
 
 export function Closing() {
-  const title = useRef<HTMLHeadingElement>(null);
-  const inView = useInView(title, { once: true, amount: 0.25 });
   const reduce = useReducedMotion() ?? false;
   const { entrance } = useFirstScene();
   const ready = entrance !== "waiting";
@@ -86,21 +99,14 @@ export function Closing() {
         <div className="rounded-[32px] border border-ink/10 bg-mist px-5 py-7 sm:px-8 sm:py-9 md:grid md:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] md:items-center md:gap-7 lg:rounded-[40px] lg:px-12 lg:py-11 xl:gap-14">
           <div className="min-w-0">
             <span aria-hidden="true" className="eyebrow-line" />
-            <h2 ref={title} id="home-closing-heading" className="display mt-4 text-[clamp(2rem,4.2vw,4.3rem)] leading-[1.02]">
+            <h2 id="home-closing-heading" className="display mt-4 text-[clamp(2rem,4.2vw,4.3rem)] leading-[1.02]">
               Independence,{" "}
-              <motion.span
-                className="block text-aqua-ink"
-                initial={false}
-                animate={{ y: reduce || (ready && inView) ? 0 : DISTANCE.sm }}
-                transition={reduce ? { duration: 0 } : settle}
-              >
-                with connection.
-              </motion.span>
+              <span className="block text-aqua-ink"><ScrollFloat>with connection.</ScrollFloat></span>
             </h2>
-            <p className="lede mt-4 max-w-[48ch]">
+            <ScrollReveal className="lede mt-4 max-w-[48ch]">
               SafeKid imagines a little more confidence for children, and a little more reassurance
               for the families cheering them on.
-            </p>
+            </ScrollReveal>
 
             <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
               <Link

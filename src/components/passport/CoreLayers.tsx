@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Layers, Shield, Sparkles } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, motion, useInView, useReducedMotion } from "motion/react";
 import { DURATION, EASE } from "@/components/motion/tokens";
 import { DEMO_LABEL } from "@/data/watchPassport";
 import { cn } from "@/lib/utils";
@@ -18,28 +18,31 @@ export function CoreLayers() {
   const [active, setActive] = useState(0);
   const reduce = useReducedMotion();
   const selected = LAYERS[active];
+  const figure = useRef<SVGSVGElement>(null);
+  const seen = useInView(figure, { once: true });
+  const exploded = reduce || seen;
 
   return (
     <section className="rounded-[2rem] border border-ink/10 bg-white p-5 shadow-[0_28px_70px_-52px_#102a38] sm:p-8"
       aria-label="SafeKid concept layers">
       <p className="eyebrow"><span className="eyebrow-line" />{DEMO_LABEL}</p>
       <h2 className="display mt-3 text-[clamp(1.8rem,4vw,2.8rem)]">What stays. What can change.</h2>
-      <svg viewBox="0 0 340 112" className="h-24 w-full sm:h-28" aria-hidden="true">
+      <svg ref={figure} data-passport-explode="" viewBox="0 0 340 112" className="h-24 w-full sm:h-28" aria-hidden="true">
         <path d="M38 93 C83 93 88 78 110 78 H226 C255 78 257 93 302 93"
           fill="none" stroke="#00787a" strokeOpacity=".38" strokeDasharray="3 4" />
-        <motion.g initial={false} animate={{ x: active === 1 ? -16 : -4, opacity: active === 1 ? 1 : .55 }}
+        <motion.g initial={false} animate={{ x: exploded ? (active === 1 ? -45 : -30) : 33, y: exploded ? 6 : 0, opacity: active === 1 ? 1 : .55 }}
           transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}>
           <rect x="99" y="27" width="74" height="66" rx="20" fill="#bce8e4" stroke="#00787a" strokeWidth="1.5" />
           <rect x="107" y="35" width="58" height="50" rx="14" fill="#eaf4f5" stroke="#00787a" />
         </motion.g>
-        <motion.g initial={false} animate={{ scale: active === 0 ? 1 : .9 }}
+        <motion.g initial={false} animate={{ y: exploded ? -4 : 0, scale: exploded && active === 0 ? 1.04 : .9 }}
           style={{ transformOrigin: "50% 52%" }}
           transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}>
           <rect x="137" y="17" width="68" height="78" rx="18" fill="#0d2736" />
           <rect x="145" y="25" width="52" height="62" rx="13" fill="#173c4d" stroke="#32c7c4" />
           <path d="M155 58H164L168 50L174 65L178 56H187" stroke="#82f4e7" fill="none" strokeWidth="2" />
         </motion.g>
-        <motion.g initial={false} animate={{ x: active === 2 ? 17 : 5, opacity: active === 2 ? 1 : .57 }}
+        <motion.g initial={false} animate={{ x: exploded ? (active === 2 ? 48 : 30) : -30, y: exploded ? 7 : 0, opacity: active === 2 ? 1 : .57 }}
           transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}>
           <rect x="186" y="34" width="48" height="54" rx="12" fill="#fff5dd" stroke="#8f6517" strokeWidth="1.5" />
           <path d="M196 49H224M196 58H224M196 67H214" stroke="#8f6517" strokeLinecap="round" />

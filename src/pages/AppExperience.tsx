@@ -1,3 +1,5 @@
+import { AnimatedContent } from "@/components/motion/reactbits/AnimatedContent";
+import { SceneSignature } from "@/components/motion/SceneSignature";
 import { MEDIA } from "@/lib/breakpoints";
 import { ArrowLeft, ArrowUpRight, Download, Globe2, Smartphone } from "lucide-react";
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
@@ -86,9 +88,10 @@ export default function AppExperience() {
         <Link className="sk-app__tap sk-app__back" to="/"><ArrowLeft size={16} aria-hidden="true" /> Back to site</Link>
       </motion.header>
 
-      <main>
+      <AnimatedContent as="main" trigger="mount" duration={0.46}>
         <section className="sk-app__hero sk-app__shell" ref={hero}>
           <div className="sk-app__intro">
+            <SceneSignature scene="app" className="sk-app-signature mb-2" />
             <motion.p className="sk-app__kicker"
               initial={reduce ? false : { opacity: 0, x: -26 }}
               animate={{ opacity: 1, x: 0 }}
@@ -203,7 +206,7 @@ export default function AppExperience() {
           </div>
           <p className="sk-app__footnote">SafeKid Parent App is in testing. Its location view shows the device running the app. The Web App and Android app store data separately.</p>
         </section>
-      </main>
+      </AnimatedContent>
       <AndroidDownload open={downloadOpen} onOpenChange={setDownloadOpen} trigger={downloadTrigger} />
     </div>
   );
