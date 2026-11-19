@@ -1,3 +1,4 @@
+import { MEDIA } from "@/lib/breakpoints";
 import { ArrowLeft, ArrowUpRight, Download, Globe2, Smartphone } from "lucide-react";
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
@@ -47,7 +48,7 @@ export default function AppExperience() {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const downloadTrigger = useRef<HTMLButtonElement>(null);
   const { scrollYProgress } = useScroll({ target: hero, offset: ["start start", "end start"] });
-  const wide = useMediaQuery("(min-width: 961px)");
+  const wide = useMediaQuery(MEDIA.parentAppStage);
   const stageRef = useRef<HTMLDivElement>(null);
   const stageVisible = useInView(stageRef, { once: true, amount: 0.2 });
   const { entrance } = useFirstScene();

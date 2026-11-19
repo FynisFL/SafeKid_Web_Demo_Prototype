@@ -1,3 +1,4 @@
+import { MEDIA } from "@/lib/breakpoints";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -411,7 +412,7 @@ function StoryCarousel() {
 export function StorySequence() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  const tablet = useMediaQuery("(min-width: 640px) and (max-width: 1023px) and (min-height: 650px)");
+  const tablet = useMediaQuery(MEDIA.tabletStage);
   const [active, setActive] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const activeRef = useRef(0);
@@ -455,7 +456,7 @@ export function StorySequence() {
     <div id="story" className="lg:bg-mist">
       <motion.section
         ref={sectionRef}
-        className="relative hidden bg-[radial-gradient(ellipse_at_50%_0%,#19404a_0%,#0b2531_34%,#0a1924_75%)] lg:[@media(min-height:650px)]:block"
+        className="relative hidden bg-[radial-gradient(ellipse_at_50%_0%,#19404a_0%,#0b2531_34%,#0a1924_75%)] desktop-stage:block"
         style={{
           height: "265svh",
           borderTopLeftRadius: topRadius,
@@ -463,7 +464,7 @@ export function StorySequence() {
         }}
         aria-label="The SafeKid story: from the child's watch to the parent's app"
       >
-        <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden pt-[66px]">
+        <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden pt-[calc(66px+var(--safe-top))]">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -left-40 top-1/4 h-[620px] w-[620px] rounded-full bg-primary/[0.07] blur-[120px]"

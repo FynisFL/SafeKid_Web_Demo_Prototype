@@ -1,3 +1,4 @@
+import { MEDIA } from "@/lib/breakpoints";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, useReducedMotion } from "motion/react";
@@ -54,7 +55,7 @@ export function SiteHeader() {
     setSearchOpen(false);
   }, [location.pathname]);
 
-  const desktop = useMediaQuery("(min-width: 1024px)");
+  const desktop = useMediaQuery(MEDIA.laptop);
   useEffect(() => {
     if (desktop) setMenuOpen(false);
   }, [desktop]);
@@ -64,7 +65,7 @@ export function SiteHeader() {
     <Dialog.Root open={menuOpen && !desktop} onOpenChange={setMenuOpen}>
       <header
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-[background-color,border-color,box-shadow] duration-500",
+          "fixed inset-x-0 top-0 z-50 pt-[var(--safe-top)] transition-[background-color,border-color,box-shadow] duration-500",
           scrolled
             ? "border-b border-ink/8 bg-white/95 shadow-[0_10px_40px_-30px_rgba(9,40,50,0.5)] backdrop-blur-xl"
             : "border-b border-ink/[0.05] bg-white/85 backdrop-blur-md"
@@ -134,7 +135,7 @@ export function SiteHeader() {
                 setSearchOpen(true);
               }}
               aria-label="Search the 12 editions"
-              className="hidden h-10 w-10 items-center justify-center rounded-full text-deep/70 transition-colors hover:bg-mist hover:text-ink sm:inline-flex"
+              className="hidden size-11 shrink-0 items-center justify-center rounded-full text-deep/70 transition-colors hover:bg-mist hover:text-ink sm:inline-flex"
             >
               <Search className="h-[17px] w-[17px]" aria-hidden="true" />
             </button>
@@ -150,7 +151,7 @@ export function SiteHeader() {
                 type="button"
                 ref={menuTrigger}
                 aria-label="Open menu"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/12 text-ink transition-colors hover:bg-mist lg:hidden"
+                className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-ink/12 text-ink transition-colors hover:bg-mist lg:hidden"
               >
                 <Menu className="h-[18px] w-[18px]" aria-hidden="true" />
               </button>
@@ -166,7 +167,7 @@ export function SiteHeader() {
           closeRef.current?.focus();
         }} onCloseAutoFocus={(event) => {
           if (searchOpen || desktop) event.preventDefault();
-        }} className="fixed inset-0 z-[70] bg-mist motion-safe:data-[state=open]:animate-in motion-safe:data-[state=open]:slide-in-from-top-4 motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fade-out-0 duration-200">
+        }} className="fixed inset-0 z-[70] bg-mist pt-[var(--safe-top)] pb-[var(--safe-bottom)] motion-safe:data-[state=open]:animate-in motion-safe:data-[state=open]:slide-in-from-top-4 motion-safe:data-[state=closed]:animate-out motion-safe:data-[state=closed]:fade-out-0 duration-200">
           <Dialog.Title className="sr-only">Site navigation</Dialog.Title>
           <div className="flex h-full flex-col overflow-y-auto">
             <div className="shell flex h-[78px] shrink-0 items-center justify-between">
@@ -176,7 +177,7 @@ export function SiteHeader() {
                 type="button"
                 onClick={() => setMenuOpen(false)}
                 aria-label="Close menu"
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-ink/12 bg-white/70 text-ink"
+                className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-ink/12 bg-white/70 text-ink"
               >
                 <X className="h-[18px] w-[18px]" aria-hidden="true" />
               </button>
@@ -226,7 +227,7 @@ export function SiteHeader() {
                   setMenuOpen(false);
                   setSearchOpen(true);
                 }}
-                className="mt-6 inline-flex items-center gap-2 text-sm text-deep/70"
+                className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm text-deep/70"
               >
                 <Search className="h-4 w-4" aria-hidden="true" />
                 Search the 12 editions

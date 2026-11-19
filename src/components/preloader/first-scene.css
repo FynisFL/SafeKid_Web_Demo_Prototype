@@ -6,7 +6,10 @@
   place-items: center;
   color: #102a38;
   background: radial-gradient(ellipse at 50% 45%, #fff 8%, #eaf4f5 73%);
-  touch-action: none;
+  overflow-y: auto;
+  padding: max(1rem, var(--safe-top)) max(1rem, var(--safe-right))
+    max(1rem, var(--safe-bottom)) max(1rem, var(--safe-left));
+
 }
 
 .first-scene__inner {

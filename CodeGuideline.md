@@ -406,3 +406,15 @@ Trước khi commit hoặc bàn giao một thay đổi, hãy kiểm tra:
 ---
 
 *SafeKid — Developed by DigiBabi.*
+
+### Nền responsive và kiểm thử thiết bị
+
+Ngưỡng chiều rộng ở `src/lib/breakpoints.ts` dùng chung với Tailwind và media query của React.
+Giữ ngưỡng chiều cao tối thiểu cho cảnh ghim. Giao diện mặc định vẫn đọc theo luồng khi màn hình thấp.
+`--safe-top`, `--safe-right`, `--safe-bottom` và `--safe-left` là inset cho header, menu,
+dialog, loader và thanh giỏ hàng. Dùng `svh` cho khung đọc và `dvh` cho vùng cuộn
+nhạy với thanh địa chỉ, với khai báo `vh` dự phòng trước.
+
+CI browser thông thường kiểm tra luồng chính. `device-matrix.yml` lưu báo cáo theo engine,
+ảnh và số đo đối chứng trên cùng runner. Chạy `tests/device_regressions.py` khi sửa mục tiêu
+chạm, trường nhập hoặc đường tắt tới ô chat.

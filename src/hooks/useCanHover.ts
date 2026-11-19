@@ -1,3 +1,4 @@
+import { MEDIA } from "@/lib/breakpoints";
 import { useEffect, useState } from "react";
 
 /**
@@ -8,7 +9,7 @@ export function useCanHover() {
   const [canHover, setCanHover] = useState(false);
 
   useEffect(() => {
-    const query = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const query = window.matchMedia(MEDIA.finePointer);
     const update = () => setCanHover(query.matches);
     update();
     query.addEventListener("change", update);

@@ -42,6 +42,10 @@
     --ink: 201 56% 14%;
 
     --radius: 1rem;
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
   }
 
   * {
@@ -50,12 +54,11 @@
 
   html {
     -webkit-text-size-adjust: 100%;
-    scroll-padding-top: 6.5rem;
+    scroll-padding-top: calc(6.5rem + var(--safe-top));
   }
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    overflow-x: clip;
     text-rendering: optimizeLegibility;
   }
 
@@ -97,14 +100,44 @@
 }
 
 @layer components {
+  .shell, .shell-tight {
+    --shell-gutter: 1.25rem;
+    padding-left: max(var(--shell-gutter), var(--safe-left));
+    padding-right: max(var(--shell-gutter), var(--safe-right));
+    @screen sm { --shell-gutter: 2rem; }
+    @screen lg { --shell-gutter: 3rem; }
+  }
+
   .shell {
-    @apply mx-auto w-full px-5 sm:px-8 lg:px-12;
+    @apply mx-auto w-full;
     max-width: 1320px;
   }
 
   .shell-tight {
-    @apply mx-auto w-full px-5 sm:px-8 lg:px-12;
+    @apply mx-auto w-full;
     max-width: 1120px;
+  }
+
+  .safe-search {
+    left: max(1rem, var(--safe-left));
+    right: max(1rem, var(--safe-right));
+    top: max(1rem, var(--safe-top), 12vh);
+    max-height: min(82vh, calc(100vh - var(--safe-top) - var(--safe-bottom) - 2rem));
+  }
+
+  .safe-modal {
+    max-width: calc(100% - max(1rem, var(--safe-left)) - max(1rem, var(--safe-right)));
+    max-height: calc(100vh - var(--safe-top) - var(--safe-bottom) - 2rem);
+  }
+
+  @supports (height: 100dvh) {
+    .safe-search {
+      top: max(1rem, var(--safe-top), 12dvh);
+      max-height: min(82dvh, calc(100dvh - var(--safe-top) - var(--safe-bottom) - 2rem));
+    }
+    .safe-modal {
+      max-height: calc(100dvh - var(--safe-top) - var(--safe-bottom) - 2rem);
+    }
   }
 
   .eyebrow {

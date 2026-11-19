@@ -62,7 +62,7 @@ export default function Contact() {
   }
 
   const fieldClass =
-    "field-motion mt-2 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 font-sans text-[14px] text-ink outline-none transition-colors placeholder:text-deep/45 focus:border-primary focus:ring-2 focus:ring-primary/20";
+    "field-motion mt-2 w-full rounded-xl border border-ink/10 bg-white px-4 py-3 font-sans text-base text-ink outline-none transition-colors placeholder:text-deep/45 focus:border-primary focus:ring-2 focus:ring-primary/20";
 
   return (
     <SiteLayout>

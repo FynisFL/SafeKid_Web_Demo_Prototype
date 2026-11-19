@@ -43,7 +43,7 @@ function SearchContent({ onClose, returnFocus }: Omit<EditionSearchProps, "open"
       <Dialog.Overlay className="fixed inset-0 z-[79] bg-night/35 backdrop-blur-[6px]" />
       <Dialog.Content
         aria-describedby={undefined}
-        className="fixed inset-x-4 top-[max(1rem,12dvh)] z-[80] mx-auto max-h-[82dvh] max-w-xl overflow-y-auto rounded-[28px] border border-white/70 bg-white shadow-xl motion-safe:data-[state=open]:animate-in motion-safe:data-[state=open]:fade-in-0 motion-safe:data-[state=open]:slide-in-from-top-2 duration-200"
+        className="safe-search fixed z-[80] mx-auto max-w-xl overflow-y-auto rounded-[28px] border border-white/70 bg-white shadow-xl motion-safe:data-[state=open]:animate-in motion-safe:data-[state=open]:fade-in-0 motion-safe:data-[state=open]:slide-in-from-top-2 duration-200"
         onOpenAutoFocus={(event) => {
           event.preventDefault();
           inputRef.current?.focus();
@@ -65,19 +65,19 @@ function SearchContent({ onClose, returnFocus }: Omit<EditionSearchProps, "open"
             }}
             placeholder="Search Buffalo, Dragon, Tý…"
             aria-label="Search editions"
-            className="h-8 w-full bg-transparent font-sans text-[15px] text-ink outline-none placeholder:text-deep/55"
+            className="min-h-11 min-w-0 flex-1 bg-transparent font-sans text-base text-ink outline-none placeholder:text-deep/55"
           />
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1.5 text-deep/50 transition-colors hover:bg-mist hover:text-ink"
+            className="grid size-11 shrink-0 place-items-center rounded-full text-deep/70 transition-colors hover:bg-mist hover:text-ink"
             aria-label="Close search"
           >
             <X className="h-4 w-4" aria-hidden="true" />
           </button>
         </div>
 
-        <div className="max-h-[54vh] overflow-y-auto p-2">
+        <div className="max-h-[54vh] supports-[height:100dvh]:max-h-[54dvh] overflow-y-auto p-2">
           <p className="px-3 pb-2 pt-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-deep/60">
             {query ? `${results.length} edition${results.length === 1 ? "" : "s"}` : "All 12 editions"}
           </p>
