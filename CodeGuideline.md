@@ -18,6 +18,8 @@ project-root/
 │   ├── assets/                 # Hình ảnh, logo và tài nguyên
 │   ├── components/             # Các thành phần giao diện dùng lại
 │   │   ├── ui/                 # Button, Dialog, Card,...
+│   │   ├── about/              # TeamStory dùng tại About
+│   │   ├── app-experience/     # Parent App demo và tải Android
 │   │   ├── home/               # Component riêng của Homepage
 │   │   ├── motion/             # Hiệu ứng và animation
 │   │   ├── passport/           # Thành phần Watch Passport
@@ -367,6 +369,9 @@ Tài liệu cần phản ánh đúng cấu trúc thực tế của repository, k
 ---
 
 ## 10. Checklist trước khi hoàn thành công việc
+
+Dùng `npm ci`, `npm run check` và `npm run build`. Chạy `npm run preview` cùng các bài kiểm tra Python Playwright trong `tests/` khi thay đổi điều hướng, layout hoặc motion. About dùng `components/about/TeamStory.tsx` cho phần giới thiệu đội ngũ.
+
 
 Trước khi commit hoặc bàn giao một thay đổi, hãy kiểm tra:
 

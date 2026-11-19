@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:prod": "vite build",
-    "check": "pnpm lint && pnpm exec tsc --noEmit",
+    "check": "npm run lint && tsc --noEmit -p tsconfig.app.json",
     "lint": "eslint .",
     "preview": "vite preview",
     "pInstall": "pnpm install",

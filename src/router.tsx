@@ -12,6 +12,8 @@ const Chat = lazy(() => import("./pages/Chat"));
 const Sos = lazy(() => import("./pages/Sos"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
+// Route configuration intentionally owns this compatibility redirect.
+// eslint-disable-next-line react-refresh/only-export-components
 function PassportRedirect() {
   const { search, hash } = useLocation();
   return <Navigate to={{ pathname: "/watch-passport", search, hash }} replace />;
