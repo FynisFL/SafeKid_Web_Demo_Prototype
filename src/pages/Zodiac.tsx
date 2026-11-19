@@ -69,7 +69,7 @@ function CollectionRail({ stageOwnsTransition, onEditionClick }: { stageOwnsTran
                       </span>
                       <span className="flex items-end justify-between gap-3 px-2 pb-1 pt-3.5">
                         <span>
-                          <span className="block text-[9px] uppercase tracking-[0.18em] text-primary">
+                          <span className="block text-[9px] uppercase tracking-[0.18em] text-aqua-ink">
                             {product.animal}
                           </span>
                           <span className="mt-1 block font-display text-[16px] font-medium tracking-[-0.02em] text-ink">

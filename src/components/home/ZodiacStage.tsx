@@ -222,7 +222,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                       <span
                         className={cn(
                           "text-[9px] tabular-nums tracking-[0.12em] transition-colors",
-                          selected ? "text-aqua-ink" : "text-deep/80"
+                          selected ? "text-aqua-ink" : "text-deep"
                         )}
                       >
                         {String(itemIndex + 1).padStart(2, "0")}
@@ -233,7 +233,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                       <span
                         className={cn(
                           "text-[11px] transition-colors",
-                          selected ? "text-aqua-ink" : "text-deep/80"
+                          selected ? "text-aqua-ink" : "text-deep"
                         )}
                       >
                         {item.animal}
@@ -251,7 +251,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
               })}
             </ul>
 
-            <p className="mt-6 max-w-[38ch] text-[11px] leading-relaxed text-deep/60">
+            <p className="mt-6 max-w-[38ch] text-[11px] leading-relaxed text-deep">
               Use arrow keys to move through the collection. SafeKid isn’t available to order yet.
             </p>
           </div>

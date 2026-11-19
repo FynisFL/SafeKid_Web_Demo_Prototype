@@ -76,6 +76,7 @@ export function FirstSceneGate({ children }: { children: ReactNode }) {
   const [showOverlay, setShowOverlay] = useState(false);
   const [showSkip, setShowSkip] = useState(false);
   const bootDone = useRef(plan.bypass);
+  const routeMounted = useRef(false);
   const focusOnExit = useRef(false);
   const [releaseOverlay, setReleaseOverlay] = useState(plan.bypass);
   const reduced = useReducedMotion();
@@ -95,6 +96,7 @@ export function FirstSceneGate({ children }: { children: ReactNode }) {
   }, [plan.key]);
 
   const ready = useCallback((failed = false) => {
+    routeMounted.current = true;
     setRouteReady(true);
     if (failed) enter("static");
   }, [enter]);
@@ -102,14 +104,21 @@ export function FirstSceneGate({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (plan.bypass) return;
     let active = true;
+    let pendingImages = plan.images.length;
     function finishTask() {
       if (active && !bootDone.current) setPrepared((count) => count + 1);
     }
     for (const { url } of plan.images) {
-      void imageDecoded(url).then(finishTask, () => { if (active) enter("static"); });
+      void imageDecoded(url).then(() => {
+        pendingImages -= 1;
+        finishTask();
+      }, () => { if (active) enter("static"); });
     }
     void loadFonts().then(finishTask);
-    const overlay = window.setTimeout(() => { if (!bootDone.current) setShowOverlay(true); }, SHOW_AFTER_MS);
+    const overlay = window.setTimeout(() => {
+      // A font fallback and the final paint can settle without obstructing ready content.
+      if (!bootDone.current && (!routeMounted.current || pendingImages > 0)) setShowOverlay(true);
+    }, SHOW_AFTER_MS);
     const skip = window.setTimeout(() => { if (!bootDone.current) setShowSkip(true); }, SKIP_AFTER_MS);
     const timeout = window.setTimeout(() => enter("static"), MAX_WAIT_MS);
     return () => {

@@ -164,7 +164,7 @@ function ParentApp({ chapter, compact = false }: { chapter: number; compact?: bo
           <p className="truncate font-display text-[12.5px] font-semibold tracking-tight text-ink">
             SafeKid family
           </p>
-          <p className="text-[9.5px] uppercase tracking-[0.14em] text-deep/60">
+          <p className="text-[9.5px] uppercase tracking-[0.14em] text-deep">
             Illustrative app screen
           </p>
         </div>

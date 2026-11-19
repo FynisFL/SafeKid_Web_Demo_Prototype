@@ -280,6 +280,10 @@ Tiền tố này được nền tảng Enter sử dụng để nhận diện l�
 
 Nếu chỉ muốn cô lập lỗi trong một khu vực giao diện, có thể sử dụng `ErrorBoundary` từ `react-error-boundary` cùng `FallbackComponent={ErrorFallback}`.
 
+Ở bản production, nút thử lại của Zodiac và Product đọc `route-chunks.json` để xác thực lại
+tệp route trước khi tải lại tài liệu. Vite sinh bảng tên tệp từ cùng build. Hai lần fetch này
+chỉ chạy sau khi người dùng bấm thử lại và cùng dùng một timeout 4 giây.
+
 ---
 
 ## 8. Các module đặc thù của SafeKid

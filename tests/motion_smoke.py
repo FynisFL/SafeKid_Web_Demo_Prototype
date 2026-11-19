@@ -271,7 +271,7 @@ def interactions(browser, width, height, touch, reduce):
     expect(chat.get_by_text("Reviewed",exact=True)).to_have_count(0)
 
     go(page,"sos/")
-    sos=page.get_by_role("button",name="Press and hold to preview the SOS demonstration")
+    sos=page.get_by_role("button",name="Press and hold SOS to preview the demonstration")
     sos.scroll_into_view_if_needed()
     b=sos.bounding_box()
     page.mouse.move(b["x"]+b["width"]/2,b["y"]+b["height"]/2)

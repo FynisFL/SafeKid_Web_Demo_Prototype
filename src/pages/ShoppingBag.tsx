@@ -24,10 +24,10 @@ const previewFees = [
 function PurchaseSteps({ checkout }: { checkout: boolean }) {
   return (
     <nav aria-label="Shopping steps" className="mb-6">
-      <ol className="flex flex-wrap items-center gap-2 text-xs font-medium text-deep/75">
+      <ol className="flex flex-wrap items-center gap-2 text-xs font-medium text-deep">
         <li>
           {checkout ? (
-            <Link to="/cart" className="inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 hover:bg-white hover:text-ink">
+            <Link to="/cart" className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 hover:bg-white hover:text-ink">
               <BagIcon size={15} aria-hidden="true" /> Bag
             </Link>
           ) : (
@@ -40,7 +40,7 @@ function PurchaseSteps({ checkout }: { checkout: boolean }) {
         <li>
           <span
             aria-current={checkout ? "step" : undefined}
-            className={`inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 ${checkout ? "bg-ink text-white" : ""}`}
+            className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 ${checkout ? "bg-ink text-white" : ""}`}
           >
             <CreditCard size={15} aria-hidden="true" /> Checkout
           </span>
@@ -86,7 +86,7 @@ function BagItems({ checkout }: { checkout: boolean }) {
                       {formatVnd(quantity * WATCH_PRICE_VND)}
                     </motion.p>
                   </div>
-                  <p className="mt-1 text-xs text-deep/75">{quantity} × {formatVnd(WATCH_PRICE_VND)}</p>
+                  <p className="mt-1 text-xs text-deep">{quantity} × {formatVnd(WATCH_PRICE_VND)}</p>
                   {!checkout && (
                     <div className="mt-3 flex flex-wrap items-center gap-2">
                       <div className="inline-flex items-center rounded-full border border-border">
@@ -238,7 +238,7 @@ export default function ShoppingBag({ checkout = false }: { checkout?: boolean }
         >
           <div className="mx-auto flex max-w-[60rem] items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-[11px] text-deep/75">Preview total · {count} {count === 1 ? "watch" : "watches"}</p>
+              <p className="text-[11px] text-deep">Preview total · {count} {count === 1 ? "watch" : "watches"}</p>
               <p className="text-sm font-semibold tabular-nums text-ink">{formatVnd(total)}</p>
             </div>
             <Button asChild variant="outline" className="shop-flow-btn shrink-0">

@@ -119,7 +119,7 @@ export default function Sos() {
 
               <Link
                 to="/support"
-                className="group mt-7 inline-flex items-center gap-2 text-[13px] font-medium text-white/75 transition-colors hover:text-white"
+                className="group mt-7 inline-flex min-h-11 items-center gap-2 text-[13px] font-medium text-white/75 transition-colors hover:text-white"
               >
                 Read about the concept
                 <ArrowUpRight className="h-4 w-4 text-primary" aria-hidden="true" />
@@ -187,10 +187,9 @@ export default function Sos() {
                     }}
                     className="absolute inset-0 m-auto flex h-[180px] w-[180px] touch-none flex-col items-center justify-center gap-1.5 rounded-full bg-primary text-primary-foreground shadow-[0_30px_80px_-30px_hsl(var(--primary)/0.8)] transition-all duration-300 motion-safe:hover:scale-[1.03] motion-safe:active:scale-[0.95] sm:h-[204px] sm:w-[204px]"
 
-                    aria-label="Press and hold to preview the SOS demonstration"
                   >
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.24em] opacity-70">
-                      Hold
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.24em]">
+                      Press and hold
                     </span>
                     <AnimatePresence initial={false} mode="wait">
                       <motion.span
@@ -205,9 +204,7 @@ export default function Sos() {
                         {acknowledged ? <Check size={35} /> : "SOS"}
                       </motion.span>
                     </AnimatePresence>
-                    <span className="text-[9px] uppercase tracking-[0.2em] opacity-60">
-                      Demo only
-                    </span>
+                    <span className="sr-only"> SOS to preview the demonstration</span>
                   </button>
                 </div>
 
@@ -272,7 +269,7 @@ export default function Sos() {
           ))}
         </div>
         <div className="shell mt-8">
-          <p className="rounded-[20px] border border-ink/10 p-4 text-[11.5px] leading-relaxed text-deep/60">
+          <p className="rounded-[20px] border border-ink/10 p-4 text-[11.5px] leading-relaxed text-deep">
             {sosDisclosure} If you need emergency help, contact your local emergency number directly.
           </p>
         </div>

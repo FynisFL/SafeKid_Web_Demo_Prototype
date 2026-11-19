@@ -24,7 +24,7 @@ export function PrivacyTrust() {
         <div className="mt-12 grid gap-5 lg:grid-cols-2">
           <Reveal>
             <div className="hairline-card h-full p-7 sm:p-9">
-              <p className="flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-deep/70">
+              <p className="flex items-center gap-2.5 text-[11px] font-semibold uppercase tracking-[0.22em] text-deep">
                 <Lock className="h-4 w-4 text-primary" aria-hidden="true" />
                 What the passport tracks
               </p>
@@ -56,7 +56,7 @@ export function PrivacyTrust() {
           </Reveal>
         </div>
 
-        <p className="mt-8 max-w-[70ch] text-[12px] leading-relaxed text-deep/60">
+        <p className="mt-8 max-w-[70ch] text-[12px] leading-relaxed text-deep">
           Concept note: this page does not connect to a device, collect information about children or families,
           or run any certification process. Everything shown is local sample content.
         </p>

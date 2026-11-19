@@ -124,7 +124,7 @@ export default function Contact() {
             <form id="contact-draft" onSubmit={openEmailDraft} onChange={() => setDraftOpened(false)} className="rounded-[28px] border border-ink/10 bg-mist/40 p-6 sm:p-8">
               <div className="flex items-end justify-between gap-4 border-b border-ink/10 pb-5">
                 <div>
-                  <p className="text-[9.5px] uppercase tracking-[0.2em] text-primary">
+                  <p className="text-[9.5px] uppercase tracking-[0.2em] text-aqua-ink">
                     01 / Your message
                   </p>
                   <h2 className="mt-2 font-display text-[22px] font-medium tracking-[-0.03em] text-ink">
@@ -231,7 +231,7 @@ export default function Contact() {
 
           <Reveal variant="soft" delay={0.08}>
             <aside className="h-full rounded-[28px] border border-ink/10 bg-white p-6 sm:p-8">
-              <p className="text-[9.5px] uppercase tracking-[0.2em] text-primary">02 / Direct contact</p>
+              <p className="text-[9.5px] uppercase tracking-[0.2em] text-aqua-ink">02 / Direct contact</p>
               <h2 className="mt-2 font-display text-[22px] font-medium tracking-[-0.03em] text-ink">
                 Here's where
                 <br />
@@ -288,7 +288,7 @@ export default function Contact() {
               </ul>
 
               <div className="mt-7 border-t border-ink/10 pt-4">
-                <p className="flex items-center gap-2 text-[11px] text-deep/50">
+                <p className="flex items-center gap-2 text-[11px] text-deep">
                   <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                   Developed by <span className="font-medium text-ink">DigiBabi</span>
                 </p>
@@ -300,7 +300,7 @@ export default function Contact() {
 
               <Link
                 to="/support"
-                className="group mt-5 inline-flex items-center gap-2 text-[12.5px] font-medium text-ink"
+                className="group mt-5 inline-flex min-h-11 items-center gap-2 text-[12.5px] font-medium text-ink"
               >
                 Read the support notes
                 <ArrowUpRight

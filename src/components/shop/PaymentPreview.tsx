@@ -32,7 +32,7 @@ export function PaymentPreview({ selected, onSelect }: {
     <fieldset className="min-w-0 rounded-[28px] border border-border bg-white p-5 sm:p-7">
       <legend className="sr-only">Payment method</legend>
       <h2 className="font-display text-[clamp(1.5rem,3vw,2rem)] font-medium tracking-tight text-ink">Payment method</h2>
-      <p className="mt-3 text-sm leading-relaxed text-deep/75">Choose a method to preview checkout. Ordering is closed until launch.</p>
+      <p className="mt-3 text-sm leading-relaxed text-deep">Choose a method to preview checkout. Ordering is closed until launch.</p>
       <div className="mt-5 grid gap-2.5">
         {paymentMethods.map((method) => {
           const active = method.id === selected.id;
@@ -102,7 +102,7 @@ export function CheckoutConfirm({ method }: { method: PaymentMethod }) {
                   <ShoppingBag size={23} strokeWidth={1.75} />
                 </span>
                 <Dialog.Title className="display display-md max-w-[18ch] pr-4">SafeKid isn’t available to order yet</Dialog.Title>
-                <Dialog.Description className="mt-3 text-sm leading-relaxed text-deep/75">Your items are still in your bag. No payment was taken.</Dialog.Description>
+                <Dialog.Description className="mt-3 text-sm leading-relaxed text-deep">Your items are still in your bag. No payment was taken.</Dialog.Description>
                 <div className="my-5 flex items-center gap-3 rounded-2xl bg-mist p-3">
                   <PaymentIcon method={method} />
                   <div className="min-w-0">

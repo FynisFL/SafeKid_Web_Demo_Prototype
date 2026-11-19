@@ -154,7 +154,7 @@ function JourneyStep({
       </motion.span>
       <motion.div className="relative" style={reduce ? undefined : { opacity: textOpacity }}>
         <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-deep/80">
-          <span className="text-primary">{step.number}</span> · {step.verb}
+          <span className="text-aqua-ink">{step.number}</span> · {step.verb}
         </p>
         <motion.h3
           className="mt-3 font-display text-[clamp(1.35rem,2.2vw,1.8rem)] font-medium tracking-[-0.03em] text-ink"
@@ -162,7 +162,7 @@ function JourneyStep({
         >
           {step.title}
         </motion.h3>
-        <p className="mt-3 max-w-[48ch] text-[14.5px] leading-[1.75] text-deep/75">{step.body}</p>
+        <p className="mt-3 max-w-[48ch] text-[14.5px] leading-[1.75] text-deep">{step.body}</p>
       </motion.div>
     </li>
   );
@@ -423,7 +423,7 @@ export default function About() {
                   loading="lazy"
                 />
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-primary">A little watch</p>
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-aqua-ink">A little watch</p>
                   <p className="mt-1 font-display text-[15px] font-medium tracking-[-0.02em] text-ink">
                     A lot of meaning.
                   </p>

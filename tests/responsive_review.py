@@ -21,7 +21,7 @@ with sync_playwright() as driver:
             assert page.evaluate("document.documentElement.scrollWidth === innerWidth"), (path, width)
 
         visit("/sos/")
-        hold = page.get_by_role("button", name="Press and hold to preview the SOS demonstration")
+        hold = page.get_by_role("button", name="Press and hold SOS to preview the demonstration")
         hold.press("Enter")
         expect(page.get_by_role("button", name="Reset demo")).to_be_visible()
         assert hold.evaluate("""el => document.querySelector('[role=status]').parentElement

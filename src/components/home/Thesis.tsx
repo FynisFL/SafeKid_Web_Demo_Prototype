@@ -112,7 +112,7 @@ export function Thesis() {
             </p>
           </Reveal>
           <Reveal variant="soft" delay={0.16}>
-            <Link to="/zodiac" className="group inline-flex items-center gap-2 text-sm font-medium text-ink">
+            <Link to="/zodiac" className="group inline-flex min-h-11 items-center gap-2 text-sm font-medium text-ink">
               Find their kind of adventure
               <ArrowUpRight
                 className="h-4 w-4 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"

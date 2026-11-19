@@ -80,7 +80,7 @@ export default function Product() {
         <div className="shell relative">
           <Link
             to="/zodiac"
-            className="group inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-deep/50 transition-colors hover:text-ink"
+            className="group inline-flex min-h-11 items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-deep transition-colors hover:text-ink"
           >
             <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-0.5" aria-hidden="true" />
             Zodiac collection
@@ -216,7 +216,7 @@ export default function Product() {
 
             <div className="min-w-0 lg:col-start-2 lg:row-start-2 lg:self-start">
               <AddToBag key={product.id} editionId={product.id} image={product.image} />
-              <p className="lede mt-6 max-w-[42ch]">
+              <p className="lede mt-6 max-w-[42ch] text-deep">
                 Meet the {product.label} edition — a Vietnamese Zodiac-inspired character in the
                 SafeKid watch concept, made for the little person who is always a few steps ahead.
               </p>
@@ -252,7 +252,7 @@ export default function Product() {
             </p>
             <Link
               to="/zodiac"
-              className="group mt-8 inline-flex items-center gap-2 text-[13px] font-medium text-white/80 transition-colors hover:text-white"
+              className="group mt-8 inline-flex min-h-11 items-center gap-2 text-[13px] font-medium text-white/80 transition-colors hover:text-white"
             >
               Back to all Zodiac editions
               <ArrowUpRight className="h-4 w-4 text-primary" aria-hidden="true" />
@@ -296,7 +296,7 @@ export default function Product() {
             {PILLARS.map((pillar, pillarIndex) => (
               <Reveal key={pillar.number} variant="soft" delay={pillarIndex * 0.06}>
                 <article className="group h-full bg-white p-6 transition-colors duration-500 hover:bg-mist lg:p-8">
-                  <p className="text-[9.5px] uppercase tracking-[0.2em] text-primary">
+                  <p className="text-[9.5px] uppercase tracking-[0.2em] text-aqua-ink">
                     {pillar.number}
                   </p>
                   <h3 className="mt-4 font-display text-[20px] font-medium tracking-[-0.03em] text-ink">
@@ -315,7 +315,7 @@ export default function Product() {
               <h3 className="font-display text-[19px] font-medium tracking-[-0.03em] text-ink">
                 Concept capabilities
               </h3>
-              <p className="text-[10px] uppercase tracking-[0.18em] text-deep/55">
+              <p className="text-[10px] uppercase tracking-[0.18em] text-deep">
                 Illustrative watch features
               </p>
             </div>
@@ -323,17 +323,17 @@ export default function Product() {
               {conceptCapabilities.map((capability) => (
                 <li
                   key={capability}
-                  className="rounded-full border border-ink/10 bg-white px-3.5 py-2 text-[12px] text-deep/70"
+                  className="rounded-full border border-ink/10 bg-white px-3.5 py-2 text-[12px] text-deep"
                 >
                   {capability}
                 </li>
               ))}
             </ul>
-            <p className="mt-5 max-w-[70ch] text-[11px] leading-relaxed text-deep/60">{conceptNote}</p>
+            <p className="mt-5 max-w-[70ch] text-[11px] leading-relaxed text-deep">{conceptNote}</p>
             <div className="mt-6 flex flex-col items-start justify-between gap-4 border-t border-ink/10 pt-5 sm:flex-row sm:items-center">
               <div>
                 <p className="text-[13px] font-medium text-ink">Explore the one-touch SOS concept.</p>
-                <p className="mt-1 text-[11px] leading-relaxed text-deep/55">
+                <p className="mt-1 text-[11px] leading-relaxed text-deep">
                   A local interaction preview only. No emergency alert is sent.
                 </p>
               </div>
@@ -365,7 +365,7 @@ export default function Product() {
             </div>
             <Link
               to="/zodiac"
-              className="group inline-flex items-center gap-2 text-[13px] font-medium text-ink"
+              className="group inline-flex min-h-11 items-center gap-2 text-[13px] font-medium text-ink"
             >
               See all 12 editions
               <ArrowUpRight className="h-4 w-4 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
@@ -398,7 +398,7 @@ export default function Product() {
                         </span>
                         <span className="flex items-end justify-between gap-2 px-2 pb-1 pt-3.5">
                           <span>
-                            <span className="block text-[9px] uppercase tracking-[0.18em] text-primary">
+                            <span className="block text-[9px] uppercase tracking-[0.18em] text-aqua-ink">
                               {item.animal}
                             </span>
                             <span className="mt-1 block font-display text-[15px] font-medium text-ink">
@@ -418,23 +418,23 @@ export default function Product() {
           <div className="mt-12 flex flex-wrap items-center justify-between gap-4 border-t border-ink/10 pt-6">
             <Link
               to={`/product/${previous.id}`}
-              className="group inline-flex items-center gap-2 text-[12px] text-deep/60 transition-colors hover:text-ink"
+              className="group inline-flex min-h-11 items-center gap-2 text-[12px] text-deep transition-colors hover:text-ink"
             >
               <ArrowLeft className="h-3.5 w-3.5" aria-hidden="true" />
               {previous.label} edition
             </Link>
-            <p className="text-[10px] uppercase tracking-[0.18em] text-deep/50">
+            <p className="text-[10px] uppercase tracking-[0.18em] text-deep">
               {product.detailTitle} · Concept
             </p>
             <Link
               to={`/product/${next.id}`}
-              className="group inline-flex items-center gap-2 text-[12px] text-deep/60 transition-colors hover:text-ink"
+              className="group inline-flex min-h-11 items-center gap-2 text-[12px] text-deep transition-colors hover:text-ink"
             >
               {next.label} edition
               <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
             </Link>
           </div>
-          <p className="mt-6 max-w-[80ch] text-[11px] leading-relaxed text-deep/55">
+          <p className="mt-6 max-w-[80ch] text-[11px] leading-relaxed text-deep">
             {conceptNote} Final edition specifications are pending.
           </p>
         </div>

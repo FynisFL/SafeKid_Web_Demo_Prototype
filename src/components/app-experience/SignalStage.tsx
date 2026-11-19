@@ -1,7 +1,7 @@
 import { useEnhancedMotion } from "@/components/motion/useEnhancedMotion";
 import { BellRing, Check, RotateCcw, ShieldCheck, Signal, Zap } from "lucide-react";
 import { motion, useAnimate } from "motion/react";
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 
 import watch from "@/assets/safekid/editions/rat.webp";
@@ -150,6 +150,7 @@ export function SignalStage({
   const [rig, animateRig] = useAnimate<HTMLDivElement>();
   const enhanced = useEnhancedMotion();
   const { canvasRef, spark } = useClickSpark(reduce || !enhanced, scene.accent);
+  const swipe = useRef<{ id: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
     const element = rig.current;
@@ -184,6 +185,25 @@ export function SignalStage({
     delete event.currentTarget.dataset.spotlight;
   }
 
+  function startSwipe(event: PointerEvent<HTMLDivElement>) {
+    if (!event.isPrimary || event.button !== 0 || (event.target as Element).closest("button")) return;
+    swipe.current = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function endSwipe(event: PointerEvent<HTMLDivElement>) {
+    const start = swipe.current;
+    if (start?.id !== event.pointerId) return;
+    swipe.current = null;
+    const x = event.clientX - start.x;
+    const y = event.clientY - start.y;
+    if (Math.abs(x) > 56 && Math.abs(x) > Math.abs(y) * 1.5) onStep(x < 0 ? 1 : -1);
+  }
+
+  function cancelSwipe(event: PointerEvent<HTMLDivElement>) {
+    if (swipe.current?.id === event.pointerId) swipe.current = null;
+  }
+
   return (
     <figure className="sk-stage" style={{ "--scene-color": scene.accent } as CSSProperties} aria-label="SafeKid connection demo">
       <div className="sk-stage__top">
@@ -194,15 +214,21 @@ export function SignalStage({
       </div>
       <motion.div className="sk-stage__viewport" data-scene={scene.id}
         style={{ touchAction: "pan-y pinch-zoom" }}
-        onPanEnd={(event, { offset }) => {
-          if ((event.target as Element | null)?.closest?.("button")) return;
-          if (Math.abs(offset.x) > 56 && Math.abs(offset.x) > Math.abs(offset.y) * 1.5) onStep(offset.x < 0 ? 1 : -1);
-        }}
         onPointerMove={(event) => { if (!reduce && event.pointerType === "mouse") aimSpotlight(event); }}
-        onPointerDown={(event) => { if (!reduce && event.isPrimary) aimSpotlight(event); }}
-        onPointerUp={(event) => { if (event.pointerType !== "mouse") resetSpotlight(event); }}
+        onPointerDown={(event) => {
+          startSwipe(event);
+          if (!reduce && event.isPrimary) aimSpotlight(event);
+        }}
+        onPointerUp={(event) => {
+          endSwipe(event);
+          if (event.pointerType !== "mouse") resetSpotlight(event);
+        }}
         onPointerLeave={resetSpotlight}
-        onPointerCancel={resetSpotlight}
+        onLostPointerCapture={cancelSwipe}
+        onPointerCancel={(event) => {
+          cancelSwipe(event);
+          resetSpotlight(event);
+        }}
         onClick={spark}>
         <div className="sk-stage__art">
           <div ref={rig} className="sk-stage__rig">

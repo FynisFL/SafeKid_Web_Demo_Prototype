@@ -143,7 +143,7 @@ export default function Support() {
               const content = (
                 <>
                   <span className="flex items-center justify-between">
-                    <span className="text-[9.5px] uppercase tracking-[0.2em] text-primary">
+                    <span className="text-[9.5px] uppercase tracking-[0.2em] text-aqua-ink">
                       {topic.number}
                     </span>
                     <ArrowUpRight
@@ -274,7 +274,7 @@ export default function Support() {
               <Reveal key={id} variant="soft">
                 <article id={id} className="h-full scroll-mt-28 rounded-[26px] border border-border bg-mist/50 p-6">
                   <h3 className="font-display text-xl font-medium tracking-tight text-ink">{title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-deep/75">{body}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-deep">{body}</p>
                   {id === "payments" && <Link className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4" to="/checkout">Explore checkout</Link>}
                   {id === "privacy" && <Link className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4" to="/app">Explore the Parent App</Link>}
                 </article>
@@ -290,7 +290,7 @@ export default function Support() {
             <div className="flex items-start gap-4">
               <span className="mt-0.5 flex h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-deep/60">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-deep">
                   Before launch
                 </p>
                 <p className="mt-2 max-w-[62ch] text-[13px] leading-relaxed text-muted-foreground">

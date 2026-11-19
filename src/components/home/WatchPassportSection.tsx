@@ -23,7 +23,7 @@ function LifeSummary({ stage }: { stage: (typeof LIFE_STAGES)[number] }) {
   const wipeCount = wipeEventsAt(stage.id).length;
   return (
     <>
-      <p className="text-[10px] uppercase tracking-[0.2em] text-deep/75">{stage.eyebrow}</p>
+      <p className="text-[10px] uppercase tracking-[0.2em] text-deep">{stage.eyebrow}</p>
       <p className="mt-1 font-display text-[1.5rem] font-medium leading-tight tracking-[-0.04em] text-ink">
         {stage.title}
       </p>
@@ -119,7 +119,7 @@ export function WatchPassportSection() {
           >
             <div className="overflow-hidden rounded-[28px] border border-border/80 bg-white shadow-[0_40px_90px_-60px_rgba(16,42,56,0.55)] lg:rounded-[36px]">
               <div className="flex items-center justify-between gap-3 border-b border-border/80 px-6 py-4">
-                <p className="flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-deep/70">
+                <p className="flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-deep">
                   <Fingerprint className="h-4 w-4 text-primary" aria-hidden="true" />
                   Watch Passport
                 </p>
@@ -128,7 +128,7 @@ export function WatchPassportSection() {
                 </span>
               </div>
               <div className="px-6 pb-7 pt-6">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-deep/55">Device ID · sample</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-deep">Device ID · sample</p>
                 <p className="mt-1 font-mono text-[1.25rem] tracking-[0.06em] text-ink">{SAMPLE_DEVICE_ID}</p>
 
                 <div className="mt-7" aria-hidden="true">
@@ -174,7 +174,7 @@ export function WatchPassportSection() {
                 </div>
               </div>
             </div>
-            <p className="mt-4 text-center text-[11px] text-deep/55">
+            <p className="mt-4 text-center text-[11px] text-deep">
               Sample information. Not a real connected device.
             </p>
           </motion.div>

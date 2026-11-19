@@ -178,12 +178,13 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div
+      <svg
         aria-hidden="true"
-        className="pointer-events-none select-none overflow-hidden px-4 pb-2 text-center font-display text-[19vw] font-semibold leading-[0.75] tracking-[-0.05em] text-white/[0.045]"
+        viewBox="0 0 1000 148"
+        className="pointer-events-none block w-full select-none px-4 pb-2 font-display font-semibold"
       >
-        SafeKid
-      </div>
+        <text x="500" y="140" textAnchor="middle" fontSize="190" className="fill-white/[0.045] tracking-[-0.05em]">SafeKid</text>
+      </svg>
       {isLittleDetourOpen && (
         <Suspense fallback={<div style={{ position: "fixed", inset: 0, zIndex: 10000, display: "grid", placeItems: "center", background: "#17363d", color: "#f8f2df", fontFamily: "Plus Jakarta Sans, Inter, sans-serif", fontSize: 12, letterSpacing: "0.12em" }}>Opening a little detour…</div>}>
           <LittleDetourGame onClose={closeLittleDetour} />

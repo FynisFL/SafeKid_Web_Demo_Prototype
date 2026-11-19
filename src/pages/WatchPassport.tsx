@@ -107,7 +107,7 @@ export default function WatchPassport() {
                   </Magnetic>
                   <Link
                     to="/contact"
-                    className="press text-[14px] font-medium text-white/75 transition-colors hover:text-white"
+                    className="inline-flex min-h-11 items-center press text-[14px] font-medium text-white/75 transition-colors hover:text-white"
                   >
                     Let's talk about SafeKid
                   </Link>

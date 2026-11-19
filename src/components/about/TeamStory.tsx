@@ -466,7 +466,7 @@ function SceneInfo({
           <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-primary" />
           {member.role}
         </p>
-        <p className="text-[11px] tracking-[0.18em] text-deep/65" aria-hidden="true">
+        <p className="text-[11px] tracking-[0.18em] text-deep" aria-hidden="true">
           {String(index + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
         </p>
       </motion.div>
@@ -482,7 +482,7 @@ function SceneInfo({
       </h3>
 
       <motion.p
-        className="mt-4 max-w-[46ch] text-[15px] leading-[1.7] text-deep/75"
+        className="mt-4 max-w-[46ch] text-[15px] leading-[1.7] text-deep"
         style={{ opacity: summaryOpacity, y: summaryY }}
       >
         {member.summary}
