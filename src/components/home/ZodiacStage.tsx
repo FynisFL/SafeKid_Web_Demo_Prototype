@@ -169,7 +169,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
           </p>
         </div>
 
-        <div className="mt-12 grid gap-10 lg:mt-16 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">
+        <div className="mt-12 grid grid-cols-1 gap-10 lg:mt-16 lg:grid-cols-[0.82fr_1.18fr] lg:gap-14">
           <div className="order-2 lg:order-1">
             <div className="flex items-center justify-between border-b border-ink/10 pb-3">
               <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-deep/50">
