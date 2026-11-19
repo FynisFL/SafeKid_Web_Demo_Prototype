@@ -11,9 +11,9 @@ const settle = { duration: DURATION.base, ease: EASE };
 const pulse: Variants = {
   rest: { opacity: 0, scale: 0.64, transition: { duration: 0 } },
   arrive: (delay: number) => ({
-    opacity: [0, 0.85, 0],
-    scale: [0.64, 0.92, 1.35],
-    transition: { ...settle, delay, times: [0, 0.26, 1] },
+    opacity: [0, 0.85, 0.72, 0],
+    scale: [0.64, 0.86, 1.05, 1.35],
+    transition: { ...settle, delay, times: [0, 0.2, 0.62, 1] },
   }),
 };
 

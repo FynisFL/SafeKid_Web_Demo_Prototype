@@ -31,7 +31,7 @@ def check_home(page, width, height, reduced_motion):
     for element in (title, primary, secondary):
         expect(element).to_have_css("opacity", "1")
     if width in (407, 488):
-        peaks, settled = closing.evaluate("""section => new Promise(resolve => {
+        peaks = closing.evaluate("""section => new Promise(resolve => {
           const waves = Array.from(section.querySelectorAll('[data-closing-pulse]'));
           const peaks = waves.map(() => 0);
           const start = performance.now();
@@ -39,12 +39,13 @@ def check_home(page, width, height, reduced_motion):
             const values = waves.map(wave => Number(getComputedStyle(wave).opacity));
             values.forEach((value, index) => { peaks[index] = Math.max(peaks[index], value); });
             if (now - start < 1600) requestAnimationFrame(sample);
-            else resolve([peaks, values]);
+            else resolve(peaks);
           }
           section.querySelector('[data-closing-stage]').scrollIntoView({ block: 'center', behavior: 'instant' });
           requestAnimationFrame(sample);
         })""")
-        assert settled == [0, 0], settled
+        for target in ("watch", "app"):
+            expect(closing.locator(f"[data-closing-pulse='{target}']")).to_have_css("opacity", "0")
         if reduced_motion:
             assert peaks == [0, 0], peaks
         else:
