@@ -131,6 +131,44 @@ Cùng Chromium headless shell 153 và máy chạy, baseline 89c2154. Mỗi hồ 
 
 Cửa sổ resource 3,4 giây sau Hero là 238.763 → 244.088 B gzip, gồm chunk canvas lazy ở ứng viên. Route chunk lớn nhất là Home, 15.289 B gzip, dưới trần khoảng 40.000 B. [Số đo thô và tóm tắt](DEVICE_PERFORMANCE_LOCAL.json).
 
-**Cổng chưa đạt.** JS và tải cảnh đầu nằm trong ngân sách. CLS mobile là 0 ở cả 3 lượt sau khi giữ chiều cao Watch Passport. Desktop tăng 5,85 FPS và hạ p95. Mobile giảm 2,73 FPS và còn long task, nên giữ PR #10 nháp. Browser Review ứng viên qua. Device Matrix cùng SHA còn đang chạy khi chốt số đo local.
+**Cổng chưa đạt.** JS và tải cảnh đầu nằm trong ngân sách. CLS mobile là 0 ở cả 3 lượt sau khi giữ chiều cao Watch Passport. Desktop tăng 5,85 FPS và hạ p95. Mobile giảm 2,73 FPS và còn long task, nên giữ PR #10 nháp.
 
 Run Firefox e0f5a26 qua 7/8 suite sau sửa anchor, còn lỗi reset chat trong motion_smoke. Kiểm riêng thao tác reset ở Firefox local qua 3 viewport. WebKit đã chạy trên CI, vòng trước ghi lỗi retry chunk và case timing loader. CTA và kiểm thử thiết bị thật cần đánh giá riêng.
+
+## CI · Kết quả cuối cho d7901a1 trên cùng runner
+
+Job performance qua trên Chromium Playwright 151. Build production của 89c2154 và d7901a1 dùng cùng runner, browser và cấu hình đo. Mỗi hồ sơ mạng có 5 lượt cache lạnh mỗi build. FPS/p95 là trung vị 3 lượt cuộn CPU 4×, CLS lấy mức cao nhất.
+
+| Chỉ số | Baseline 89c2154 | Ứng viên d7901a1 |
+|---|---:|---:|
+| Mạng thường · Hero / LCP, ms | 289 / 1.564 | 295 / 1.580 |
+| Fast 4G · Hero / LCP, ms | 959 / 2.236 | 969 / 2.248 |
+| Slow 3G · Hero / LCP, ms | 7.074 / 8.368 | 7.127 / 8.408 |
+| Mobile · FPS / p95, ms | 59,46 / 16,8 | 59,79 / 16,8 |
+| Desktop · FPS / p95, ms | 46,26 / 50,0 | 53,29 / 33,3 |
+| Mobile · CLS / long tasks | 0,000550 / 0·0·0 | 0 / 0·0·0 |
+| Desktop · CLS / long tasks | 0,000060 / 1·3·3 | 0,000041 / 1·0·0 |
+
+| Lighthouse | Performance mobile / desktop | Accessibility mobile / desktop |
+|---|---:|---:|
+| Home | 69 / 98 | 96 / 95 |
+| Zodiac | 81 / 98 | 96 / 96 |
+| Product Dragon | 83 / 99 | 96 / 96 |
+| Watch Passport | 99 / 100 | 96 / 96 |
+| About | 77 / 98 | 96 / 96 |
+
+**Hiệu năng qua trên CI.** Local còn hồi quy FPS mobile trên cùng build. Hai kết quả mô tả hai môi trường đo riêng. Mobile Lighthouse Home 69 là số lab.
+
+| Engine | Suite qua | Ca viewport × route | Lỗi layout cứng | Ca có target dưới 44px | Ca nghi vấn clip |
+|---|---:|---:|---:|---:|---:|
+| Chromium | 8/8 | 450 | 0 | 370 | 16 |
+| Firefox | 7/8 | 450 | 0 | 376 | 16 |
+| WebKit | 5/8 | 450 | 0 | 368 | 16 |
+
+Firefox còn lỗi reset chat trong full motion_smoke. Kiểm tra riêng nút New đã qua ở 3 viewport local Firefox. Axe còn báo color-contrast và label-content-name-mismatch. Các số đếm target và clip tính theo lượt viewport × route, có thể lặp cùng một phần tử.
+
+WebKit hoàn tất đủ 450 ca viewport × route, detector báo 0 lỗi layout cứng. Suite qua 5/8. `motion_smoke` không khôi phục được Product sau lỗi tải chunk. `responsive_review` vẫn thấy cảnh Zone khi chờ SOS. `first_scene` phát hiện overlay đã xuất hiện trong ca font fallback sớm. `scene_regressions` qua. Audit ghi 368 ca chứa target dưới 44px và 16 ca có dấu hiệu clip.
+
+Ma trận dùng DPR 2 cho hồ sơ chạm và DPR 1 cho desktop. Firefox Playwright không hỗ trợ cờ isMobile. Lượt xoay kiểm overflow và ghi layout shifts nơi engine có API, trên Home, Zodiac, Watch Passport và Checkout. Cổng CTA màn hình đầu áp dụng cho viewport dọc rộng tối đa 430px và cao từ 640px, trừ Product vì CTA theo sau gallery. Thiết bị thật vẫn chờ xác minh.
+
+[Device Matrix](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44510529792) · [Browser Review qua](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44510529835) · [Job Performance và Lighthouse](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44510529792/job/135513292344) · [112 ảnh đối chứng và JSON thô](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44510529792/artifacts/14523987300) · [Chromium artifact](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44510529792/artifacts/14522553120) · [Firefox artifact](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44510529792/artifacts/14524101784) · [WebKit job](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44510529792/job/135513292957) · [WebKit artifact](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44510529792/artifacts/14523664854)
