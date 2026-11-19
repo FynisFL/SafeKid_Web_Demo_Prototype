@@ -14,6 +14,7 @@ import { ArrowUpRight, Check, MapPin, Phone } from "lucide-react";
 import heroWatch from "@/assets/safekid/editions/rat.webp";
 import { sosDisclosure } from "@/data/zodiac";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from "@/components/ui/carousel";
+import { SET_PIECES } from "@/components/motion/setPieces";
 import { DURATION, EASE, SCROLL_SPRING } from "@/components/motion/tokens";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { cn } from "@/lib/utils";
@@ -305,7 +306,7 @@ function Thread({ progress }: { progress: MotionValue<number> }) {
 
 function StaticStory() {
   return (
-    <section id="story" className="relative overflow-hidden bg-night py-20">
+    <section id="story" data-home-thread-chapter="story" className="relative overflow-hidden bg-night py-20">
       <div className="shell">
         <p className="eyebrow eyebrow-inverse">
           <span className="eyebrow-line" />
@@ -475,7 +476,7 @@ export function StorySequence() {
   if (reduce) return <StaticStory />;
 
   return (
-    <div id="story" className="lg:bg-mist">
+    <div id="story" data-home-thread-chapter="story" className="lg:bg-mist">
       <motion.section
         ref={sectionRef}
         className="relative hidden bg-[radial-gradient(ellipse_at_50%_0%,#19404a_0%,#0b2531_34%,#0a1924_75%)] lg:[@media(min-height:650px)]:block"
@@ -521,7 +522,7 @@ export function StorySequence() {
             </div>
 
             <div className="relative grid h-[clamp(320px,53svh,560px)] w-full grid-cols-[44%_12%_44%] items-center">
-              <Thread progress={signal} />
+              {!SET_PIECES.thread && <Thread progress={signal} />}
 
               <motion.div
                 style={{ x: watchX }}

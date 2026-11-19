@@ -355,6 +355,12 @@ Các thành phần như Reveal, Stagger, Hero và Watch Passport sử dụng nh�
 
 `FirstSceneGate` bao quanh bộ định tuyến trong Error Boundary. `src/data/firstScene.ts` chọn ảnh theo đường dẫn đi vào. Một phần trăm thể hiện số việc đã sẵn sàng, gồm mã khởi chạy, trang, font hoặc font dự phòng, ảnh cần dùng và khung hình đầu. Khi ảnh lỗi, quá thời hạn hoặc người dùng chọn Skip, cảnh mở đầu hiển thị đơn giản. Các route khác và ảnh ở phần dưới sử dụng cơ chế tải trễ. Overlay chỉ hiện nếu chuẩn bị mất hơn 350ms. CSS font ghi nhận lỗi ngay từ HTML để React không đợi lại sự kiện đã xảy ra. Font có ngân sách chờ riêng 160ms, sau đó giữ font dự phòng trong lượt mở. Khi hoàn tất không giữ màn 100% thêm theo timer.
 
+### 8.4. Sợi tín hiệu trên Home
+
+`src/components/motion/setPieces.ts` giữ cờ `thread`. Tắt cờ để quay về trang trí Vòng 1. Home chỉ tải `HomeThread` sau khi cảnh đầu sẵn sàng và đã có khung hình cho nội dung. Suspense và Error Boundary của lớp SVG có fallback rỗng để HTML và điều hướng luôn dùng được.
+
+`HomeThread` lấy hai đầu mút và vị trí chương từ `data-home-thread-*`. Story dùng phần tử bao ngoài vùng sticky. Giữ lớp SVG tuyệt đối, không nhận tương tác, giữ cuộn sticky bằng cách tránh đặt overflow trên wrapper Home. ResizeObserver và sự kiện font cập nhật hình học. Một animation frame theo sự kiện chỉ chạy khi thấy Home và tab đang hiển thị. Reduced motion và Save-Data hiện đường tĩnh. Thanh tiến độ ở header vẫn phục vụ điều hướng.
+
 ## 9. Quy định cập nhật tài liệu
 
 Đây là quy định quan trọng đối với tất cả thành viên.

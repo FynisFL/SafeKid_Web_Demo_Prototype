@@ -15,6 +15,8 @@ import { useFirstScene } from "@/components/preloader/firstSceneContext";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { DURATION, EASE } from "@/components/motion/tokens";
 
+import { SET_PIECES } from "@/components/motion/setPieces";
+
 const ease = EASE;
 
 function OrbitTicks() {
@@ -130,6 +132,8 @@ export function Hero() {
     pointerY.set(0);
   }
 
+  const watchEntrance = SET_PIECES.thread ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 30 };
+
   const motionProps = reduce
     ? {}
     : {
@@ -174,22 +178,26 @@ export function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-[7%] hidden w-px bg-ink/[0.05] lg:block"
       />
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-[7%] hidden w-px origin-top bg-primary/35 lg:block"
-        initial={reduce ? false : { scaleY: 0 }}
-        animate={{ scaleY: 1 }}
-        transition={{ duration: 1.8, delay: 0.5, ease }}
-      />
+      {!SET_PIECES.thread && (
+        <>
+          <motion.div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-[7%] hidden w-px origin-top bg-primary/35 lg:block"
+            initial={reduce ? false : { scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ duration: 1.8, delay: 0.5, ease }}
+          />
 
-      <svg viewBox="0 0 900 235" preserveAspectRatio="none" aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%] w-full text-primary">
-        <path d="M815 0 C808 76 761 117 700 137 S581 168 524 181 S462 207 450 235"
-          fill="none" stroke="currentColor" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity=".24" />
-        <motion.path d="M815 0 C808 76 761 117 700 137 S581 168 524 181 S462 207 450 235"
-          fill="none" stroke="currentColor" strokeWidth="2" vectorEffect="non-scaling-stroke"
-          strokeLinecap="round" style={reduce ? undefined : { pathLength: trail }} />
-      </svg>
+          <svg viewBox="0 0 900 235" preserveAspectRatio="none" aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%] w-full text-primary">
+            <path d="M815 0 C808 76 761 117 700 137 S581 168 524 181 S462 207 450 235"
+              fill="none" stroke="currentColor" strokeWidth="1" vectorEffect="non-scaling-stroke" opacity=".24" />
+            <motion.path d="M815 0 C808 76 761 117 700 137 S581 168 524 181 S462 207 450 235"
+              fill="none" stroke="currentColor" strokeWidth="2" vectorEffect="non-scaling-stroke"
+              strokeLinecap="round" style={reduce ? undefined : { pathLength: trail }} />
+          </svg>
+        </>
+      )}
 
       <div className="shell relative grid items-center gap-5 pb-8 pt-2 sm:gap-12 sm:pt-6 lg:grid-cols-[1.02fr_0.98fr] lg:gap-4 lg:pb-12">
         <motion.div
@@ -268,12 +276,12 @@ export function Hero() {
         </motion.div>
 
         <motion.div
-          style={reduce ? undefined : { y: artY, scale: artScale, x: wide ? artX : 0 }}
+          style={reduce || SET_PIECES.thread ? undefined : { y: artY, scale: artScale, x: wide ? artX : 0 }}
           className="relative z-0 flex w-full justify-center lg:justify-end"
         >
           <motion.div
-            initial={reduce ? undefined : { opacity: 0, scale: 0.94, y: 30 }}
-            animate={waiting && !reduce ? { opacity: 0, scale: 0.94, y: 30 } : { opacity: 1, scale: 1, y: 0 }}
+            initial={reduce ? undefined : watchEntrance}
+            animate={waiting && !reduce ? watchEntrance : { opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: reduce || waiting ? 0 : DURATION.slow, ease, delay: reduce || waiting ? 0 : 0.12 }}
             className="flex w-full justify-center lg:justify-end"
             style={{ willChange: waiting && !reduce ? "transform, opacity" : undefined }}
@@ -284,6 +292,9 @@ export function Hero() {
             onPointerLeave={resetTilt}
             className="perspective-1200 relative aspect-square w-full max-w-[320px] sm:max-w-[520px] lg:max-w-[580px]"
           >
+            {SET_PIECES.thread && (
+              <span aria-hidden="true" data-home-thread-start className="absolute left-[68%] top-[73%]" />
+            )}
             <motion.div
               aria-hidden="true"
               className="stage-glow absolute inset-[2%] rounded-full"

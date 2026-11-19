@@ -16,6 +16,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { useCanHover } from "@/hooks/useCanHover";
 import logo from "@/assets/safekid/logo.webp";
+import { SET_PIECES } from "@/components/motion/setPieces";
 import { DURATION } from "@/components/motion/tokens";
 
 /* -------------------------------------------------------------------------- */
@@ -135,7 +136,7 @@ export function Closing() {
   const ruleClip = useTransform(rule, (v) => `inset(0% 0% ${(1 - v) * 100}% 0%)`);
 
   return (
-    <section ref={sectionRef} className="bg-white pb-20 pt-4 sm:pb-24">
+    <section ref={sectionRef} data-home-thread-chapter="closing" className="bg-white pb-20 pt-4 sm:pb-24">
       <div className="shell">
         <div
           onPointerMove={onPanelMove}
@@ -154,21 +155,33 @@ export function Closing() {
             aria-hidden="true"
             className="pointer-events-none absolute -right-24 -top-24 h-[520px] w-[520px] rounded-full bg-primary/12 blur-[100px]"
           />
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute left-[8%] top-1/2 hidden h-[300px] w-px -translate-y-1/2 bg-gradient-to-b from-transparent via-primary/45 to-transparent lg:block"
-            style={{ clipPath: ruleClip }}
-          />
+          {!SET_PIECES.thread && (
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute left-[8%] top-1/2 hidden h-[300px] w-px -translate-y-1/2 bg-gradient-to-b from-transparent via-primary/45 to-transparent lg:block"
+              style={{ clipPath: ruleClip }}
+            />
+          )}
           <div aria-hidden="true" className="pointer-events-none relative mb-8 ml-auto grid size-32 place-items-center sm:size-40 lg:absolute lg:inset-y-0 lg:right-[7%] lg:my-auto lg:size-60">
             <motion.div className="absolute inset-0 grid place-items-center"
-              style={reduce ? undefined : { y: watchY, rotate: watchRotate }}>
+              style={reduce || SET_PIECES.thread ? undefined : { y: watchY, rotate: watchRotate }}>
               <svg viewBox="0 0 240 240" className="absolute inset-0 size-full text-primary">
-                <path d="M0 173C37 177 40 125 55 90C73 48 99 38 120 32C142 38 171 49 185 64C184 130 170 163 120 201C73 165 57 139 55 90"
-                  fill="none" stroke="currentColor" strokeWidth="1.2" opacity=".3" />
-                <motion.path d="M0 173C37 177 40 125 55 90C73 48 99 38 120 32C142 38 171 49 185 64C184 130 170 163 120 201C73 165 57 139 55 90"
-                  fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
-                  style={{ pathLength: rule }} />
+                {SET_PIECES.thread ? (
+                  <path d="M185 64C184 130 170 163 120 201C73 165 57 139 55 90C73 48 99 38 120 32C142 38 171 49 185 64Z"
+                    fill="none" stroke="currentColor" strokeWidth="1.5" opacity=".6" />
+                ) : (
+                  <>
+                    <path d="M0 173C37 177 40 125 55 90C73 48 99 38 120 32C142 38 171 49 185 64C184 130 170 163 120 201C73 165 57 139 55 90"
+                      fill="none" stroke="currentColor" strokeWidth="1.2" opacity=".3" />
+                    <motion.path d="M0 173C37 177 40 125 55 90C73 48 99 38 120 32C142 38 171 49 185 64C184 130 170 163 120 201C73 165 57 139 55 90"
+                      fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
+                      style={{ pathLength: rule }} />
+                  </>
+                )}
               </svg>
+              {SET_PIECES.thread && (
+                <span data-home-thread-end className="absolute left-[77.0833%] top-[26.6667%]" />
+              )}
               <img src={logo} alt="" width={256} height={256} loading="lazy" className="relative size-[37%] rounded-[22%] bg-white/95 p-1 object-contain" />
             </motion.div>
           </div>

@@ -144,6 +144,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
       )}
       style={{ backgroundColor: product.tint }}
       aria-labelledby="collection-heading"
+      data-home-thread-chapter={variant === "page" ? undefined : "zodiac"}
     >
       <div
         aria-hidden="true"
