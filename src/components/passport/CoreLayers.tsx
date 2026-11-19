@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowDown, Layers, Shield, Sparkles } from "lucide-react";
+import { Layers, Shield, Sparkles } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { DURATION, EASE } from "@/components/motion/tokens";
 import { DEMO_LABEL } from "@/data/watchPassport";
@@ -74,9 +74,6 @@ export function CoreLayers() {
           </motion.p>
         </AnimatePresence>
       </div>
-      <a href="#passport" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-aqua-ink">
-        Open the sample passport <ArrowDown className="size-4" aria-hidden="true" />
-      </a>
     </section>
   );
 }

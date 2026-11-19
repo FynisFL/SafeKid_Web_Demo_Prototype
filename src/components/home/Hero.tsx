@@ -181,7 +181,7 @@ export function Hero() {
           strokeLinecap="round" style={reduce ? undefined : { pathLength: trail }} />
       </svg>
 
-      <div className="shell relative grid items-center gap-12 pb-8 pt-6 lg:grid-cols-[1.02fr_0.98fr] lg:gap-4 lg:pb-12">
+      <div className="shell relative grid items-center gap-5 pb-8 pt-2 sm:gap-12 sm:pt-6 lg:grid-cols-[1.02fr_0.98fr] lg:gap-4 lg:pb-12">
         <motion.div
           style={reduce ? undefined : { y: copyY, opacity: copyOpacity }}
           {...motionProps}
@@ -193,7 +193,7 @@ export function Hero() {
             A little more room to grow
           </motion.p>
 
-          <h1 className="display display-xl mt-6 text-ink">
+          <h1 className="display display-xl mt-4 sm:mt-6 text-ink">
             <span className="block overflow-hidden pb-[0.04em]">
               <motion.span variants={reduce ? undefined : line} className="block">
                 Let them
@@ -208,7 +208,7 @@ export function Hero() {
 
           <motion.p
             variants={reduce ? undefined : soft}
-            className="lede mt-7 max-w-[46ch] text-[16px] sm:text-[17px]"
+            className="lede mt-4 max-w-[46ch] text-[15px] leading-relaxed sm:mt-7 sm:text-[17px]"
           >
             A little independence for them. A little more reassurance for you. SafeKid is a product
             concept built around the space between both.
@@ -216,7 +216,7 @@ export function Hero() {
 
           <motion.div
             variants={reduce ? undefined : soft}
-            className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-7"
+            className="mt-5 flex flex-wrap items-center gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-7"
           >
             <a
               href="#story"
@@ -241,7 +241,7 @@ export function Hero() {
 
           <motion.div
             variants={reduce ? undefined : soft}
-            className="mt-11 flex items-center gap-4 text-[11px] text-deep/50"
+            className="mt-5 flex flex-wrap items-center gap-2 text-[11px] text-deep/85 sm:mt-11 sm:gap-4"
           >
             <span className="inline-flex items-center gap-2">
               <span className="relative flex h-2 w-2">
@@ -271,7 +271,7 @@ export function Hero() {
             ref={artRef}
             onPointerMove={handlePointerMove}
             onPointerLeave={resetTilt}
-            className="perspective-1200 relative aspect-square w-full max-w-[520px] lg:max-w-[580px]"
+            className="perspective-1200 relative aspect-square w-full max-w-[320px] sm:max-w-[520px] lg:max-w-[580px]"
           >
             <motion.div
               aria-hidden="true"
@@ -363,7 +363,6 @@ export function Hero() {
         <p className="hidden text-[10px] uppercase tracking-[0.2em] text-deep/50 sm:block">
           The space between them
         </p>
-        <p className="text-[10px] uppercase tracking-[0.2em] text-deep/50">01 / 06</p>
       </div>
     </section>
   );
