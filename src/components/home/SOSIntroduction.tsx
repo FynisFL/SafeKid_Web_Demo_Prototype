@@ -10,7 +10,7 @@ export function SOSIntroduction() {
         <div className="relative isolate overflow-hidden rounded-[32px] border border-ink/10 bg-mist px-6 py-12 sm:px-10 sm:py-14 lg:rounded-[40px] lg:px-14">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-24 -top-28 h-[420px] w-[420px] rounded-full bg-primary/[0.09] blur-[100px]"
+            className="pointer-events-none absolute -right-24 -top-28 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,hsl(var(--primary)/0.12),transparent_72%)]"
           />
           <div className="relative grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-12">
             <Reveal>

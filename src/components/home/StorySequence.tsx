@@ -152,7 +152,7 @@ function ParentApp({ chapter, compact = false }: { chapter: number; compact?: bo
   return (
     <div
       className={cn(
-        "relative w-full rounded-[26px] border border-white/70 bg-white/95 p-3.5 text-left shadow-[0_36px_90px_-45px_rgba(8,30,40,0.7)] backdrop-blur",
+        "relative w-full rounded-[26px] border border-white/70 bg-white/95 p-3.5 text-left shadow-[0_36px_90px_-45px_rgba(8,30,40,0.7)]",
         compact && "p-3"
       )}
     >
@@ -467,11 +467,11 @@ export function StorySequence() {
         <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden pt-[calc(88px+var(--safe-top))]">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -left-40 top-1/4 h-[620px] w-[620px] rounded-full bg-primary/[0.07] blur-[120px]"
+            className="pointer-events-none absolute -left-40 top-1/4 h-[620px] w-[620px] rounded-full bg-[radial-gradient(circle,hsl(var(--primary)/0.11),transparent_72%)]"
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-32 bottom-0 h-[520px] w-[520px] rounded-full bg-primary/[0.05] blur-[100px]"
+            className="pointer-events-none absolute -right-32 bottom-0 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,hsl(var(--primary)/0.08),transparent_72%)]"
           />
 
           <div className="shell relative flex items-center justify-between border-b border-white/10 py-4">

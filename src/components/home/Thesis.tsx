@@ -63,7 +63,7 @@ export function Thesis() {
     <section ref={ref} className="relative overflow-hidden bg-mist py-20 sm:py-24 lg:py-32">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-24 top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-white/70 blur-[80px]"
+        className="pointer-events-none absolute -left-24 top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,hsl(0_0%_100%/0.76),transparent_72%)]"
       />
       <div className="shell relative grid gap-12 lg:grid-cols-[1.25fr_0.75fr] lg:gap-16">
         <div>

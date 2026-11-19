@@ -66,7 +66,7 @@ export function WatchPassportSection() {
     <section ref={ref} className="relative overflow-hidden bg-mist py-20 sm:py-28 lg:py-32">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-32 top-0 h-[520px] w-[520px] rounded-full bg-white/80 blur-[100px]"
+        className="pointer-events-none absolute -right-32 top-0 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,hsl(0_0%_100%/0.88),transparent_72%)]"
       />
       <div className="shell relative grid items-center gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
         <div>
