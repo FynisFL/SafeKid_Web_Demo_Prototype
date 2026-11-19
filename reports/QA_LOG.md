@@ -15,3 +15,14 @@
 | QA-01 | GitHub Actions trên đầu PR #6 | `cancelled` | [Run 44494827271](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44494827271). |
 
 Axe toàn site, so sánh long task/FPS/CLS, ba hồ sơ mạng có CDP, nghiệm thu ảnh sau redesign, ma trận sau sửa và thiết bị thật đều đang chờ. Chưa sửa hay nới test của repo. Không có vòng lặp sau phát triển để báo pass/fail.
+
+## Gỡ blocker theo ủy quyền mới
+
+| Bậc | Kết quả |
+|---|---|
+| a | `npm ci` trong worktree mới thoát 0, thêm 412 gói. Chạy build baseline từ cây nguồn đã đối chiếu với `89c2154`; build và check thoát 0. |
+| b | Cài Chromium và thử riêng `--only-shell`: tải về thất bại với `End of central directory record signature not found. Either not a zip file, or file is truncated.` Probe hai binary Playwright báo thiếu executable. Chromium hệ thống thử ba cờ yêu cầu và báo `socket() failed: Operation not permitted (1)`. |
+| c | `npm exec -- playwright install-deps webkit` báo `Switching to root user to install dependencies...`, rồi `Password: su: System error`. Dry run Python cũng báo thiếu package và không đọc được apt config. |
+| d | PR #7 mở dạng nháp từ nhánh PR #6. Workflow matrix tách Chromium, Firefox, WebKit và job đo đối chứng với đúng SHA baseline. Git CLI push báo `fatal: could not read Username for 'https://github.com': No such device or address`; đã lưu commit qua GitHub connector. |
+| CI cũ | Job `preview` của run 44494827271 qua npm ci, check, build, pip và bị hủy ở step cài browser. Kết quả job không chỉ ra được bên yêu cầu hủy. Workflow mới có timeout 35 phút, không hủy job do push khác. |
+| P-A local | Firefox qua `device_regressions.py` tại 320×568, 390×844, 844×390 và 768×1024. `reading_layout.py` qua 7 cấu hình, gồm 2712×1220. |

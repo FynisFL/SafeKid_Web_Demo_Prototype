@@ -1,0 +1,117 @@
+name: SafeKid device matrix
+
+on:
+  workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'index.html'
+      - 'package*.json'
+      - '*config*'
+      - '.github/workflows/device-matrix.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: safekid-device-${{ github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  browsers:
+    name: ${{ matrix.engine }} device matrix
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        engine: [chromium, firefox, webkit]
+    env:
+      SAFEKID_BROWSER: ${{ matrix.engine }}
+      SAFEKID_QA_OUTPUT: .qa-output
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - run: python -m pip install playwright==1.62.0
+      - run: npm --prefix tests install --package-lock=false
+      - run: npm --prefix tests exec -- playwright install --with-deps "${SAFEKID_BROWSER}"
+      - name: Run browser suites and layout audits
+        run: |
+          npm run preview -- --host 127.0.0.1 --strictPort > .qa-preview.log 2>&1 &
+          preview=$!
+          trap 'kill "$preview" 2>/dev/null || true' EXIT
+          curl -fsS --retry 20 --retry-connrefused --retry-delay 1 http://127.0.0.1:4173/ > /dev/null
+          status=0
+          for suite in motion_smoke responsive_review collection_navigation connected_scenes first_scene reading_layout device_regressions; do
+            if python "tests/$suite.py"; then result=pass; else result=fail; status=1; fi
+            printf 'SUITE_JSON {"browser":"%s","suite":"%s","result":"%s"}\n' "$SAFEKID_BROWSER" "$suite" "$result"
+            printf -- '- %s: %s\n' "$suite" "$result" >> "$GITHUB_STEP_SUMMARY"
+          done
+          node tests/device_matrix.mjs || status=1
+          exit "$status"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: device-matrix-${{ matrix.engine }}
+          path: |
+            .qa-output
+            .qa-preview.log
+          include-hidden-files: true
+
+  performance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    env:
+      SAFEKID_QA_OUTPUT: .qa-output
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm --prefix tests install --package-lock=false
+      - run: npm --prefix tests exec -- playwright install --with-deps chromium
+      - run: npm run build -- --manifest
+      - name: Build the exact baseline
+        run: |
+          mkdir .qa-baseline
+          git archive 89c215430cfdd07bb603f2f4c2a7e1c9c50bd8bd | tar -x -C .qa-baseline
+          npm --prefix .qa-baseline ci
+          npm --prefix .qa-baseline run build -- --manifest
+      - name: Measure paired performance and Lighthouse
+        run: |
+          npm run preview -- --host 127.0.0.1 --strictPort > .qa-preview.log 2>&1 &
+          candidate=$!
+          npm --prefix .qa-baseline run preview -- --host 127.0.0.1 --port 4174 --strictPort > .qa-baseline-preview.log 2>&1 &
+          baseline=$!
+          trap 'kill "$candidate" "$baseline" 2>/dev/null || true' EXIT
+          for port in 4173 4174; do
+            curl -fsS --retry 20 --retry-connrefused --retry-delay 1 "http://127.0.0.1:$port/" > /dev/null
+          done
+          status=0
+          node tests/device_performance.mjs || status=1
+          node tests/device_lighthouse.mjs || status=1
+          exit "$status"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: device-performance
+          path: |
+            .qa-output
+            .qa-preview.log
+            .qa-baseline-preview.log
+          include-hidden-files: true
