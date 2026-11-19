@@ -32,3 +32,9 @@ Tất cả 252 lượt đều tìm thấy `main h1`. Không ghi nhận lỗi Jav
 - iPhone Safari. Mở Home và Zodiac trên điện thoại dọc. Thu/mở thanh địa chỉ khi vuốt, sau đó xoay. Quan sát Hero và stage sticky, lớp canvas hoặc hình tĩnh. Kiểm vùng notch và home indicator với header, dialog, thanh giỏ. Focus vào Contact và S.F AI, xác nhận bàn phím không che trường đang nhập và nút gửi. Lặp với Reduce Motion và Low Data Mode nếu có.
 - Android Chrome. Thử ở 360–430 CSS px và 844×390 tương đương. Vuốt dọc qua rail Zodiac rồi vuốt ngang trong rail. Mở edition, Back và xoay, xác nhận đúng edition và scroll. Kiểm trường nhập, cỡ chữ hệ thống lớn, thanh địa chỉ và trải nghiệm cuộn ở chế độ pin thấp.
 - Cả hai. Soát nút 44×44px, zoom 200%, nhãn demo, dialog Escape với bàn phím ngoài, đổi app trong khi chạy cảnh hoặc mô phỏng. Mobile được coi là nghiệm thu khi test thực sự thực hiện và ghi thiết bị/OS/trình duyệt.
+
+### Bổ sung khi nghiệm thu PR #10
+
+- Trên iPhone Safari, bấm “Explore all 12 editions”. Kiểm tra đầu sân khấu nằm dưới header. Thử nút trước/sau, ảnh Orbit, sang Product và Back. Lặp ở portrait và landscape.
+- Thử mở bản nháp Contact bằng nút và Slide Commit khi trường bắt buộc còn trống. SOS chỉ mô phỏng cục bộ. Thử hold, slide, Enter và Reset trước khi xoay.
+- Trên Android Chrome, chuyển tab ngay khi thấy hạt Hero, quay lại và cuộn. Lặp với Reduce Motion, Data Saver hoặc pin yếu nếu máy hỗ trợ.
