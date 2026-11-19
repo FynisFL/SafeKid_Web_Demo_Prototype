@@ -1,4 +1,4 @@
-"""Check that the Home ending and Zodiac introduction work without decorative motion."""
+"""Check the Home ending, scoped motion, and Zodiac introduction."""
 
 import os
 import re
@@ -30,6 +30,26 @@ def check_home(page, width, height, reduced_motion):
     secondary = closing.get_by_role("link", name="Try the Parent App")
     for element in (title, primary, secondary):
         expect(element).to_have_css("opacity", "1")
+    if width in (407, 488):
+        peaks, settled = closing.evaluate("""section => new Promise(resolve => {
+          const waves = Array.from(section.querySelectorAll('[data-closing-pulse]'));
+          const peaks = waves.map(() => 0);
+          const start = performance.now();
+          function sample(now) {
+            const values = waves.map(wave => Number(getComputedStyle(wave).opacity));
+            values.forEach((value, index) => { peaks[index] = Math.max(peaks[index], value); });
+            if (now - start < 1600) requestAnimationFrame(sample);
+            else resolve([peaks, values]);
+          }
+          section.querySelector('[data-closing-stage]').scrollIntoView({ block: 'center', behavior: 'instant' });
+          requestAnimationFrame(sample);
+        })""")
+        assert settled == [0, 0], settled
+        if reduced_motion:
+            assert peaks == [0, 0], peaks
+        else:
+            assert all(peak > 0.4 for peak in peaks), peaks
+
     closing.scroll_into_view_if_needed()
     for link in (primary, secondary):
         assert link.bounding_box()["height"] >= 44, link

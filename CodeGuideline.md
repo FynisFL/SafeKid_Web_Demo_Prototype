@@ -357,7 +357,7 @@ Các thành phần như Reveal, Stagger, Hero và Watch Passport sử dụng nh�
 
 ### 8.4. Đoạn kết Home và trang Zodiac
 
-Đoạn kết Home trình bày trực tiếp tiêu đề, mô tả và hai CTA trong HTML. Motion gắn với từng nội dung tương tác, chẳng hạn bộ chọn Zodiac, và thanh tiến độ trang nằm riêng ở header.
+Đoạn kết Home trình bày trực tiếp tiêu đề, mô tả và hai CTA trong HTML. Phần nhấn của tiêu đề dịch nhẹ lần đầu xuất hiện. Nhịp tín hiệu giữa đồng hồ và hình minh họa điện thoại chạy trong khung riêng khi vào viewport, rồi dừng. Reduced motion giữ cảnh tĩnh. Thanh tiến độ trang nằm riêng ở header.
 
 Trang Zodiac dùng phần giới thiệu ngắn rồi vào ngay `ZodiacStage`. Anchor `#collection` trỏ tới vùng chọn edition. Giữ cột mobile của stage theo chiều rộng vùng chứa để dải edition cuộn bên trong mà ảnh và nút đổi mẫu vẫn nằm trong viewport. Cả Home và trang Zodiac dùng chung sân khấu.
 
