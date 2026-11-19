@@ -51,14 +51,24 @@ with sync_playwright() as driver:
     page.close()
 
     page = browser.new_page(viewport={"width": 390, "height": 844})
-    delayed = []
-    page.route("**/assets/HeroSignal-*.js", lambda route: delayed.append(route))
+    page.route("https://fonts.googleapis.com/**", lambda route: route.fulfill(body="", content_type="text/css"))
+    pending_signal = []
+    page.route("**/assets/HeroSignal-*.js", lambda route: pending_signal.append(route))
     visit(page, "/")
-    page.wait_for_timeout(800)
-    assert delayed, "HeroSignal chunk should be deferred until the Hero has entered"
+    # On a narrow screen the artwork can begin below the fold. Bring it into view
+    # and synchronize with the intercepted request rather than guessing its frame.
+    hero = page.get_by_role("region", name="SafeKid introduction")
+    artwork = hero.get_by_role("img", name=re.compile("SafeKid smartwatch concept, Mouse edition"))
+    artwork.scroll_into_view_if_needed()
+    deadline = 6000
+    while not pending_signal and deadline > 0:
+        page.wait_for_timeout(50)
+        deadline -= 50
+    assert pending_signal, "HeroSignal should load once its artwork is visible"
+    assert page.evaluate("performance.getEntriesByName('safekid-hero-enter').length > 0")
     expect(page.locator("[data-hero-signal]")).to_have_count(0)
     expect(page.get_by_role("link", name="Discover SafeKid", exact=True)).to_be_enabled()
-    for route in delayed:
+    for route in pending_signal:
         route.continue_()
     expect(page.locator("[data-hero-signal]")).to_have_count(1)
     page.close()

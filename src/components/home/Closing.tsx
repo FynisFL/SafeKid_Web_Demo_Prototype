@@ -4,7 +4,7 @@ import { ScrollFloat } from "@/components/motion/reactbits/ScrollFloat";
 import { ScrollReveal } from "@/components/motion/reactbits/ScrollReveal";
 import { useRef, type CSSProperties } from "react";
 import { ArrowRight, ArrowUpRight, Radio } from "lucide-react";
-import { motion, useInView, useReducedMotion, type Variants } from "motion/react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import { Link } from "react-router-dom";
 import dragonWatch from "@/assets/safekid/editions/dragon.webp";
 import { DISTANCE, DURATION, EASE } from "@/components/motion/tokens";
@@ -15,14 +15,8 @@ const shieldPoints = [[60, 6], [78, 13], [101, 23], [101, 43], [89, 72], [78, 87
 
 const settle = { duration: DURATION.base, ease: EASE };
 
-const pulse: Variants = {
-  rest: { opacity: 0, scale: 0.64, transition: { duration: 0 } },
-  arrive: (delay: number) => ({
-    opacity: [0, 0.85, 0.72, 0],
-    scale: [0.64, 0.86, 1.05, 1.35],
-    transition: { ...settle, delay, times: [0, 0.2, 0.62, 1] },
-  }),
-};
+const closingPulse = (delay: number) =>
+  `sk-closing-pulse ${DURATION.base}s cubic-bezier(${EASE.join(",")}) ${delay}s both`;
 
 function ClosingSignal({ ready, reduce }: { ready: boolean; reduce: boolean }) {
   const stage = useRef<HTMLDivElement>(null);
@@ -60,7 +54,8 @@ function ClosingSignal({ ready, reduce }: { ready: boolean; reduce: boolean }) {
 
       <div className="absolute left-[33%] top-1/2 grid w-[42%] -translate-x-1/2 -translate-y-1/2 place-items-center">
         <span className="absolute aspect-square w-full rounded-full border border-primary/20" />
-        <motion.span data-closing-pulse="watch" custom={0} variants={pulse} className="absolute aspect-square w-full rounded-full border-2 border-primary" />
+        <span data-closing-pulse="watch" className="absolute aspect-square w-full rounded-full border-2 border-primary opacity-0"
+          style={{ animation: active ? closingPulse(DURATION.feedback) : undefined }} />
         <motion.img
           src={dragonWatch}
           alt=""
@@ -78,7 +73,8 @@ function ClosingSignal({ ready, reduce }: { ready: boolean; reduce: boolean }) {
 
       <div className="absolute left-[73%] top-1/2 grid aspect-square w-[32%] -translate-x-1/2 -translate-y-1/2 place-items-center">
         <span className="absolute inset-0 rounded-full border border-primary/20" />
-        <motion.span data-closing-pulse="app" custom={DURATION.quick} variants={pulse} className="absolute inset-0 rounded-full border-2 border-primary" />
+        <span data-closing-pulse="app" className="absolute inset-0 rounded-full border-2 border-primary opacity-0"
+          style={{ animation: active ? closingPulse(DURATION.quick) : undefined }} />
         <motion.div
           variants={{
             rest: { y: reduce ? 0 : DISTANCE.sm, rotate: 8 },
