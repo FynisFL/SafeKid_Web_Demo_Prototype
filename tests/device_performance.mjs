@@ -40,7 +40,7 @@ async function open(variant, device, { network, cpu } = {}) {
           if (type === "largest-contentful-paint") window.lab.lcp = entry.startTime;
           if (type === "layout-shift" && !entry.hadRecentInput) window.lab.shifts.push({
             value: entry.value, time: entry.startTime,
-            nodes: (entry.sources ?? []).map(source => source.node?.id || source.node?.tagName || null),
+            nodes: (entry.sources ?? []).map(source => source.node?.id || source.node?.getAttribute?.("aria-labelledby") || source.node?.querySelector?.("h2")?.textContent?.trim().slice(0, 48) || source.node?.tagName || null),
           });
           if (type === "longtask") window.lab.long.push({ duration: entry.duration, time: entry.startTime });
         }

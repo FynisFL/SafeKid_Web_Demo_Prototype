@@ -462,3 +462,17 @@ footer .display .text-primary {
 .eyebrow:not(.eyebrow-inverse) {
   color: hsl(var(--deep));
 }
+
+.sk-shield-point {
+  opacity: 0.24;
+}
+
+.sk-shield-point-active {
+  animation: sk-shield-settle 980ms cubic-bezier(0.22, 1, 0.36, 1) var(--wait) both;
+}
+
+@keyframes sk-shield-settle {
+  from { transform: translate(var(--dx), var(--dy)); opacity: 0; }
+  38% { opacity: 0.9; }
+  to { transform: translate(0, 0); opacity: 0.24; }
+}

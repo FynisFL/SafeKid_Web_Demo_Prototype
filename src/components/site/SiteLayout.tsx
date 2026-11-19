@@ -46,7 +46,15 @@ export function SiteLayout({ children }: { children: ReactNode }) {
     if (hash && !hash.startsWith("#/")) {
       const target = document.getElementById(hash.slice(1));
       if (target) {
-        target.scrollIntoView({ behavior: reduce ? "instant" : "smooth", block: "start" });
+        if (hash === "#collection") {
+          const padding = Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+          window.scrollTo({
+            top: target.getBoundingClientRect().top + window.scrollY - padding,
+            behavior: reduce ? "instant" : "smooth",
+          });
+        } else {
+          target.scrollIntoView({ behavior: reduce ? "instant" : "smooth", block: "start" });
+        }
         return;
       }
     }

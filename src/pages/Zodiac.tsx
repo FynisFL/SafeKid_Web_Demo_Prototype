@@ -183,10 +183,10 @@ export default function Zodiac() {
               <p className="max-w-[42ch] text-[15px] leading-relaxed text-deep">
                 Discover a SafeKid watch design for each character in the Vietnamese Zodiac.
               </p>
-              <a href="#collection" className="mt-1 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-aqua-ink underline-offset-4 hover:underline">
+              <Link to="#collection" className="mt-1 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-aqua-ink underline-offset-4 hover:underline">
                 Explore all 12 editions
                 <ArrowDown className="size-4 shrink-0" aria-hidden="true" />
-              </a>
+              </Link>
               <p className="text-xs leading-relaxed text-deep">
                 {formatVnd(WATCH_PRICE_VND)} per watch · Not available to order yet
               </p>

@@ -19,11 +19,27 @@ with sync_playwright() as driver:
     browser = getattr(driver, engine).launch(executable_path=os.getenv(f"SAFEKID_{engine.upper()}"))
     page = browser.new_page(viewport={"width": 390, "height": 844}, has_touch=True)
     page.route("https://fonts.googleapis.com/**", lambda route: route.fulfill(body="", content_type="text/css"))
+    page.add_init_script("""(() => {
+      const add = EventTarget.prototype.addEventListener;
+      const remove = EventTarget.prototype.removeEventListener;
+      window.heroPointerListeners = new Set();
+      const track = (owner, type) => owner instanceof Element &&
+        owner.classList.contains('perspective-1200') && /^pointer/.test(type);
+      EventTarget.prototype.addEventListener = function(type, listener, options) {
+        if (track(this, type)) heroPointerListeners.add(listener);
+        return add.call(this, type, listener, options);
+      };
+      EventTarget.prototype.removeEventListener = function(type, listener, options) {
+        if (track(this, type)) heroPointerListeners.delete(listener);
+        return remove.call(this, type, listener, options);
+      };
+    })()""")
     visit(page, "/")
     signal = page.locator("[data-hero-signal]")
     expect(signal).to_have_count(1, timeout=6000)
     page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
     expect(signal).to_have_count(0)
+    page.wait_for_function("window.heroPointerListeners.size === 0")
     page.evaluate("window.scrollTo(0, 0)")
     expect(signal).to_have_count(1)
     page.evaluate("""() => {
@@ -31,6 +47,20 @@ with sync_playwright() as driver:
       document.dispatchEvent(new Event('visibilitychange'));
     }""")
     expect(signal).to_have_count(0)
+    page.wait_for_function("window.heroPointerListeners.size === 0")
+    page.close()
+
+    page = browser.new_page(viewport={"width": 390, "height": 844})
+    delayed = []
+    page.route("**/assets/HeroSignal-*.js", lambda route: delayed.append(route))
+    visit(page, "/")
+    page.wait_for_timeout(800)
+    assert delayed, "HeroSignal chunk should be deferred until the Hero has entered"
+    expect(page.locator("[data-hero-signal]")).to_have_count(0)
+    expect(page.get_by_role("link", name="Discover SafeKid", exact=True)).to_be_enabled()
+    for route in delayed:
+        route.continue_()
+    expect(page.locator("[data-hero-signal]")).to_have_count(1)
     page.close()
 
     for restriction in ("reduce", "save-data"):

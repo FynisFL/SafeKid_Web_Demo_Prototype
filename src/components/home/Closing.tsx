@@ -2,7 +2,7 @@ import { SET_PIECES } from "@/components/motion/setPieces";
 import { useEnhancedMotion } from "@/components/motion/useEnhancedMotion";
 import { ScrollFloat } from "@/components/motion/reactbits/ScrollFloat";
 import { ScrollReveal } from "@/components/motion/reactbits/ScrollReveal";
-import { useRef } from "react";
+import { useRef, type CSSProperties } from "react";
 import { ArrowRight, ArrowUpRight, Radio } from "lucide-react";
 import { motion, useInView, useReducedMotion, type Variants } from "motion/react";
 import { Link } from "react-router-dom";
@@ -47,14 +47,10 @@ function ClosingSignal({ ready, reduce }: { ready: boolean; reduce: boolean }) {
             fill="none" stroke="#52f4e0" strokeWidth="1.4"
             variants={{ rest: { pathLength: 1 }, arrive: { pathLength: [.07, 1], transition: { duration: 1.18, ease: EASE } } }} />
           {shieldPoints.map(([x, y], index) => (
-            <motion.circle key={index} cx={x} cy={y} r="1.25" fill="#8ff9e8"
-              variants={{
-                rest: { x: 0, y: 0, opacity: .22, transition: { duration: 0 } },
-                arrive: {
-                  x: [(x - 60) * .72, 0], y: [(y - 52) * .72, 0],
-                  opacity: [0, .9, .28], transition: { duration: .98, delay: index * .017, ease: EASE },
-                },
-              }} />
+            <circle key={index} cx={x} cy={y} r="1.25" fill="#8ff9e8"
+              className={active ? "sk-shield-point sk-shield-point-active" : "sk-shield-point"}
+              style={{ "--dx": `${(x - 60) * .72}px`, "--dy": `${(y - 52) * .72}px`,
+                "--wait": `${index * .017}s` } as CSSProperties} />
           ))}
           <motion.path d="m46 51 10 10 19-23" fill="none" stroke="#52f4e0" strokeWidth="1.8" strokeLinecap="round"
             variants={{ rest: { opacity: .42 }, arrive: { opacity: [.16, 1, .66], transition: { duration: 1.3, ease: EASE } } }} />
