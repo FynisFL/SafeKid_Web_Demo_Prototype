@@ -181,10 +181,10 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
         )}>
           <div className="order-2 lg:order-1">
             <div className="flex items-center justify-between border-b border-ink/10 pb-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-deep/50">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-deep/85">
                 Choose a character
               </p>
-              <p className="text-[10px] tabular-nums text-deep/55">
+              <p className="text-[10px] tabular-nums text-deep/85">
                 {String(index + 1).padStart(2, "0")} / 12
               </p>
             </div>
@@ -208,7 +208,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                       tabIndex={selected ? 0 : -1}
                       className={cn(
                         "group relative isolate flex w-full items-center gap-3 rounded-lg border-b border-ink/[0.07] px-2 py-3 text-left transition-colors",
-                        selected ? "text-ink" : "text-deep/55 hover:bg-mist/40 hover:text-ink"
+                        selected ? "text-ink" : "text-deep/85 hover:bg-mist/40 hover:text-ink"
                       )}
                     >
                       {selected && (
@@ -376,7 +376,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                 </motion.div>
               </TiltCard>
 
-              <div className="absolute right-0 top-2 flex items-center gap-1.5">
+              <div className="absolute right-0 top-2 z-20 flex items-center gap-1.5">
                 <button
                   type="button"
                   onClick={() => step(-1)}

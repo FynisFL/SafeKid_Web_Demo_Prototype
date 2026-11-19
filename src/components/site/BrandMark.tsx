@@ -102,7 +102,7 @@ export function BrandMark({
     <Link
       to="/"
       aria-label="SafeKid home"
-      className={cn("group inline-flex select-none items-center gap-2.5", className)}
+      className={cn("group inline-flex min-h-11 select-none items-center gap-2.5", className)}
       style={{ WebkitTouchCallout: "none", WebkitUserSelect: "none", touchAction: "manipulation" }}
       onPointerEnter={handlePointerEnter}
       onPointerDown={handlePointerDown}

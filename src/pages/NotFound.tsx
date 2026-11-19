@@ -26,7 +26,7 @@ export default function NotFound() {
             <h1 className="display display-lg mt-6 max-w-[16ch]">
               This path hasn't been
               <br />
-              <span className="text-primary">drawn yet.</span>
+              <span className="text-aqua-ink">drawn yet.</span>
             </h1>
             <p className="lede mt-6 max-w-[42ch]">
               The page you were looking for isn't part of the SafeKid concept. Let's get you back to

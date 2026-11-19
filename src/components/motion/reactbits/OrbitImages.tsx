@@ -12,7 +12,7 @@ type OrbitItem = { id: string; image: string; label: string };
 export function OrbitImages({ items, active, select }: { items: OrbitItem[]; active: number; select: (index: number) => void }) {
   const compact = useMediaQuery(`(max-width: ${BREAKPOINT.tablet - 1}px)`);
   const enhanced = useEnhancedMotion();
-  const radius = 43;
+  const radius = compact ? 40 : 43;
   const size = items.length;
   const isNeighbor = (index: number) => [0, 1, 2, size - 2, size - 1].includes((index - active + size) % size);
 
@@ -22,7 +22,7 @@ export function OrbitImages({ items, active, select }: { items: OrbitItem[]; act
       {items.map((item, index) => {
         const offset = (index - active + size) % size;
         if (compact && !isNeighbor(index)) return null;
-        const angle = offset / size * 2 * Math.PI - Math.PI / 2;
+        const angle = offset / size * 2 * Math.PI + (compact ? Math.PI / 2 : -Math.PI / 2);
         const point = { left: `${50 + radius * Math.cos(angle)}%`, top: `${50 + radius * Math.sin(angle)}%` };
         return (
           <motion.button

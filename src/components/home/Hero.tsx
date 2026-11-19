@@ -230,7 +230,7 @@ export function Hero() {
             </a>
             <Link
               to="/zodiac"
-              className="group inline-flex items-center gap-2 text-[14px] font-medium text-ink"
+              className="group inline-flex min-h-11 items-center gap-2 text-[14px] font-medium text-ink"
             >
               Meet the 12 Zodiac editions
               <ArrowUpRight
@@ -358,7 +358,7 @@ export function Hero() {
       </div>
 
       <div className="shell relative flex items-center justify-between border-t border-ink/[0.07] pt-5">
-        <a href="#story" className="group inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-deep/55">
+        <a href="#story" className="group inline-flex min-h-11 items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-deep/55">
           <span className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/15 transition-colors group-hover:border-primary group-hover:text-primary">
             <MoveDown className="h-3.5 w-3.5" aria-hidden="true" />
           </span>

@@ -8,7 +8,7 @@ import { useSceneEntrance } from "./useSceneEntrance";
 
 export function ScrollReveal(props: ComponentPropsWithoutRef<"p">) {
   const node = useRef<HTMLParagraphElement>(null);
-  useSceneEntrance(node, { enabled: SET_PIECES.scrollText, trigger: "enter", duration: DURATION.base,
-    y: DISTANCE.sm, opacity: 0.8, filter: "blur(2px)" });
+  useSceneEntrance(node, { enabled: SET_PIECES.scrollText, trigger: "enter", duration: DURATION.quick,
+    y: DISTANCE.sm, opacity: 0.9, filter: "blur(0.4px)" });
   return <p ref={node} data-scroll-reveal="" {...props} />;
 }

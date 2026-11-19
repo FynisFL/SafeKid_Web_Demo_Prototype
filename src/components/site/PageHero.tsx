@@ -61,7 +61,7 @@ export function PageHero({ eyebrow, title, intro, actions, art, meta, compact }:
           </motion.p>
           {actions && <div className="mt-8 flex flex-wrap items-center gap-5">{actions}</div>}
           {meta && (
-            <p className="mt-8 text-[10px] uppercase tracking-[0.2em] text-deep/55">{meta}</p>
+            <p className="mt-8 text-[10px] uppercase tracking-[0.2em] text-deep/85">{meta}</p>
           )}
         </div>
 

@@ -67,8 +67,8 @@ export function SiteHeader() {
         className={cn(
           "fixed inset-x-0 top-0 z-50 pt-[var(--safe-top)] transition-[background-color,border-color,box-shadow] duration-500",
           scrolled
-            ? "border-b border-ink/8 bg-white/95 shadow-[0_10px_40px_-30px_rgba(9,40,50,0.5)] backdrop-blur-xl"
-            : "border-b border-ink/[0.05] bg-white/85 backdrop-blur-md"
+            ? "border-b border-ink/8 bg-white/[0.98] shadow-[0_10px_40px_-30px_rgba(9,40,50,0.5)] backdrop-blur-sm"
+            : "border-b border-ink/[0.05] bg-white/90 backdrop-blur-sm"
         )}
       >
         <div className="shell flex items-center justify-between gap-6">

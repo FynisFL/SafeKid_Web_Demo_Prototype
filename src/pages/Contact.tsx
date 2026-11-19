@@ -110,7 +110,7 @@ export default function Contact() {
               S<span className="text-primary/35">.</span>
             </p>
             <div className="absolute inset-x-0 bottom-4 flex justify-center">
-              <p className="rounded-full border border-white/80 bg-white/80 px-3.5 py-2 text-center text-[9px] font-medium uppercase tracking-[0.18em] text-deep/55 backdrop-blur">
+              <p className="rounded-full border border-white/80 bg-white/80 px-3.5 py-2 text-center text-[9px] font-medium uppercase tracking-[0.18em] text-deep/85 backdrop-blur">
                 Room to grow · Space to connect
               </p>
             </div>
@@ -138,7 +138,7 @@ export default function Contact() {
 
               <div className="mt-6 grid gap-5 sm:grid-cols-2">
                 <label className="block">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-deep/55">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-deep/85">
                     Your name
                   </span>
                   <input
@@ -150,7 +150,7 @@ export default function Contact() {
                   />
                 </label>
                 <label className="block">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-deep/55">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-deep/85">
                     Email address
                   </span>
                   <input
@@ -163,7 +163,7 @@ export default function Contact() {
                   />
                 </label>
                 <label className="block sm:col-span-2">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-deep/55">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-deep/85">
                     Subject
                   </span>
                   <input
@@ -174,7 +174,7 @@ export default function Contact() {
                   />
                 </label>
                 <label className="block sm:col-span-2">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-deep/55">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-deep/85">
                     Message
                   </span>
                   <textarea
@@ -195,7 +195,7 @@ export default function Contact() {
                   <Send className="h-4 w-4" aria-hidden="true" />
                   Open email draft
                 </button>
-                <p className="max-w-[38ch] text-[11px] leading-relaxed text-deep/60">
+                <p className="max-w-[38ch] text-[11px] leading-relaxed text-deep/85">
                   Your email app opens with this message ready. Nothing is sent until you press Send.
                 </p>
               </div>
@@ -250,7 +250,7 @@ export default function Contact() {
                         <Icon className="h-[17px] w-[17px]" aria-hidden="true" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block text-[9px] uppercase tracking-[0.18em] text-deep/55">
+                        <span className="block text-[9px] uppercase tracking-[0.18em] text-deep/85">
                           {detail.label}
                         </span>
                         <span className="mt-0.5 block [overflow-wrap:anywhere] text-[13px] font-medium text-ink">
@@ -292,7 +292,7 @@ export default function Contact() {
                   <span className="h-1.5 w-1.5 rounded-full bg-primary" />
                   Developed by <span className="font-medium text-ink">DigiBabi</span>
                 </p>
-                <p className="mt-3 text-[10.5px] leading-relaxed text-deep/55">
+                <p className="mt-3 text-[10.5px] leading-relaxed text-deep/85">
                   Contact the team about the store preview or Parent App testing. Use the email
                   form above to prepare a message, then send it from your email app.
                 </p>

@@ -447,3 +447,18 @@
   width: clamp(3rem, 6vw, 5rem);
   color: #63e7dc;
 }
+
+/* Decorative turquoise remains bright. Editorial labels use the ink shade. */
+.display .text-primary {
+  color: hsl(var(--aqua-ink));
+}
+
+.bg-night .display .text-primary,
+.bg-ink .display .text-primary,
+footer .display .text-primary {
+  color: hsl(var(--primary));
+}
+
+.eyebrow:not(.eyebrow-inverse) {
+  color: hsl(var(--deep));
+}

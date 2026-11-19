@@ -26,3 +26,12 @@ Axe toàn site, so sánh long task/FPS/CLS, ba hồ sơ mạng có CDP, nghiệm
 | d | PR #7 mở dạng nháp từ nhánh PR #6. Workflow matrix tách Chromium, Firefox, WebKit và job đo đối chứng với đúng SHA baseline. Git CLI push báo `fatal: could not read Username for 'https://github.com': No such device or address`; đã lưu commit qua GitHub connector. |
 | CI cũ | Job `preview` của run 44494827271 qua npm ci, check, build, pip và bị hủy ở step cài browser. Kết quả job không chỉ ra được bên yêu cầu hủy. Workflow mới có timeout 35 phút, không hủy job do push khác. |
 | P-A local | Firefox qua `device_regressions.py` tại 320×568, 390×844, 844×390 và 768×1024. `reading_layout.py` qua 7 cấu hình, gồm 2712×1220. |
+
+## Vòng QA P-C → P-D
+
+| Vòng | Phát hiện | Sửa và đo lại |
+|---|---|---|
+| 1 | Ảnh 390×844 cho thấy cụm Orbit gần nút đổi edition. Ảnh Closing chụp đúng lúc blur làm đoạn dẫn khó đọc. | Đưa cụm ảnh mobile xuống cung dưới, ưu tiên lớp nút prev/next, giảm blur đoạn chữ và giữ fade/rise. Thêm hạt SVG hội tụ vào hình khiên trong khung Closing. |
+| 1 | Firefox `reading_layout` gặp timeout khi neo Zodiac đang cuộn. Route wrapper chuyển động phần tử main trong lúc browser tính vị trí neo. | Animated Content chỉ dịch section mở đầu. Không dịch toàn bộ main chứa đích neo. Giữ nguyên bài test gốc. |
+| 1 | axe gắn cờ contrast và label, ma trận thấy target dưới 44px ở footer, Chat và Story. | Tăng độ đậm của chữ nhỏ, dùng màu accent chữ cho tiêu đề sáng, tăng target theo cụm. Chạy lại axe và các luồng đọc. |
+| 2 | Job local ban đầu chỉ dùng Firefox cho ảnh. Bậc Chromium bổ sung thành công bằng headless shell 153.0.8010.0 từ package `@sparticuz/chromium` nằm trong vùng QA nội bộ. | Đo CDP cùng binary cho baseline và ứng viên. Artifact CI dùng binary Playwright chính thức. Báo hai môi trường riêng. |

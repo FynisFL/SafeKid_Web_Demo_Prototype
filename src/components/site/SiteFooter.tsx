@@ -59,14 +59,14 @@ export function SiteFooter() {
                 aria-hidden="true"
               />
             </a>
-            <p className="text-[11px] text-white/55">A product concept by DigiBabi.</p>
+            <p className="text-[11px] text-white/75">A product concept by DigiBabi.</p>
           </div>
         </div>
 
         <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.25fr_0.8fr_0.9fr_1fr]">
           <div>
             <BrandMark tone="light" compact onSecretUnlock={() => setLittleDetourOpen(true)} />
-            <p className="mt-5 max-w-[26ch] text-sm leading-relaxed text-white/55">
+            <p className="mt-5 max-w-[26ch] text-sm leading-relaxed text-white/75">
               Explore twelve Vietnamese Zodiac watch designs, preview your shopping bag, and try
               the SafeKid Parent App.
             </p>
@@ -90,10 +90,10 @@ export function SiteFooter() {
                 <Github className="h-[15px] w-[15px]" aria-hidden="true" />
               </a>
               <div className="ml-1 flex flex-col gap-1 text-[10px] leading-tight text-white/45">
-                <a href="https://facebook.com/DigiBabi" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">
+                <a href="https://facebook.com/DigiBabi" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-white/80 transition-colors hover:text-primary">
                   Follow SafeKid on Facebook
                 </a>
-                <a href="https://github.com/FynisFL/SafeKid_Web_Demo_Prototype" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">
+                <a href="https://github.com/FynisFL/SafeKid_Web_Demo_Prototype" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-white/80 transition-colors hover:text-primary">
                   Explore the open-source code
                 </a>
               </div>
@@ -101,7 +101,7 @@ export function SiteFooter() {
           </div>
 
           <nav aria-label="Explore">
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50">
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/70">
               Explore
             </h3>
             <ul className="mt-5 space-y-0">
@@ -109,7 +109,7 @@ export function SiteFooter() {
                 <li key={item.label}>
                   <Link
                     to={item.to}
-                    className="inline-flex min-h-11 items-center text-sm text-white/70 transition-colors hover:text-primary"
+                    className="inline-flex min-h-11 min-w-11 items-center text-sm text-white/70 transition-colors hover:text-primary"
                   >
                     {item.label}
                   </Link>
@@ -119,7 +119,7 @@ export function SiteFooter() {
           </nav>
 
           <nav aria-label="Support">
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50">
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/70">
               Support
             </h3>
             <ul className="mt-5 space-y-0">
@@ -127,7 +127,7 @@ export function SiteFooter() {
                 <li key={item.label}>
                   <Link
                     to={item.to}
-                    className="inline-flex min-h-11 items-center text-sm text-white/70 transition-colors hover:text-primary"
+                    className="inline-flex min-h-11 min-w-11 items-center text-sm text-white/70 transition-colors hover:text-primary"
                   >
                     {item.label}
                   </Link>
@@ -137,7 +137,7 @@ export function SiteFooter() {
           </nav>
 
           <div>
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50">
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/70">
               Get in touch
             </h3>
             <ul className="mt-5 space-y-0 text-sm text-white/70">
@@ -164,13 +164,13 @@ export function SiteFooter() {
                 Ho Chi Minh City, Vietnam
               </li>
             </ul>
-            <p className="mt-6 max-w-[30ch] text-[11px] leading-relaxed text-white/50">
+            <p className="mt-6 max-w-[30ch] text-[11px] leading-relaxed text-white/70">
               Try the store preview and Parent App. Watch orders and payments will open at launch.
             </p>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-white/10 pt-6 pb-[calc(1.5rem+var(--safe-bottom))] text-[11px] text-white/55 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 border-t border-white/10 pt-6 pb-[calc(1.5rem+var(--safe-bottom))] text-[11px] text-white/75 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} SafeKid · Store preview & Parent App testing</p>
           <p>
             Developed by <span className="text-white/65">DigiBabi</span>

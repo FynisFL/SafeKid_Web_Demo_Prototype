@@ -21,7 +21,7 @@ export function AnimatedContent({
 }: Props) {
   const element = useRef<HTMLDivElement>(null);
   useSceneEntrance(element, {
-    enabled: SET_PIECES.animatedContent, trigger, duration, opacity: initialOpacity,
+    enabled: SET_PIECES.animatedContent, firstSection: Element === "main", trigger, duration, opacity: initialOpacity,
     x: direction === "horizontal" ? distance : 0, y: direction === "vertical" ? distance : 0,
   });
   return <Element ref={element} data-animated-content="" {...props} />;

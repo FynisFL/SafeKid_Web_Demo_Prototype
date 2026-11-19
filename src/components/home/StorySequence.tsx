@@ -380,11 +380,11 @@ function StoryCarousel() {
             <button
               key={chapter.id}
               type="button"
-              aria-label={`Chapter ${index + 1}: ${chapter.title}`}
+              aria-label={`Chapter ${index + 1}: ${chapter.title} (${String(index + 1).padStart(2, "0")})`}
               aria-current={selection.index === index ? "step" : undefined}
               onClick={() => api?.scrollTo(index)}
               className={cn(
-                "h-11 w-9 rounded-full text-[11px] font-semibold tabular-nums sm:w-11",
+                "size-11 rounded-full text-[11px] font-semibold tabular-nums",
                 selection.index === index ? "bg-primary text-ink" : "bg-white/10 text-white"
               )}
             >

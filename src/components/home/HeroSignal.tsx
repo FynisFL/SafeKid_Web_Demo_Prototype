@@ -112,9 +112,16 @@ export default function HeroSignal() {
     }
 
     function onBattery() {
-      if (battery?.charging || (battery?.level ?? 1) >= .15) return;
+      if (battery?.charging || (battery?.level ?? 1) >= .15) {
+        if (!active) {
+          active = true;
+          wake();
+        }
+        return;
+      }
       active = false;
       cancelAnimationFrame(frame);
+      frame = 0;
       context.clearRect(0, 0, width, height);
     }
 

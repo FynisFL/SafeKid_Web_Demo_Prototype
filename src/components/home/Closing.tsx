@@ -10,6 +10,9 @@ import dragonWatch from "@/assets/safekid/editions/dragon.webp";
 import { DISTANCE, DURATION, EASE } from "@/components/motion/tokens";
 import { useFirstScene } from "@/components/preloader/firstSceneContext";
 
+const shieldPoints = [[60, 6], [78, 13], [101, 23], [101, 43], [89, 72], [78, 87],
+  [60, 98], [42, 87], [31, 72], [19, 43], [19, 23], [42, 13]];
+
 const settle = { duration: DURATION.base, ease: EASE };
 
 const pulse: Variants = {
@@ -43,6 +46,16 @@ function ClosingSignal({ ready, reduce }: { ready: boolean; reduce: boolean }) {
           <motion.path d="M60 6L101 23v20c0 25-17 43-41 55-24-12-41-30-41-55V23Z"
             fill="none" stroke="#52f4e0" strokeWidth="1.4"
             variants={{ rest: { pathLength: 1 }, arrive: { pathLength: [.07, 1], transition: { duration: 1.18, ease: EASE } } }} />
+          {shieldPoints.map(([x, y], index) => (
+            <motion.circle key={index} cx={x} cy={y} r="1.25" fill="#8ff9e8"
+              variants={{
+                rest: { x: 0, y: 0, opacity: .22, transition: { duration: 0 } },
+                arrive: {
+                  x: [(x - 60) * .72, 0], y: [(y - 52) * .72, 0],
+                  opacity: [0, .9, .28], transition: { duration: .98, delay: index * .017, ease: EASE },
+                },
+              }} />
+          ))}
           <motion.path d="m46 51 10 10 19-23" fill="none" stroke="#52f4e0" strokeWidth="1.8" strokeLinecap="round"
             variants={{ rest: { opacity: .42 }, arrive: { opacity: [.16, 1, .66], transition: { duration: 1.3, ease: EASE } } }} />
         </motion.svg>

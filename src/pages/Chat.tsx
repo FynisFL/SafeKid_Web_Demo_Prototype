@@ -32,7 +32,7 @@ function MessageBubble({
           <Sparkles className="h-4 w-4" aria-hidden="true" />
         </span>
         <div className="rounded-2xl rounded-tl-md border border-ink/10 bg-white px-4 py-3">
-          <p className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-deep/60">
+          <p className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.14em] text-deep/85">
             {message.working ? "Thinking" : "Reviewed"}
             {message.working && <span className="flex gap-1" aria-hidden="true">
               {[0, 1, 2].map((dot) => (
@@ -47,7 +47,7 @@ function MessageBubble({
           </p>
           <ul className="mt-2 space-y-1.5">
             {(message.steps ?? THOUGHT_STEPS).map((step) => (
-              <li key={step} className="flex items-center gap-2 text-[12px] text-deep/60">
+              <li key={step} className="flex items-center gap-2 text-[12px] text-deep/85">
                 <Check className="h-3 w-3 text-primary" aria-hidden="true" />
                 {step}
               </li>
@@ -186,7 +186,7 @@ export default function Chat() {
             <h1 className="display mt-6 text-[clamp(2.3rem,4.2vw,3.6rem)]">
               A little help,
               <br />
-              <span className="text-primary">close at hand.</span>
+              <span className="text-aqua-ink">close at hand.</span>
             </h1>
             <p className="lede mt-5 max-w-[40ch]">
               A local, scripted preview of how a SafeKid support conversation could feel. It answers
@@ -207,7 +207,7 @@ export default function Chat() {
                 "No account, order or location data is accessed.",
                 "The human handoff is a simulation only.",
               ].map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-[12.5px] text-deep/60">
+                <li key={item} className="flex items-start gap-2.5 text-[12.5px] text-deep/85">
                   <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
                   {item}
                 </li>
@@ -216,7 +216,7 @@ export default function Chat() {
 
             <Link
               to="/support"
-              className="group mt-7 inline-flex items-center gap-2 text-[13px] font-medium text-ink"
+              className="group mt-7 inline-flex min-h-11 items-center gap-2 text-[13px] font-medium text-ink"
             >
               Read the support notes
               <ArrowUpRight
@@ -235,7 +235,7 @@ export default function Chat() {
                 <p className="font-display text-[14px] font-semibold tracking-[-0.02em] text-ink">
                   SafeKid assistant
                 </p>
-                <p className="flex items-center gap-1.5 text-[10px] text-deep/60">
+                <p className="flex items-center gap-1.5 text-[10px] text-deep/85">
                   <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
                   {status} · scripted
                 </p>
@@ -246,7 +246,7 @@ export default function Chat() {
                   reset();
                   setDraft("");
                 }}
-                className="inline-flex items-center gap-1.5 rounded-full border border-ink/12 bg-white px-3 py-1.5 text-[11px] text-deep/60 transition-colors hover:border-primary/40 hover:text-ink"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-full border border-ink/12 bg-white px-3 py-1.5 text-[11px] text-deep/85 transition-colors hover:border-primary/40 hover:text-ink"
               >
                 <RotateCcw className="h-3 w-3" aria-hidden="true" />
                 New
@@ -329,7 +329,7 @@ export default function Chat() {
               </form>
 
               <details className="mt-2">
-                <summary className="cursor-pointer list-none text-[10.5px] text-deep/55 transition-colors hover:text-deep/60">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center text-[10.5px] text-deep/85 transition-colors hover:text-deep/85">
                   Quick questions
                 </summary>
                 <div className="mt-2 flex flex-wrap gap-1.5">
@@ -339,7 +339,7 @@ export default function Chat() {
                       type="button"
                       onClick={() => send(question)}
                       disabled={isBusy}
-                      className="press rounded-full border border-ink/10 bg-white px-2.5 py-1 text-[10.5px] text-deep/60 transition-colors hover:border-primary/40 disabled:opacity-50"
+                      className="press rounded-full border border-ink/10 bg-white px-2.5 py-1 text-[10.5px] text-deep/85 transition-colors hover:border-primary/40 disabled:opacity-50"
                     >
                       {question}
                     </button>

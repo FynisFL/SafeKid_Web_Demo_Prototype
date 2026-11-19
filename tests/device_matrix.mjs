@@ -102,11 +102,11 @@ for (const [width, height] of samples) {
         if (rotation.width > rotation.visible + 1) failures.push("overflow after rotating");
         await page.setViewportSize({ width, height });
       }
-      if ((width === 390 && height === 844 || width === 1440 && height === 900) &&
+      if ((width === 390 || width === 768 || width === 844 || width === 1440) &&
           (!path.startsWith("/product") || path.endsWith("/dragon"))) {
         const key = path.replace(/[^a-z0-9]+/gi, "-") || "home";
         await page.screenshot({ path: join(output, `${engine}-${width}x${height}${key}.png`), animations: "disabled" });
-        if (width === 390) {
+        if (width === 390 && height === 844) {
           try {
             await page.addScriptTag({ path: require.resolve("axe-core/axe.min.js") });
             const result = await page.evaluate(() => window.axe.run({
