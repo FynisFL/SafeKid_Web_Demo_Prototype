@@ -55,6 +55,26 @@ with sync_playwright() as p:
     print("PASS throttled cold start, monotonic progress, blocked font, warm reload")
 
     page = browser.new_page()
+    entry = []
+    page.route(FONTS, lambda route: route.abort())
+    page.route(re.compile(r"/assets/index-[^/]+\.js$"), lambda route: entry.append(route))
+    page.add_init_script("""(() => {
+      window.overlayEverShown = false;
+      new MutationObserver(() => {
+        if (document.querySelector('[data-testid=first-scene]')) window.overlayEverShown = true;
+      }).observe(document, {subtree: true, childList: true});
+    })()""")
+    enter(page)
+    expect(page.locator("#safekid-webfonts")).to_have_attribute("data-fallback", "true")
+    page.wait_for_function("document.querySelector('#safekid-webfonts').media === 'not all'")
+    assert entry
+    entry[0].continue_()
+    visible_home(page)
+    assert page.evaluate("!overlayEverShown")
+    page.close()
+    print("PASS font failure before React starts uses immediate fallback without an overlay")
+
+    page = browser.new_page()
     page.route(WATCH, lambda route: route.fulfill(status=404, body=""))
     enter(page)
     visible_home(page)

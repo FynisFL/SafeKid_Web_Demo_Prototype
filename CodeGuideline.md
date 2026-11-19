@@ -353,7 +353,7 @@ Các thành phần như Reveal, Stagger, Hero và Watch Passport sử dụng nh�
 
 ### 8.3. Tải cảnh đầu
 
-`FirstSceneGate` bao quanh bộ định tuyến trong Error Boundary. `src/data/firstScene.ts` chọn ảnh theo đường dẫn đi vào. Một phần trăm thể hiện số việc đã sẵn sàng, gồm mã khởi chạy, trang, font hoặc font dự phòng, ảnh cần dùng và khung hình đầu. Khi ảnh lỗi, quá thời hạn hoặc người dùng chọn Skip, cảnh mở đầu hiển thị đơn giản. Các route khác và ảnh ở phần dưới sử dụng cơ chế tải trễ.
+`FirstSceneGate` bao quanh bộ định tuyến trong Error Boundary. `src/data/firstScene.ts` chọn ảnh theo đường dẫn đi vào. Một phần trăm thể hiện số việc đã sẵn sàng, gồm mã khởi chạy, trang, font hoặc font dự phòng, ảnh cần dùng và khung hình đầu. Khi ảnh lỗi, quá thời hạn hoặc người dùng chọn Skip, cảnh mở đầu hiển thị đơn giản. Các route khác và ảnh ở phần dưới sử dụng cơ chế tải trễ. Overlay chỉ hiện nếu chuẩn bị mất hơn 350ms. CSS font ghi nhận lỗi ngay từ HTML để React không đợi lại sự kiện đã xảy ra. Font có ngân sách chờ riêng 160ms, sau đó giữ font dự phòng trong lượt mở. Khi hoàn tất không giữ màn 100% thêm theo timer.
 
 ## 9. Quy định cập nhật tài liệu
 
