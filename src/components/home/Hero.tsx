@@ -96,13 +96,14 @@ export function Hero() {
     offset: ["start start", "end start"],
   });
   const visible = useInView(sectionRef);
+  const artVisible = useInView(artRef);
   const enhanced = useEnhancedMotion();
   const [signalReady, setSignalReady] = useState(false);
   useEffect(() => {
-    if (waiting || reduce || !enhanced || !visible || !SET_PIECES.heroSignal) return;
+    if (waiting || reduce || !enhanced || !artVisible || !SET_PIECES.heroSignal) return;
     const timer = window.setTimeout(() => setSignalReady(true), 420);
     return () => window.clearTimeout(timer);
-  }, [enhanced, reduce, visible, waiting]);
+  }, [enhanced, reduce, artVisible, waiting]);
   const copyY = useTransform(scrollYProgress, [0, 1], [0, 40]);
   // Starts late on purpose: the CTAs sit about 60-70% down the hero and must stay readable
   // (>= ~0.7 opacity) for as long as they are on screen. See HE-1.
@@ -272,7 +273,7 @@ export function Hero() {
             onPointerLeave={resetTilt}
             className="perspective-1200 relative aspect-square w-full max-w-[320px] sm:max-w-[520px] lg:max-w-[580px]"
           >
-            {signalReady && enhanced && visible && !reduce && (
+            {signalReady && enhanced && artVisible && !reduce && (
               <ErrorBoundary fallback={null}>
                 <Suspense fallback={null}><HeroSignal /></Suspense>
               </ErrorBoundary>

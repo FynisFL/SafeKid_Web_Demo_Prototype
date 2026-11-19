@@ -464,7 +464,7 @@ export function StorySequence() {
         }}
         aria-label="The SafeKid story: from the child's watch to the parent's app"
       >
-        <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden pt-[calc(66px+var(--safe-top))]">
+        <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden pt-[calc(88px+var(--safe-top))]">
           <div
             aria-hidden="true"
             className="pointer-events-none absolute -left-40 top-1/4 h-[620px] w-[620px] rounded-full bg-primary/[0.07] blur-[120px]"

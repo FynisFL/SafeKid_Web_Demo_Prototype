@@ -67,17 +67,12 @@ export function SiteHeader() {
         className={cn(
           "fixed inset-x-0 top-0 z-50 pt-[var(--safe-top)] transition-[background-color,border-color,box-shadow] duration-500",
           scrolled
-            ? "border-b border-ink/8 bg-white/[0.98] shadow-[0_10px_40px_-30px_rgba(9,40,50,0.5)] backdrop-blur-sm"
+            ? "border-b border-ink/8 bg-white/[0.98] shadow-[0_10px_40px_-30px_rgba(9,40,50,0.5)]"
             : "border-b border-ink/[0.05] bg-white/90 backdrop-blur-sm"
         )}
       >
         <div className="shell flex items-center justify-between gap-6">
-          <div
-            className={cn(
-              "flex items-center transition-[height] duration-500",
-              scrolled ? "h-[66px]" : "h-[78px] lg:h-[88px]"
-            )}
-          >
+          <div className="flex h-[78px] items-center lg:h-[88px]">
             <BrandMark compact />
           </div>
 

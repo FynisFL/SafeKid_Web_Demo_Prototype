@@ -23,5 +23,5 @@ export function CountUp({ value, digits = 0, className }: { value: number; digit
       node.textContent = final;
     };
   }, [digits, enabled, final, inView, value]);
-  return <span className={className} data-count-up=""><span className="sr-only">{final}</span><span ref={element} aria-hidden="true">{final}</span></span>;
+  return <span className={className} data-count-up=""><span className="sr-only">{final}</span><span ref={element} aria-hidden="true" className="inline-block tabular-nums" style={{ minWidth: `${final.length}ch` }}>{final}</span></span>;
 }
