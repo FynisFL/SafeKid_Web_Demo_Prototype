@@ -1,0 +1,71 @@
+.first-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  color: #102a38;
+  background: radial-gradient(ellipse at 50% 45%, #fff 8%, #eaf4f5 73%);
+  touch-action: none;
+}
+
+.first-scene__inner {
+  display: grid;
+  justify-items: center;
+  gap: 0.85rem;
+  text-align: center;
+}
+
+.first-scene__dial {
+  position: relative;
+  display: grid;
+  width: 9rem;
+  height: 9rem;
+  place-items: center;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: #006d71;
+}
+
+.first-scene__dial svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.first-scene__dial img {
+  position: absolute;
+  inset: 15%;
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+.first-scene__dial:has(img) span {
+  align-self: end;
+  z-index: 1;
+  margin-bottom: -0.6rem;
+  border: 1px solid #d6e6e6;
+  border-radius: 1rem;
+  background: white;
+  padding: 0.16rem 0.6rem;
+}
+
+.first-scene__brand {
+  margin-top: .6rem;
+  font-weight: 600;
+}
+
+.first-scene__actions {
+  min-height: 2.75rem;
+}
+
+.first-scene__actions button {
+  min-height: 2.75rem;
+  border: 1px solid #99c2c6;
+  border-radius: 100px;
+  background: white;
+  padding-inline: 1.25rem;
+  font-size: .875rem;
+}

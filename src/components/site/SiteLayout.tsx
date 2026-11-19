@@ -38,10 +38,8 @@ export function SiteLayout({ children }: { children: ReactNode }) {
     if (hash && !hash.startsWith("#/")) {
       const target = document.getElementById(hash.slice(1));
       if (target) {
-        const timer = window.setTimeout(() => {
-          target.scrollIntoView({ behavior: reduce ? "instant" : "smooth", block: "start" });
-        }, 90);
-        return () => window.clearTimeout(timer);
+        target.scrollIntoView({ behavior: reduce ? "instant" : "smooth", block: "start" });
+        return;
       }
     }
 

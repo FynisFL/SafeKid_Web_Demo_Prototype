@@ -7,6 +7,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { AndroidDownload } from "@/components/app-experience/AndroidDownload";
 import { SignalStage } from "@/components/app-experience/SignalStage";
 import { scenes, signalArrival } from "@/components/app-experience/scenes";
+import { useFirstScene } from "@/components/preloader/firstSceneContext";
 import { DURATION, EASE } from "@/components/motion/tokens";
 import { BrandMark } from "@/components/site/BrandMark";
 import { Button } from "@/components/ui/button";
@@ -49,7 +50,8 @@ export default function AppExperience() {
   const wide = useMediaQuery("(min-width: 961px)");
   const stageRef = useRef<HTMLDivElement>(null);
   const stageVisible = useInView(stageRef, { once: true, amount: 0.2 });
-  const playing = stageVisible || interaction.replay > 0;
+  const { entrance } = useFirstScene();
+  const playing = (entrance === "play" && stageVisible) || interaction.replay > 0;
   const stageY = useTransform(() => scrollYProgress.get() * (wide ? 34 : 8));
   const stageScale = useTransform(() => 1 + scrollYProgress.get() * (wide ? 0.035 : 0.012));
 

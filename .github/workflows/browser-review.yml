@@ -3,6 +3,7 @@ name: SafeKid browser checks
 on:
   pull_request:
   workflow_dispatch:
+  workflow_call:
 
 permissions:
   contents: read
@@ -32,4 +33,6 @@ jobs:
           python tests/motion_smoke.py
           python tests/responsive_review.py
           python tests/collection_navigation.py
+          python tests/connected_scenes.py
+          python tests/first_scene.py
           SAFEKID_BROWSER=firefox python tests/collection_navigation.py

@@ -12,6 +12,7 @@ with sync_playwright() as driver:
         def visit(path):
             page.goto(base + path, wait_until="domcontentloaded")
             expect(page.locator("h1").first).to_be_visible()
+            expect(page.get_by_test_id("first-scene")).to_have_count(0, timeout=9000)
 
         for path in ["/about/", "/contact/"]:
             visit(path)
