@@ -8,6 +8,7 @@ import { Reveal } from "@/components/site/Reveal";
 import { TiltCard } from "@/components/motion/TiltCard";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { useFirstScene } from "@/components/preloader/firstSceneContext";
 import { DURATION, EASE } from "@/components/motion/tokens";
 import NotFound from "@/pages/NotFound";
 import { usePageTitle } from "@/hooks/usePageTitle";
@@ -40,6 +41,7 @@ const artwork = {
 export default function Product() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { entrance } = useFirstScene();
   const reduce = useReducedMotion();
   const sharedFromCollection = useViewTransitionState("/zodiac");
   const index = zodiacProducts.findIndex((item) => item.id === id);
@@ -94,14 +96,14 @@ export default function Product() {
                 <motion.span
                   key={product.id}
                   className="inline-block"
-                  initial={reduce ? false : { opacity: 0.6, x: direction * 8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+                  initial={reduce || entrance === "static" ? false : { opacity: 0.6, x: direction * 8 }}
+                  animate={entrance === "waiting" && !reduce ? { opacity: 0.6, x: direction * 8 } : { opacity: 1, x: 0 }}
+                  transition={{ duration: reduce || entrance !== "play" ? 0 : DURATION.quick, ease: EASE }}
                 >
                   {product.label}
                 </motion.span>
                 <br />
-                <span className="text-primary">little explorer.</span>
+                <span className="text-aqua-ink">little explorer.</span>
               </h1>
             </div>
             <div className="relative lg:col-start-1 lg:row-start-1 lg:row-span-2">
@@ -149,6 +151,9 @@ export default function Product() {
                             custom={direction}
                             src={product.image}
                             alt={`SafeKid smartwatch concept in the ${product.label} edition`}
+                            width={620}
+                            height={620}
+                            fetchPriority="high"
                             data-edition-art={product.id}
                             draggable={false}
                             style={sharedFromCollection ? { viewTransitionName: `edition-${product.id}` } : undefined}

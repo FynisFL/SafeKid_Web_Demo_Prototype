@@ -346,6 +346,7 @@ export function ZodiacStage({ variant = "home", ownsEditionTransition = false, o
                       key={product.id}
                       style={transitioning && ownsEditionTransition ? { viewTransitionName: `edition-${product.id}` } : undefined}
                       src={product.image}
+                      loading={variant === "home" ? "lazy" : "eager"}
                       alt={`SafeKid smartwatch concept in the ${product.label} edition, Vietnamese Zodiac ${product.animal}`}
                       custom={direction}
                       variants={slide}

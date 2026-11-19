@@ -22,6 +22,7 @@ project-root/
 │   │   ├── app-experience/     # Parent App demo và tải Android
 │   │   ├── home/               # Component riêng của Homepage
 │   │   ├── motion/             # Hiệu ứng và animation
+│   │   ├── preloader/          # Chuẩn bị tài nguyên cho cảnh đầu
 │   │   ├── passport/           # Thành phần Watch Passport
 │   │   ├── site/               # Header, Footer, Layout,...
 │   │   ├── easter-egg/         # Mini game ẩn
@@ -349,6 +350,10 @@ Các thành phần như Reveal, Stagger, Hero và Watch Passport sử dụng nh�
 - Kiểm tra lại scroll, touch và keyboard sau khi thay đổi hiệu ứng.
 
 ---
+
+### 8.3. Tải cảnh đầu
+
+`FirstSceneGate` bao quanh bộ định tuyến trong Error Boundary. `src/data/firstScene.ts` chọn ảnh theo đường dẫn đi vào. Một phần trăm thể hiện số việc đã sẵn sàng, gồm mã khởi chạy, trang, font hoặc font dự phòng, ảnh cần dùng và khung hình đầu. Khi ảnh lỗi, quá thời hạn hoặc người dùng chọn Skip, cảnh mở đầu hiển thị đơn giản. Các route khác và ảnh ở phần dưới sử dụng cơ chế tải trễ.
 
 ## 9. Quy định cập nhật tài liệu
 

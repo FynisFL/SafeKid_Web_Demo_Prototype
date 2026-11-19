@@ -15,7 +15,13 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  browser:
+    uses: ./.github/workflows/browser-review.yml
+    permissions:
+      contents: read
+
   deploy:
+    needs: browser
     runs-on: ubuntu-latest
     environment:
       name: github-pages

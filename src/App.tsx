@@ -1,8 +1,11 @@
-import { Suspense } from "react";
+import { Suspense, useLayoutEffect } from "react";
 import { MotionConfig } from "motion/react";
 import { createBrowserRouter, Outlet, RouterProvider } from "react-router-dom";
 import { RouteErrorBoundary } from "./components/error-boundary/route-error-boundary";
 import { ShoppingBagProvider } from "./components/shop/ShoppingBagProvider";
+import { FirstSceneGate } from "./components/preloader/FirstSceneGate";
+import { useFirstScene } from "./components/preloader/firstSceneContext";
+import "./components/preloader/first-scene.css";
 import { routers } from "./router";
 
 // Created once so remounting App (e.g. after an error-boundary retry) never
@@ -12,7 +15,7 @@ import { routers } from "./router";
 const router = createBrowserRouter([
   {
     errorElement: <RouteErrorBoundary />,
-    HydrateFallback: PageLoader,
+    HydrateFallback: () => null,
     element: <RootShell />,
     children: routers,
   },
@@ -20,27 +23,21 @@ const router = createBrowserRouter([
   basename: import.meta.env.BASE_URL.replace(/\/$/, '') || '/',
 });
 
-function PageLoader() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-mist">
-      <div className="flex flex-col items-center gap-4">
-        <span className="relative flex h-12 w-12 items-center justify-center rounded-full border border-primary/30">
-          <span className="h-2 w-2 rounded-full bg-primary animate-sk-pulse" />
-          <span className="absolute inset-0 rounded-full border border-primary/20 animate-sk-spin" />
-        </span>
-        <span className="font-display text-[11px] uppercase tracking-[0.24em] text-deep/55">
-          SafeKid
-        </span>
-      </div>
-    </div>
-  );
+function RouteReady() {
+  const { ready } = useFirstScene();
+  useLayoutEffect(() => ready(), [ready]);
+  return null;
 }
 
 function RootShell() {
+  const { entrance } = useFirstScene();
   return (
     <ShoppingBagProvider>
-      <Suspense fallback={<PageLoader />}>
+      <Suspense fallback={entrance === "waiting" ? null : (
+        <p className="mx-auto grid min-h-screen place-items-center bg-mist text-sm text-deep" role="status">Opening page…</p>
+      )}>
         <Outlet />
+        <RouteReady />
       </Suspense>
     </ShoppingBagProvider>
   );
@@ -49,7 +46,7 @@ function RootShell() {
 const App = () => {
   return (
     <MotionConfig reducedMotion="user">
-      <RouterProvider router={router} />
+      <FirstSceneGate><RouterProvider router={router} /></FirstSceneGate>
     </MotionConfig>
   );
 };

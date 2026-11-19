@@ -1,4 +1,4 @@
-import { useRef, type PointerEvent } from "react";
+import { useEffect, useRef, type PointerEvent } from "react";
 import { Link } from "react-router-dom";
 import {
   motion,
@@ -11,6 +11,7 @@ import {
 } from "motion/react";
 import { ArrowDown, ArrowUpRight, MoveDown } from "lucide-react";
 import heroWatch from "@/assets/safekid/editions/rat.webp";
+import { useFirstScene } from "@/components/preloader/firstSceneContext";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { DURATION, EASE } from "@/components/motion/tokens";
 
@@ -18,6 +19,8 @@ const ease = EASE;
 
 function OrbitTicks() {
   const reduce = useReducedMotion();
+  const { entrance } = useFirstScene();
+  const animate = entrance === "play" && !reduce;
 
   return (
     <svg
@@ -34,8 +37,8 @@ function OrbitTicks() {
         strokeWidth="0.6"
         opacity="0.45"
         initial={reduce ? false : { pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 1.8, delay: 0.35, ease }}
+        animate={{ pathLength: entrance === "waiting" ? 0 : 1 }}
+        transition={{ duration: animate ? 1.8 : 0, delay: animate ? 0.35 : 0, ease }}
       />
       <motion.circle
         cx="200"
@@ -47,8 +50,8 @@ function OrbitTicks() {
         strokeDasharray="1 13"
         opacity="0.9"
         initial={reduce ? false : { opacity: 0 }}
-        animate={{ opacity: 0.9 }}
-        transition={{ duration: 1.2, delay: 0.9 }}
+        animate={{ opacity: entrance === "waiting" ? 0 : 0.9 }}
+        transition={{ duration: animate ? DURATION.slow : 0, delay: animate ? 0.9 : 0 }}
       />
       {Array.from({ length: 12 }).map((_, index) => {
         const angle = (index * 360) / 12;
@@ -63,8 +66,8 @@ function OrbitTicks() {
             strokeWidth={index % 3 === 0 ? 1.4 : 0.8}
             transform={`rotate(${angle} 200 200)`}
             initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 + index * 0.06 }}
+            animate={{ opacity: entrance === "waiting" ? 0 : 1 }}
+            transition={{ duration: animate ? 0.5 : 0, delay: animate ? 0.8 + index * 0.06 : 0 }}
           />
         );
       })}
@@ -75,7 +78,14 @@ function OrbitTicks() {
 export function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const artRef = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
+  const { entrance } = useFirstScene();
+  const systemReduce = useReducedMotion();
+  const reduce = systemReduce || entrance === "static";
+  const waiting = entrance === "waiting";
+
+  useEffect(() => {
+    if (!waiting) performance.mark("safekid-hero-enter");
+  }, [waiting]);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -124,7 +134,7 @@ export function Hero() {
     ? {}
     : {
         initial: "hidden" as const,
-        animate: "show" as const,
+        animate: waiting ? "hidden" as const : "show" as const,
       };
 
   const container = {
@@ -263,9 +273,10 @@ export function Hero() {
         >
           <motion.div
             initial={reduce ? undefined : { opacity: 0, scale: 0.94, y: 30 }}
-            animate={reduce ? undefined : { opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: DURATION.slow, ease, delay: 0.12 }}
+            animate={waiting && !reduce ? { opacity: 0, scale: 0.94, y: 30 } : { opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: reduce || waiting ? 0 : DURATION.slow, ease, delay: reduce || waiting ? 0 : 0.12 }}
             className="flex w-full justify-center lg:justify-end"
+            style={{ willChange: waiting && !reduce ? "transform, opacity" : undefined }}
           >
           <div
             ref={artRef}
@@ -309,7 +320,7 @@ export function Hero() {
               />
             </motion.div>
 
-            {!reduce && visible && (
+            {!reduce && !waiting && visible && (
               <motion.div aria-hidden="true"
                 className="pointer-events-none absolute inset-[8%] rounded-full border border-primary/60"
                 initial={{ scale: .85, opacity: 0 }} animate={{ scale: [0.85, 1.04, 1.09], opacity: [0, 0.62, 0] }}

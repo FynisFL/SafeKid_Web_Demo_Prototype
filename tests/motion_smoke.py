@@ -23,6 +23,7 @@ sizes = [(320,640,True,False), (390,844,True,False), (768,1024,True,False), (844
 def go(page, path):
     page.goto(f"{base}/{path}", wait_until="domcontentloaded")
     expect(page.locator("h1").first, f"Heading on /{path}").to_be_visible(timeout=8000)
+    expect(page.get_by_test_id("first-scene")).to_have_count(0, timeout=9000)
 
 def swipe(context, page, target, distance):
     target.evaluate('(el) => el.scrollIntoView({block:"center", behavior:"instant"})')
