@@ -35,7 +35,7 @@ jobs:
           python tests/collection_navigation.py
           python tests/connected_scenes.py
           python tests/first_scene.py
-          python tests/home_thread.py
+          python tests/reading_layout.py
           SAFEKID_BROWSER=firefox python tests/collection_navigation.py
-          SAFEKID_BROWSER=firefox python tests/home_thread.py
-          SAFEKID_BROWSER=webkit python tests/home_thread.py
+          SAFEKID_BROWSER=firefox python tests/reading_layout.py
+          SAFEKID_BROWSER=webkit python tests/reading_layout.py

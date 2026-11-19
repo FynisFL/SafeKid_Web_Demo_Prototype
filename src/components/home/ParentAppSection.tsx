@@ -24,7 +24,6 @@ export function ParentAppSection() {
 
   return (
     <section
-      data-home-thread-chapter="app"
       aria-labelledby="home-parent-app"
       className="home-parent-app relative isolate overflow-clip bg-night py-20 text-white sm:py-28"
       data-in-view={inView}

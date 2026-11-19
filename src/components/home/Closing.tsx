@@ -1,256 +1,45 @@
-import { useEffect, useRef, type PointerEvent, type ReactNode, type RefObject } from "react";
-import {
-  animate,
-  motion,
-  useInView,
-  useMotionTemplate,
-  useMotionValue,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from "motion/react";
-import { Link } from "react-router-dom";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { Magnetic } from "@/components/motion/Magnetic";
-import { useCanHover } from "@/hooks/useCanHover";
-import logo from "@/assets/safekid/logo.webp";
-import { SET_PIECES } from "@/components/motion/setPieces";
-import { DURATION } from "@/components/motion/tokens";
-
-/* -------------------------------------------------------------------------- */
-/*  One timeline, one trigger.                                                */
-/*  `useRevealProgress` runs a single 0 → 1 value (2.4 s) when the copy       */
-/*  scrolls into view. Every element below reads a window of it, in order:    */
-/*  eyebrow → headline (by word, ≈0.1–1.2 s) → paragraph → CTAs → footnote.   */
-/*  The watch's depth drift is the only other motion, and it is scroll-linked. */
-/* -------------------------------------------------------------------------- */
-
-const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
-const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
-
-function useSeg(p: MotionValue<number>, from: number, to: number) {
-  return useTransform(p, (v) => easeOut(clamp01((v - from) / (to - from))));
-}
-
-function useRevealProgress(ref: RefObject<Element | null>) {
-  const reduce = useReducedMotion();
-  const p = useMotionValue(reduce ? 1 : 0);
-  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
-
-  useEffect(() => {
-    // Reduced motion, or no IntersectionObserver: show the finished state, never hide content.
-    if (reduce || typeof IntersectionObserver === "undefined") {
-      p.set(1);
-      return;
-    }
-    if (!inView) return;
-    const controls = animate(p, 1, { duration: DURATION.slow, ease: "linear" });
-    return () => controls.stop();
-  }, [inView, reduce, p]);
-
-  return p;
-}
-
-/** Fades and lifts a block in once its window of the timeline opens. */
-function Step({
-  p,
-  from,
-  to,
-  lift = 12,
-  className,
-  children,
-}: {
-  p: MotionValue<number>;
-  from: number;
-  to: number;
-  lift?: number;
-  className?: string;
-  children: ReactNode;
-}) {
-  const t = useSeg(p, from, to);
-  const y = useTransform(t, (v) => lift * (1 - v));
-  return (
-    <motion.div className={className} style={{ opacity: t, y }}>
-      {children}
-    </motion.div>
-  );
-}
-
-function Word({
-  text,
-  p,
-  from,
-  to,
-  accent = false,
-}: {
-  text: string;
-  p: MotionValue<number>;
-  from: number;
-  to: number;
-  accent?: boolean;
-}) {
-  const t = useSeg(p, from, to);
-  const y = useTransform(t, (v) => `${(1 - v) * 115}%`);
-  return (
-    <span className="-my-[0.12em] inline-block overflow-hidden py-[0.12em] align-bottom">
-      <motion.span className={accent ? "inline-block text-primary" : "inline-block"} style={{ y }}>
-        {text}
-      </motion.span>
-    </span>
-  );
-}
+import { Link } from "react-router-dom";
 
 export function Closing() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const copyRef = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion() ?? false;
-  const p = useRevealProgress(copyRef);
-
-  // Depth: the watch drifts a little slower than the page. Moves a wrapper, never the filtered image.
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const watchY = useTransform(scrollYProgress, [0, 1], [-36, 36]);
-  // It also settles: a slight tilt that levels out as the panel passes the middle of the screen.
-  const watchRotate = useTransform(scrollYProgress, [0, 0.5, 1], [-6, 0, 4]);
-
-  // Light: on a fine pointer, a soft turquoise glow follows the cursor across the dark panel.
-  const canHover = useCanHover();
-  const spotX = useMotionValue(50);
-  const spotY = useMotionValue(50);
-  const sx = useSpring(spotX, { stiffness: 120, damping: 20 });
-  const sy = useSpring(spotY, { stiffness: 120, damping: 20 });
-  const spotOpacity = useSpring(0, { stiffness: 120, damping: 24 });
-  const spotlight = useMotionTemplate`radial-gradient(420px circle at ${sx}% ${sy}%, hsl(var(--primary) / 0.16), transparent 65%)`;
-  const light = canHover && !reduce;
-
-  function onPanelMove(event: PointerEvent<HTMLDivElement>) {
-    if (!light || event.pointerType === "touch") return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    spotX.set(((event.clientX - rect.left) / rect.width) * 100);
-    spotY.set(((event.clientY - rect.top) / rect.height) * 100);
-  }
-
-  // The panel's left rule draws once, top to bottom.
-  const rule = useSeg(p, 0.15, 0.95);
-  const ruleClip = useTransform(rule, (v) => `inset(0% 0% ${(1 - v) * 100}% 0%)`);
-
   return (
-    <section ref={sectionRef} data-home-thread-chapter="closing" className="bg-white pb-20 pt-4 sm:pb-24">
-      <div className="shell">
-        <div
-          onPointerMove={onPanelMove}
-          onPointerEnter={() => light && spotOpacity.set(1)}
-          onPointerLeave={() => spotOpacity.set(0)}
-          className="relative overflow-hidden rounded-[32px] bg-night px-6 py-16 sm:px-10 sm:py-20 lg:rounded-[44px] lg:px-16 lg:py-24"
-        >
-          {light && (
-            <motion.div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0"
-              style={{ background: spotlight, opacity: spotOpacity }}
-            />
-          )}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-24 -top-24 h-[520px] w-[520px] rounded-full bg-primary/12 blur-[100px]"
-          />
-          {!SET_PIECES.thread && (
-            <motion.div
-              aria-hidden="true"
-              className="pointer-events-none absolute left-[8%] top-1/2 hidden h-[300px] w-px -translate-y-1/2 bg-gradient-to-b from-transparent via-primary/45 to-transparent lg:block"
-              style={{ clipPath: ruleClip }}
-            />
-          )}
-          <div aria-hidden="true" className="pointer-events-none relative mb-8 ml-auto grid size-32 place-items-center sm:size-40 lg:absolute lg:inset-y-0 lg:right-[7%] lg:my-auto lg:size-60">
-            <motion.div className="absolute inset-0 grid place-items-center"
-              style={reduce || SET_PIECES.thread ? undefined : { y: watchY, rotate: watchRotate }}>
-              <svg viewBox="0 0 240 240" className="absolute inset-0 size-full text-primary">
-                {SET_PIECES.thread ? (
-                  <path d="M185 64C184 130 170 163 120 201C73 165 57 139 55 90C73 48 99 38 120 32C142 38 171 49 185 64Z"
-                    fill="none" stroke="currentColor" strokeWidth="1.5" opacity=".6" />
-                ) : (
-                  <>
-                    <path d="M0 173C37 177 40 125 55 90C73 48 99 38 120 32C142 38 171 49 185 64C184 130 170 163 120 201C73 165 57 139 55 90"
-                      fill="none" stroke="currentColor" strokeWidth="1.2" opacity=".3" />
-                    <motion.path d="M0 173C37 177 40 125 55 90C73 48 99 38 120 32C142 38 171 49 185 64C184 130 170 163 120 201C73 165 57 139 55 90"
-                      fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"
-                      style={{ pathLength: rule }} />
-                  </>
-                )}
-              </svg>
-              {SET_PIECES.thread && (
-                <span data-home-thread-end className="absolute left-[77.0833%] top-[26.6667%]" />
-              )}
-              <img src={logo} alt="" width={256} height={256} loading="lazy" className="relative size-[37%] rounded-[22%] bg-white/95 p-1 object-contain" />
-            </motion.div>
+    <section
+      aria-labelledby="home-closing-heading"
+      className="border-y border-deep/10 bg-mist"
+    >
+      <div className="shell py-10 sm:py-14 lg:py-[4.5rem]">
+        <div className="grid items-center gap-6 md:grid-cols-[minmax(0,1.25fr)_minmax(0,0.75fr)] md:gap-10 lg:gap-14">
+          <div className="min-w-0">
+            <h2 id="home-closing-heading" className="display text-[clamp(2rem,5.8vw,4.65rem)] leading-[1.02]">
+              Independence,{" "}
+              <span className="block text-aqua-ink">with connection.</span>
+            </h2>
+            <p className="mt-4 max-w-[52ch] text-[15px] leading-relaxed text-deep">
+              SafeKid imagines a little more confidence for children, and a little more reassurance
+              for the families cheering them on.
+            </p>
           </div>
 
-          <div ref={copyRef} className="relative max-w-[720px] lg:max-w-[65%]">
-            <Step p={p} from={0} to={0.12} lift={8}>
-              <p className="eyebrow eyebrow-inverse">
-                <span className="eyebrow-line" />
-                For all the little adventures ahead
-              </p>
-            </Step>
-
-            <h2 className="display display-lg mt-6 text-white">
-              <span className="sr-only">Independence, with connection.</span>
-              <span aria-hidden="true" className="block">
-                <span className="block">
-                  <Word text="Independence," p={p} from={0.04} to={0.3} />
-                </span>
-                <span className="block">
-                  <Word text="with" p={p} from={0.2} to={0.44} accent />{" "}
-                  <Word text="connection." p={p} from={0.28} to={0.52} accent />
-                </span>
-              </span>
-            </h2>
-
-            <Step p={p} from={0.5} to={0.68}>
-              <p className="mt-6 max-w-[44ch] text-[15px] leading-relaxed text-white/55">
-                SafeKid imagines a little more confidence for children, and a little more reassurance
-                for the families cheering them on.
-              </p>
-            </Step>
-
-            <Step p={p} from={0.4} to={0.64}>
-              <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
-                <Magnetic>
-                  <Link
-                    to="/zodiac"
-                    className="group inline-flex h-[54px] items-center gap-3 rounded-full bg-white pl-6 pr-5 text-[14px] font-medium text-ink transition-all duration-300 hover:-translate-y-0.5 hover:bg-aqua-soft btn-motion btn-motion-light"
-                  >
-                    Meet the 12 editions
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ink/5 transition-transform duration-300 group-hover:translate-x-0.5">
-                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                    </span>
-                  </Link>
-                </Magnetic>
-                <Link
-                  to="/app"
-                  className="group press inline-flex items-center gap-2 text-[14px] font-medium text-white/75 transition-colors hover:text-white"
-                >
-                  Try the Parent App
-                  <ArrowUpRight
-                    className="h-4 w-4 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </Link>
-              </div>
-            </Step>
-
-            <Step p={p} from={0.82} to={1} lift={0}>
-              <div className="mt-12 flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] uppercase tracking-[0.18em] text-white/50">
-                <span>A concept by SafeKid</span>
-                <span className="h-3 w-px bg-white/15" />
-                <span>Developed by DigiBabi</span>
-                <span className="h-3 w-px bg-white/15" />
-                <span>No live device or service</span>
-              </div>
-            </Step>
+          <div className="grid gap-2.5 sm:grid-cols-2 md:grid-cols-1 md:border-l md:border-deep/15 md:pl-8 lg:pl-10">
+            <Link
+              to="/zodiac"
+              className="flex min-h-12 items-center justify-between gap-3 rounded-xl bg-ink px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-deep"
+            >
+              Meet the 12 editions
+              <ArrowRight className="size-4 shrink-0" aria-hidden="true" />
+            </Link>
+            <Link
+              to="/app"
+              className="flex min-h-12 items-center justify-between gap-3 rounded-xl border border-deep/25 bg-white/70 px-4 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-white"
+            >
+              Try the Parent App
+              <ArrowUpRight className="size-4 shrink-0 text-aqua-ink" aria-hidden="true" />
+            </Link>
           </div>
         </div>
+        <p className="mt-6 border-t border-deep/15 pt-4 text-xs leading-relaxed text-deep sm:mt-9">
+          A concept by SafeKid, developed by DigiBabi. No live device or service.
+        </p>
       </div>
     </section>
   );
