@@ -1,4 +1,14 @@
-# SafeKid · Audit responsive đầu PR #6
+# SafeKid · Rà soát responsive và thiết bị
+
+> Cập nhật ngày 20/11/2026. Bản phát hành đã vào main tại f92098d qua PR #10. Phần dưới ghi dữ liệu và nhận định tại mốc lịch sử của từng mục. Trạng thái hiện hành nằm ở [PROGRESS.md](PROGRESS.md) và phần đầu [FINAL_REPORT.md](FINAL_REPORT.md).
+
+## Trạng thái sau phát hành
+
+Mã nguồn 9ad24e0, hợp nhất vào main tại f92098d. Chromium, Firefox và WebKit đều qua 8/8 suite, mỗi engine hoàn tất 450 ca, 0 lỗi cứng của detector và axe không ghi vi phạm trên các trang được quét ở mobile. Detector vẫn ghi nhận 113/119/118 ca có mục tiêu nhỏ theo thứ tự engine trên, cùng 16 ca nghi vấn clip mỗi engine. Đây là số lượt trang × viewport, có thể lặp cùng phần tử. Cần soi ảnh, vùng ngoài màn hình và rail trước khi phân loại từng phát hiện. Lighthouse desktop accessibility còn 95–96/100.
+
+Bộ reading_layout có kiểm 2712×1220 và 844×390. Ma trận chính có 18 viewport từ 320×568 tới 1920×1080. Kiểm thiết bị thật ở cuối tài liệu vẫn là bước riêng, bộ giả lập không cung cấp kết quả iPhone/Android vật lý. [Run nghiệm thu](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44545138560)
+
+## Mốc đánh giá ban đầu
 
 Firefox 153 headless với production build từ cây source `89c2154`. 14 URL × 18 viewport. Context dọc/ngang dùng touch giả lập và DPR 2. `reduced-motion` bật trong lượt đo layout để tách hình học khỏi animation. Font và gọi đi ngoài preview bị chặn trong lượt này. Firefox Playwright không cung cấp giả lập `isMobile` như Chromium/WebKit, vì vậy đây là rà soát viewport và CSS tĩnh.
 

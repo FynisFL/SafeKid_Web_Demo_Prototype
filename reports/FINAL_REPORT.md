@@ -1,4 +1,45 @@
-# SafeKid · Master Prompt all-in-one
+# SafeKid · Báo cáo nghiệm thu và phát hành
+
+Cập nhật ngày 20/11/2026. PR #10 đã merge vào main tại f92098d. Bản ứng viên 9ad24e0 dùng cùng cây mã nguồn với bản merge. Hướng dẫn kiến trúc hiện hành nằm tại [CodeGuideline.md](../CodeGuideline.md).
+
+## Kết quả cuối cùng trên CI
+
+Baseline 89c2154 và ứng viên 9ad24e0 đo cùng runner, browser và cấu hình. Số mạng là trung vị 5 lượt cache lạnh mỗi hồ sơ. FPS/p95 lấy trung vị 3 lượt CPU 4× mỗi viewport, CLS lấy giá trị cao nhất.
+
+| Chỉ số | Baseline | Ứng viên |
+|---|---:|---:|
+| Mạng thường · Hero / LCP, ms | 285,3 / 1.560 | 293,5 / 1.572 |
+| Fast 4G · Hero / LCP, ms | 953 / 2.228 | 972 / 2.260 |
+| Slow 3G · Hero / LCP, ms | 7.055,3 / 8.348 | 7.153,3 / 8.448 |
+| Mobile · FPS / p95, ms | 59,55 / 16,8 | 59,78 / 16,8 |
+| Desktop · FPS / p95, ms | 50,16 / 33,4 | 55,66 / 33,3 |
+| Mobile · CLS cao nhất | 0,000494 | 0 |
+| Desktop · CLS cao nhất | 0,0000514 | 0,0000379 |
+| Mobile · long task mỗi lượt | 0 / 0 / 0 | 0 / 0 / 0 |
+| Desktop · long task mỗi lượt | 1 / 1 / 2 | 0 / 0 / 0 |
+| JS quan sát trong cửa sổ đo, B gzip | 238.763 | 244.564 |
+
+JS quan sát gồm tài nguyên lazy trong cửa sổ đo. Kiểm graph entry + Home tại build local cuối ghi 243.164 B gzip, tăng 4.401 B so với baseline 238.763 B. Chunk HeroSignal lazy 1.400 B, route lớn nhất trên CI là Home 15.275 B gzip. Hai cách tính JS có phạm vi khác nhau.
+
+| Trang | Lighthouse hiệu năng mobile / desktop | Accessibility mobile / desktop |
+|---|---:|---:|
+| Home | 73 / 99 | 100 / 95 |
+| Zodiac | 81 / 98 | 100 / 96 |
+| Product Dragon | 84 / 99 | 100 / 96 |
+| Watch Passport | 99 / 100 | 100 / 96 |
+| About | 87 / 98 | 100 / 96 |
+
+Các số Lighthouse đo trong cấu hình Lighthouse, riêng với CDP network ở bảng trên. Home Lighthouse mobile LCP khoảng 5,58 giây, còn dư địa cải thiện. Lighthouse About desktop có CLS khoảng 0,00230, là phép đo khác cửa sổ cuộn CDP.
+
+Chromium, Firefox và WebKit đều qua 8/8 suite, mỗi engine hoàn tất 450 ca. Axe mobile ở các trang được quét không ghi vi phạm. Detector vẫn ghi 113/119/118 ca có target nhỏ và 16 ca nghi vấn clip mỗi engine. Các số này có thể lặp cùng phần tử qua viewport. Chưa có xác nhận trên điện thoại vật lý. Kết quả local trước merge có FPS mobile 52,69 → 52,03 và desktop 41,98 → 47,66, giữ riêng với số CI.
+
+[Device Matrix](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44545138560) · [Browser Review](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44545138451) · [Triển khai](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44646141073)
+
+[Ảnh và số đo CDP/Lighthouse](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44545138560/artifacts/14539783685) · [Chromium](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44545138560/artifacts/14541950077) · [Firefox](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44545138560/artifacts/14541920100) · [WebKit](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44545138560/artifacts/14539834880)
+
+## Hồ sơ các giai đoạn trước phát hành
+
+Các trạng thái nháp, lỗi hoặc “cổng chưa đạt” trong phần dưới thuộc đúng SHA và môi trường ghi tại mục đó. Kết quả nghiệm thu cuối ở đầu tài liệu dùng để xác định trạng thái phát hành.
 
 **19/11/2026 · Ứng viên P-D.** Stack PR nháp đi từ PR #6 ở 89c2154 tới P-A, P-B, P-C và P-D. Báo cáo ghi số đo theo build và môi trường. Các kết quả còn mở nằm ở [QA_LOG.md](QA_LOG.md) và [PROGRESS.md](PROGRESS.md).
 

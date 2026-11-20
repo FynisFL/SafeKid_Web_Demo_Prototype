@@ -1,437 +1,159 @@
-# CODE GUIDELINE — SAFEKID
+# Hướng dẫn mã nguồn SafeKid
 
-Tài liệu này quy định cách tổ chức source code, quản lý thư mục và phát triển tính năng trong dự án SafeKid.
+Cập nhật ngày 20/11/2026 theo bản phát hành `f92098d` trên `main`. Nội dung mô tả mã nguồn đã triển khai và quy ước bảo trì. Trạng thái kiểm thử và giới hạn nằm trong [báo cáo nghiệm thu](reports/FINAL_REPORT.md).
 
-**Mục tiêu:** Giúp các thành viên hiểu cấu trúc dự án, biết đặt code đúng vị trí và duy trì source code thống nhất, dễ đọc, dễ bảo trì.
-
----
-
-## 1. Tổng quan cấu trúc dự án
-
-Cấu trúc thư mục chính:
+## 1. Cấu trúc thư mục
 
 ```text
-project-root/
-├── public/                     # Tài nguyên tĩnh
-│
+.
+├── .github/workflows/          # Kiểm thử và triển khai
+├── public/                     # Favicon, ảnh chia sẻ, hình game, giấy phép
+├── reports/                    # Báo cáo đánh giá, kế hoạch và kết quả QA
 ├── src/
-│   ├── assets/                 # Hình ảnh, logo và tài nguyên
-│   ├── components/             # Các thành phần giao diện dùng lại
-│   │   ├── ui/                 # Button, Dialog, Card,...
-│   │   ├── about/              # TeamStory dùng tại About
-│   │   ├── app-experience/     # Parent App demo và tải Android
-│   │   ├── home/               # Component riêng của Homepage
-│   │   ├── motion/             # Hiệu ứng và animation
-│   │   ├── preloader/          # Chuẩn bị tài nguyên cho cảnh đầu
-│   │   ├── passport/           # Thành phần Watch Passport
-│   │   ├── site/               # Header, Footer, Layout,...
-│   │   ├── easter-egg/         # Mini game ẩn
-│   │   └── error-boundary/     # Xử lý lỗi giao diện
-│   │
-│   ├── hooks/                  # Custom React Hooks
-│   ├── lib/                    # Hàm tiện ích và xử lý dùng chung
-│   ├── data/                   # Dữ liệu nội bộ của dự án
-│   ├── integrations/           # Tích hợp dịch vụ bên ngoài
-│   ├── pages/                  # Các trang của website
-│   ├── App.tsx                 # Thiết lập Router và lớp giao diện gốc
-│   ├── router.tsx              # Khai báo và quản lý các tuyến đường
-│   ├── main.tsx                # Điểm khởi chạy ứng dụng
-│   ├── setup.ts                # Các thiết lập cần chạy trước ứng dụng
-│   └── index.css               # CSS toàn cục
-│
-├── package.json                # Thông tin và thư viện dự án
-├── CodeGuideline.md            # Tài liệu quy chuẩn lập trình
-├── vite.config.ts              # Cấu hình Vite
-├── tailwind.config.ts          # Cấu hình Tailwind CSS
-└── ...
+│   ├── assets/                 # Ảnh edition và logo được Vite xử lý
+│   ├── components/
+│   │   ├── about/              # TeamStory của trang About
+│   │   ├── app-experience/     # Sân khấu Parent App, kịch bản và tải APK
+│   │   ├── easter-egg/         # LittleDetourGame, tải trễ từ footer
+│   │   ├── error-boundary/     # Giao diện lỗi và thử lại route
+│   │   ├── home/               # Các phần của Home và ZodiacStage dùng chung
+│   │   ├── motion/             # Token, cờ, khả năng chạy motion
+│   │   │   └── reactbits/      # Các thành phần React Bits điều chỉnh
+│   │   ├── passport/           # PassportDemo, CoreLayers, hành trình vòng đời
+│   │   ├── preloader/          # FirstSceneGate và trạng thái cảnh đầu
+│   │   ├── shop/               # Giỏ hàng, giá và phương thức thanh toán mẫu
+│   │   ├── site/               # Layout, header, footer, tìm edition
+│   │   └── ui/                 # Thành phần giao diện nền tảng Radix
+│   ├── data/                   # Zodiac, Passport, tài nguyên cảnh đầu
+│   ├── hooks/                  # useLocalChat, usePageTitle, media query
+│   ├── integrations/           # Tích hợp Supabase hiện hữu
+│   ├── lib/                    # Breakpoint, tiện ích và ghi nhận lỗi
+│   ├── pages/                  # Trang ứng với route
+│   ├── main.tsx                # Khởi chạy React, analytics và Error Boundary
+│   ├── App.tsx                 # Router, FirstSceneGate và ShoppingBagProvider
+│   ├── router.tsx              # Khai báo route và tải trang trễ
+│   ├── setup.ts                # Thiết lập khởi chạy
+│   ├── analytics.ts            # Khởi tạo phân tích hiện hữu
+│   └── index.css               # Style, safe-area và animation dùng chung
+├── supabase/                   # Cấu hình Supabase hiện hữu
+├── tests/                      # Playwright, axe, Lighthouse và đo CDP
+│   └── package.json            # Dependency QA riêng
+├── index.html                  # Metadata, font, noscript và điểm gắn React
+├── package.json
+├── package-lock.json
+├── vite.config.ts
+└── tailwind.config.ts
 ```
 
-*Lưu ý: Đây là cấu trúc định hướng. Một số thư mục có thể được mở rộng khi dự án phát triển.*
+Cây trên liệt kê những nhóm có vai trò bảo trì chính. Danh sách tệp thực tế tra bằng `rg --files src tests public`.
 
-## 2. Chức năng của từng thư mục
+## 2. Khởi chạy và xử lý lỗi
 
-| Thư mục | Chức năng |
-|---|---|
-| `public/` | Chứa tài nguyên tĩnh được sử dụng trực tiếp như icon, hình nền, file SVG và các file public khác. |
-| `src/assets/` | Chứa hình ảnh, logo và tài nguyên được import vào source code. |
-| `src/components/` | Chứa các thành phần giao diện có thể tái sử dụng. |
-| `src/hooks/` | Chứa các React Hook tự xây dựng để quản lý trạng thái và logic. |
-| `src/lib/` | Chứa các hàm tiện ích, xử lý dữ liệu và logic dùng chung. |
-| `src/data/` | Chứa dữ liệu nội bộ như thông tin sản phẩm, bộ sưu tập và nội dung demo. |
-| `src/integrations/` | Chứa code kết nối với các dịch vụ bên ngoài. |
-| `src/pages/` | Chứa các trang chính tương ứng với từng đường dẫn website. |
+`main.tsx` nhập `setup.ts`, khởi tạo analytics, nạp CSS và gắn React tại `#root`. Error Boundary cấp ứng dụng dùng `ErrorFallback` cùng `reportCaughtError`. Trong `App.tsx`, `MotionConfig` và `FirstSceneGate` bao quanh `RouterProvider`. Route gốc tạo `ShoppingBagProvider`, `Suspense`, `Outlet` và thông báo khi trang đã gắn.
 
-### Các nhóm component quan trọng
+Giữ Error Boundary và tiền tố log `ErrorBoundary caught a runtime error:` để cơ chế ghi nhận lỗi hiện có hoạt động. Lỗi route dùng `src/components/error-boundary/route-error-boundary.tsx`. Khi người dùng thử lại Product hoặc Zodiac trong production, trang đọc `route-chunks.json`, xác thực lại chunk bị lỗi rồi tải lại tài liệu. Vite sinh manifest này từ chính build, hai request chỉ chạy khi bấm thử lại và dùng chung timeout 4 giây.
 
-Trong `src/components/`, nên phân chia theo chức năng:
+## 3. Bản đồ đường dẫn
 
-- `ui/`: Những thành phần giao diện cơ bản như Button, Card, Dialog, Input.
-- `home/`: Các section và component chỉ phục vụ trang chủ.
-- `motion/`: Các hiệu ứng chuyển động, parallax, scroll và animation.
-- `passport/`: Những thành phần thuộc tính năng Watch Passport.
-- `site/`: Header, Footer, Layout và các thành phần dùng chung giữa nhiều trang.
-- `easter-egg/`: Các tính năng ẩn, mini game và tương tác đặc biệt.
-- `error-boundary/`: Các thành phần hiển thị giao diện dự phòng khi ứng dụng gặp lỗi.
+Nguồn khai báo là [src/router.tsx](src/router.tsx).
 
-**Nguyên tắc:** Code nên được đặt theo chức năng. Không gom tất cả component vào một thư mục nếu chúng thuộc những tính năng khác nhau.
-
----
-
-## 3. Quy tắc khi thêm code mới
-
-### 3.1. Thêm một trang mới
-
-Mỗi trang website cần được đăng ký trong `src/router.tsx`.
-
-Đối với trang đơn giản, có thể tạo file trực tiếp trong `src/pages/`, tương tự các trang hiện tại.
-
-Đối với trang có nhiều component hoặc logic riêng, nên tạo một thư mục riêng để quản lý.
-
-Ví dụ:
-
-```text
-src/
-└── pages/
-    └── profile/
-        ├── index.tsx
-        ├── ProfileHeader.tsx
-        └── ProfileDetails.tsx
-```
-
-Sau khi tạo trang, đăng ký route trong `src/router.tsx`:
-
-```tsx
-import Profile from "./pages/profile";
-
-// Thêm vào danh sách routers
-{
-  path: "/profile",
-  name: "profile",
-  element: <Profile />
-}
-```
-
-Trong đó:
-
-- `path`: Đường dẫn mà người dùng truy cập.
-- `name`: Tên định danh của route.
-- `element`: Component hiển thị tương ứng.
-
-### 3.2. Thêm component mới
-
-- Nếu component được sử dụng ở nhiều trang, đặt trong `src/components/`.
-- Nếu chỉ phục vụ một trang, ưu tiên đặt gần trang đó.
-- Nếu có nhiều component thuộc cùng một tính năng, tạo thư mục riêng.
-- Mỗi component nên đảm nhiệm một nhiệm vụ cụ thể.
-- Ưu tiên code ngắn gọn, dễ đọc và dễ tái sử dụng.
-
-Ví dụ:
-
-```text
-components/
-└── product/
-    ├── ProductCard.tsx
-    ├── ProductGallery.tsx
-    └── ProductDetails.tsx
-```
-
-### 3.3. Thêm React Hook
-
-Tạo file trong `src/hooks/`, tên file nên bắt đầu bằng `use`.
-
-Ví dụ:
-
-```text
-src/hooks/
-├── useLocalChat.ts
-├── usePageTitle.ts
-└── useFeature.ts
-```
-
-Mỗi Hook nên tập trung giải quyết một nhiệm vụ, tránh gom quá nhiều logic không liên quan vào cùng một file.
-
-### 3.4. Thêm hàm tiện ích
-
-Các hàm xử lý dữ liệu hoặc logic không thuộc component và Hook nên được đặt trong `src/lib/`.
-
-Ví dụ:
-
-```text
-src/lib/
-├── utils.ts
-├── report-caught-error.ts
-└── helpers/
-```
-
-Không nên đặt các hàm tiện ích vào component nếu chúng có thể được sử dụng ở nhiều nơi.
-
----
-
-## 4. Quy tắc tổ chức và viết code
-
-### 4.1. Mỗi file có một nhiệm vụ chính
-
-Không nên viết một component đảm nhiệm quá nhiều công việc.
-
-Khi một file phát triển quá lớn, hãy xem xét tách thành các component, Hook hoặc utility riêng.
-
-Khuyến khích giữ các component đơn giản dưới 100 dòng khi phù hợp, nhưng không cần ép buộc nếu việc tách nhỏ khiến code khó hiểu hơn.
-
-### 4.2. Quy tắc đặt tên
-
-| Thành phần | Quy tắc | Ví dụ |
+| Đường dẫn | Tệp trong src/pages | Vai trò |
 |---|---|---|
-| React Component | PascalCase | `ProductCard.tsx` |
-| Page Component | PascalCase | `Home.tsx` |
-| Hook | camelCase, bắt đầu bằng `use` | `useLocalChat.ts` |
-| Utility | camelCase | `formatDate.ts` |
-| Biến và hàm | camelCase | `handleSubmit` |
-| Hằng số | UPPER_SNAKE_CASE | `HOLD_DURATION` |
-| Route | lowercase, dùng dấu gạch ngang khi cần | `/watch-passport` |
+| `/` | Home.tsx | Giới thiệu và các cảnh tương tác |
+| `/zodiac` | Zodiac.tsx | Bộ sưu tập 12 edition |
+| `/product/:id` | Product.tsx | Chi tiết edition, xem ảnh và thêm giỏ |
+| `/watch-passport` | WatchPassport.tsx | Hồ sơ và vòng đời mẫu |
+| `/watchpassport` | Chuyển hướng | Giữ search/hash khi chuyển về đường dẫn chuẩn |
+| `/app` | AppExperience.tsx | Parent App, Web App và tải APK |
+| `/about` | About.tsx | Đội ngũ và hành trình dự án |
+| `/support` | Support.tsx | FAQ và hướng dẫn |
+| `/contact` | Contact.tsx | Mở bản nháp email |
+| `/chat`, `/s-f-ai` | Chat.tsx | Hội thoại kịch bản cục bộ |
+| `/sos` | Sos.tsx | Nhấn giữ hoặc kéo để mô phỏng SOS |
+| `/cart`, `/checkout` | ShoppingBag.tsx | Giỏ và thanh toán xem trước |
+| `*` | NotFound.tsx | Trang không tìm thấy |
 
-### 4.3. Tính liên kết và khả năng bảo trì
+Các trang tải trễ. Product và Zodiac dùng hàm `lazy` của route, kèm `handle.retryChunk` để tra manifest thử lại. Những trang còn lại dùng `React.lazy`. Khi thêm trang, đăng ký ở router và kiểm cơ chế báo sẵn sàng, lỗi và URL trực tiếp. Vite sinh các directory index cho những đường dẫn đã khai báo trong plugin `safekid-page-entries`, nên cần cập nhật danh sách này nếu thêm đường dẫn cần truy cập trực tiếp trên GitHub Pages.
 
-- Hạn chế phụ thuộc không cần thiết giữa các component.
-- Chỉ chia sẻ code khi thực sự cần tái sử dụng.
-- Không tạo nhiều file trùng chức năng.
-- Không xóa code đang được sử dụng nếu chưa kiểm tra các nơi import.
-- Ưu tiên sử dụng thư viện đã có trong dự án trước khi cài thư viện mới.
+## 4. Home và bộ sưu tập
 
-### 4.4. Chú thích code
+Home ghép theo thứ tự `Hero` → `StorySequence` → `Thesis` → `ProductChapters` → `ParentAppSection` → `WatchPassportSection` → `ZodiacStage` → `SOSIntroduction` → `Closing`.
 
-Nên thêm comment khi xử lý logic phức tạp, animation đặc biệt hoặc những phần code không dễ hiểu ngay từ đầu.
+`ZodiacStage.tsx` dùng chung giữa Home và Zodiac. Dữ liệu sản phẩm lấy từ `src/data/zodiac.ts`. `src/components/site/collectionVisit.ts` hỗ trợ khôi phục lựa chọn và vị trí cuộn khi quay lại từ Product. Giữ liên kết `#collection`, các nút đổi mẫu, dải edition và Orbit Images đồng bộ cùng lựa chọn. Orbit có 5 ảnh trên điện thoại, 12 ảnh trên tablet/desktop.
 
-Comment cần giải thích **vì sao đoạn code được viết như vậy**, thay vì chỉ diễn giải lại từng dòng code.
+Thanh tiến độ trang nằm ở `ScrollProgress.tsx`. Tín hiệu trang trí nằm trong từng cảnh. Closing có khiên SVG, các điểm hội tụ và hai xung CSS cục bộ. Nội dung và CTA vẫn là HTML có ngữ nghĩa.
 
----
+## 5. Giỏ hàng, Contact và Chat
 
-## 5. Hỗ trợ đa ngôn ngữ
+`src/components/shop/shoppingBag.ts` khai báo giá `WATCH_PRICE_VND = 1_450_000`, giới hạn mỗi edition 99 chiếc và định dạng VND. `ShoppingBagProvider.tsx` đọc/ghi khóa localStorage `safekid.shopping-bag.v1`, kiểm ID edition và số lượng. Khi storage bị chặn, trạng thái vẫn dùng được trong lượt mở.
 
-Dự án không cài đặt sẵn hệ thống đa ngôn ngữ.
+`AddToBag.tsx`, `PaymentPreview.tsx` và `paymentMethods.ts` phục vụ luồng xem trước. Thông báo xác nhận giữ trạng thái chưa mở bán. Contact chỉ tạo URI mailto sau native validation. Slide Commit dùng cùng hành động với nút mở bản nháp. `src/hooks/useLocalChat.ts` quản lý kịch bản, timer, dừng phản hồi, reset và chuyển tiếp hỗ trợ mẫu.
 
-Khi cần hỗ trợ nhiều ngôn ngữ:
+## 6. Parent App và Watch Passport
 
-- Không tự ý cài thêm `i18next`.
-- Không tự tạo các file locale hoặc hệ thống `src/i18n/` riêng.
-- Cần sử dụng quy trình tích hợp i18n của nền tảng Enter thông qua công cụ `i18n_enable` và skill `enter_i18n`.
+`AppExperience.tsx` ghép `SignalStage.tsx`, kịch bản trong `scenes.ts` và `AndroidDownload.tsx`. Sân khấu nhận pointer capture để xác định vuốt ngang, giữ nút chọn kịch bản và phát lại. Trang liên kết sang Web App thuộc repo Parent App riêng. Khi sửa trang này, kiểm cả bàn phím, vuốt, tải APK và nhãn demo.
 
-Điều này giúp tránh xung đột giữa hệ thống dịch tự xây dựng và cấu hình nền tảng hiện tại.
+Passport gồm `PassportDemo.tsx`, `CoreLayers.tsx`, `LivesSection.tsx`, `CircularJourney.tsx`, `PrivacyTrust.tsx` và `useSectionProgress.ts` trong `components/passport/`. Nội dung mẫu nằm tại `src/data/watchPassport.ts`. Giữ nhãn `Interactive Concept Demo` và dữ liệu mẫu. Teaser ở Home dành chỗ theo chương cao nhất để tránh đẩy Zodiac khi đổi chương.
 
----
+## 7. Chuyển động và responsive
 
-## 6. SEO và thông tin chia sẻ website
+Nguồn chuẩn của đường cong, thời lượng, khoảng dịch và spring là `src/components/motion/tokens.ts`. Tái dùng token khi mở rộng. Các cờ trong `setPieces.ts` gồm `animatedContent`, `scrollText`, `pageSignatures`, `heroSignal`, `zodiacOrbit`, `slideCommit`, `closingShield`, hiện đều bật.
 
-Các thông tin metadata chính của website được quản lý trong phần `<head>` của `index.html`.
+`useEnhancedMotion.ts` theo dõi reduced motion, Save-Data nơi trình duyệt cung cấp và tab ẩn. `HeroSignal.tsx` có giới hạn DPR ≤2, số hạt 88/56/32 theo khả năng máy, giảm chất lượng theo FPS và dừng ngoài viewport. Canvas tải sau khi Hero sẵn sàng, có Suspense và Error Boundary cục bộ. Cần dọn listener, observer và RAF khi unmount.
 
-Khi thay đổi tiêu đề hoặc mô tả trang, cần kiểm tra và cập nhật đồng bộ:
+`components/motion/reactbits/` chứa AnimatedContent, ScrollFloat, ScrollReveal, OrbitImages, SlideCommit, CountUp, GradualBlur và hook useSceneEntrance. Click Spark và Spotlight Card nằm trong nhóm app-experience. Giữ ghi nguồn và giấy phép `public/licenses/react-bits.txt`. Chi tiết tại [bảng tích hợp](reports/REACTBITS_SELECTION.md).
 
-- `<title>`
-- `meta name="description"`
-- `og:title`
-- `og:description`
-- `og:image`
-- `og:image:alt`
-- `twitter:title`
-- `twitter:description`
-- `twitter:image`
+`src/lib/breakpoints.ts` dùng chung với Tailwind và JS, gồm 390, 480, 640, 768, 1024, 1280, 1440, 1536px. Ngưỡng chiều cao cảnh ghim là 650px, Parent App giữ media query riêng từ 961px. `useIsMobile` dùng ngưỡng dưới 768px. Safe-area lấy từ `--safe-top/right/bottom/left`. Khung đọc dùng svh, vùng làm việc cần thích ứng thanh địa chỉ dùng dvh với dự phòng vh. Kiểm chữ nhập từ 16px, mục tiêu chạm 44–48px và focus khi thay đổi layout.
 
-### Lưu ý về hình ảnh chia sẻ
+## 8. Loader, SEO và ngôn ngữ
 
-- URL của `og:image` và `twitter:image` phải là URL tuyệt đối.
-- Nếu thay ảnh đại diện chia sẻ, cần cập nhật cả hai thẻ.
-- Duy trì đúng kích thước khai báo `og:image:width` và `og:image:height`.
-- Ưu tiên hình ảnh đại diện phù hợp với nhận diện SafeKid.
+`FirstSceneGate.tsx` chọn ảnh mở đầu theo `src/data/firstScene.ts`. Sau 350ms, overlay chỉ xuất hiện nếu route hoặc ảnh còn đợi. Font chờ tối đa 160ms, sau đó dùng fallback ổn định cho lượt mở. HTML ghi lỗi stylesheet ngay khi xảy ra. Cache ấm bỏ intro, Skip xuất hiện sau 1,8 giây và timeout cứng là 8 giây. Không giữ thêm màn 100% bằng timer.
 
----
+Metadata chia sẻ nằm trong `index.html`, tiêu đề/mô tả từng trang dùng `usePageTitle.ts`. URL ảnh OG/Twitter cần tuyệt đối và kích thước đúng ảnh. Giữ thẻ script cùng chú thích nền tảng hiện hữu trong HTML. Giao diện hiện dùng tiếng Anh, repository chưa có hệ thống locale. Tài liệu bảo trì viết tiếng Việt, tên API và đường dẫn giữ nguyên.
 
-## 7. Xử lý lỗi và Error Boundary
+## 9. Kiểm thử và triển khai
 
-SafeKid sử dụng Error Boundary để hạn chế việc một trang hoặc component gặp lỗi làm ảnh hưởng toàn bộ website.
-
-**Các quy tắc bắt buộc:**
-
-- Không tự ý xóa hoặc vô hiệu hóa Error Boundary.
-- `src/main.tsx` chứa lớp Error Boundary cấp ứng dụng và cơ chế báo cáo lỗi.
-- `src/App.tsx` thiết lập route gốc và Error Boundary dùng chung cho các trang.
-- Route mới phải được thêm vào `src/router.tsx` để kế thừa cơ chế xử lý lỗi này.
-
-Các file liên quan:
-
-```text
-src/
-├── main.tsx
-├── App.tsx
-├── router.tsx
-├── components/
-│   └── error-boundary/
-│       ├── error-fallback.tsx
-│       └── route-error-boundary.tsx
-└── lib/
-    └── report-caught-error.ts
+```bash
+npm ci
+npm run check
+npm run build
+npm run preview
 ```
 
-Không thay đổi tiền tố log:
+CI dùng Node.js 22 và Python 3.12. `check` gồm ESLint và TypeScript, `build` tạo dist. Để chạy QA browser trong môi trường đủ quyền và mạng, cài dependency QA riêng rồi cài browser theo cùng phiên bản.
 
-```text
-ErrorBoundary caught a runtime error:
+```bash
+python -m pip install playwright==1.62.0
+npm --prefix tests install --package-lock=false
+npm --prefix tests exec -- playwright install --with-deps chromium firefox webkit
 ```
 
-Tiền tố này được nền tảng Enter sử dụng để nhận diện lỗi runtime.
+Giữ preview chạy khi chạy test. Ví dụ tại terminal khác.
 
-Nếu chỉ muốn cô lập lỗi trong một khu vực giao diện, có thể sử dụng `ErrorBoundary` từ `react-error-boundary` cùng `FallbackComponent={ErrorFallback}`.
-
-Ở bản production, nút thử lại của Zodiac và Product đọc `route-chunks.json` để xác thực lại
-tệp route trước khi tải lại tài liệu. Vite sinh bảng tên tệp từ cùng build. Hai lần fetch này
-chỉ chạy sau khi người dùng bấm thử lại và cùng dùng một timeout 4 giây.
-
----
-
-## 8. Các module đặc thù của SafeKid
-
-Đây là những module đã được phát triển riêng cho dự án. Khi chỉnh sửa, cần kiểm tra các component liên quan để tránh làm hỏng những tính năng hiện có.
-
-### 8.1. Watch Passport
-
-Watch Passport là tính năng trải nghiệm tương tác giới thiệu sản phẩm, không phải hệ thống quản lý thiết bị thực tế.
-
-Các file chính:
-
-```text
-src/
-├── pages/
-│   └── WatchPassport.tsx
-│
-├── components/
-│   ├── passport/
-│   │   ├── PassportDemo
-│   │   ├── LivesSection
-│   │   ├── CircularJourney
-│   │   ├── PrivacyTrust
-│   │   └── useSectionProgress
-│   │
-│   └── home/
-│       └── WatchPassportSection.tsx
-│
-└── data/
-    └── watchPassport.ts
+```bash
+SAFEKID_BROWSER=chromium python tests/motion_smoke.py
+SAFEKID_BROWSER=firefox python tests/scene_regressions.py
+SAFEKID_BROWSER=webkit python tests/reading_layout.py
 ```
 
-**Nguyên tắc:**
+Tám suite hiện hành là motion_smoke, responsive_review, collection_navigation, connected_scenes, first_scene, reading_layout, device_regressions và scene_regressions. Firefox smoke vô hiệu trình xử lý mailto bên ngoài của browser headless để hộp mở email không nuốt click ở ca kế tiếp.
 
-- Chỉ sử dụng dữ liệu mẫu cục bộ.
-- Không tự ý thêm dữ liệu cá nhân hoặc thông tin thiết bị thật.
-- Duy trì nhãn `Interactive Concept Demo`.
-- Giữ nguyên trải nghiệm tương tác và cấu trúc chuyển động khi chỉnh sửa.
+| Tệp QA | Vai trò |
+|---|---|
+| `tests/device_matrix.mjs` | 25 route × 18 viewport mỗi engine, ảnh, mục tiêu chạm, CTA, xoay và axe |
+| `tests/device_performance.mjs` | Đo baseline/ứng viên cùng browser bằng CDP, 3 hồ sơ × 5 lượt lạnh và cuộn CPU 4× |
+| `tests/device_lighthouse.mjs` | Lighthouse mobile/desktop cho 5 trang |
+| `tests/scene_visual.mjs` | Ảnh trước/sau ở 390, 768, 1440 và 844×390 |
 
-### 8.2. Motion System
+Đo hiệu năng dùng hai server production, manifest build và biến SAFEKID_BASELINE_URL, SAFEKID_BASE_URL, SAFEKID_BASELINE_DIST, SAFEKID_CANDIDATE_DIST. Xem job performance của workflow để chạy cùng cấu hình. Chỉ so số liệu trong cùng môi trường.
 
-Home dùng thanh tiến độ ở header để định hướng vị trí trên trang. Desktop đủ cao dùng stage sticky, tablet dùng các panel theo luồng đọc, mobile dùng carousel. Watch Passport có sơ đồ tương tác `components/passport/CoreLayers.tsx` dùng dữ liệu minh họa. Zodiac dùng cùng ảnh edition cho các lớp chính và phụ.
+`browser-review.yml` chạy tập đại diện trên PR, khi gọi trực tiếp và khi deploy. `device-matrix.yml` chạy toàn ma trận trên PR có thay đổi thuộc phạm vi và workflow_dispatch, các job không hủy nhau khi có push mới. `deploy.yml` chạy khi push main hoặc workflow_dispatch, yêu cầu browser review qua trước deploy GitHub Pages. Vercel cũng có trạng thái triển khai gắn commit.
 
+## 10. Quy ước bảo trì
 
-SafeKid sử dụng bộ quy chuẩn chuyển động chung để các hiệu ứng trên website có cảm giác đồng nhất.
-
-File quan trọng:
-
-```text
-src/components/motion/tokens.ts
-```
-
-File này quản lý:
-
-- `EASE`: Đường cong chuyển động.
-- `DURATION`: Phản hồi thao tác, đổi nội dung, vào cảnh và cảnh mở đầu.
-- `DISTANCE`: Khoảng cách di chuyển của phần tử.
-- `SCROLL_SPRING`: Thông số làm mượt chuyển động theo cuộn trang.
-
-Các thành phần như Reveal, Stagger, Hero và Watch Passport sử dụng những thông số này.
-
-**Nguyên tắc khi chỉnh sửa Motion:**
-
-- Ưu tiên sử dụng motion token có sẵn.
-- Không tự tạo nhiều hệ thống easing và duration trùng lặp.
-- Giữ trải nghiệm nhất quán giữa desktop và mobile.
-- Luôn chú ý đến `prefers-reduced-motion`.
-- Kiểm tra lại scroll, touch và keyboard sau khi thay đổi hiệu ứng.
-
----
-
-### 8.3. Tải cảnh đầu
-
-`FirstSceneGate` bao quanh bộ định tuyến trong Error Boundary. `src/data/firstScene.ts` chọn ảnh theo đường dẫn đi vào. Một phần trăm thể hiện số việc đã sẵn sàng, gồm mã khởi chạy, trang, font hoặc font dự phòng, ảnh cần dùng và khung hình đầu. Khi ảnh lỗi, quá thời hạn hoặc người dùng chọn Skip, cảnh mở đầu hiển thị đơn giản. Các route khác và ảnh ở phần dưới sử dụng cơ chế tải trễ. Overlay chỉ hiện nếu chuẩn bị mất hơn 350ms. CSS font ghi nhận lỗi ngay từ HTML để React không đợi lại sự kiện đã xảy ra. Font có ngân sách chờ riêng 160ms, sau đó giữ font dự phòng trong lượt mở. Khi hoàn tất không giữ màn 100% thêm theo timer.
-
-### 8.4. Đoạn kết Home và trang Zodiac
-
-Đoạn kết Home trình bày trực tiếp tiêu đề, mô tả và hai CTA trong HTML. Phần nhấn của tiêu đề dịch nhẹ lần đầu xuất hiện. Nhịp tín hiệu giữa đồng hồ và hình minh họa điện thoại chạy trong khung riêng khi vào viewport, rồi dừng. Reduced motion giữ cảnh tĩnh. Thanh tiến độ trang nằm riêng ở header.
-
-Trang Zodiac dùng phần giới thiệu ngắn rồi vào ngay `ZodiacStage`. Anchor `#collection` trỏ tới vùng chọn edition. Giữ cột mobile của stage theo chiều rộng vùng chứa để dải edition cuộn bên trong mà ảnh và nút đổi mẫu vẫn nằm trong viewport. Cả Home và trang Zodiac dùng chung sân khấu.
-
-## 9. Quy định cập nhật tài liệu
-
-Đây là quy định quan trọng đối với tất cả thành viên.
-
-Mỗi khi thêm, xóa hoặc thay đổi một module có ảnh hưởng đến cấu trúc dự án, cần cập nhật lại file `CodeGuideline.md`.
-
-Các trường hợp cần cập nhật:
-
-- Thêm hoặc xóa một trang mới.
-- Tạo thêm thư mục component.
-- Thêm Hook hoặc utility mới có vai trò quan trọng.
-- Bổ sung một hệ thống hoặc tính năng lớn.
-- Thay đổi cách tổ chức source code.
-- Thêm thư viện hoặc công nghệ có ảnh hưởng đến kiến trúc.
-
-Tài liệu cần phản ánh đúng cấu trúc thực tế của repository, không giữ lại những module đã bị xóa hoặc không còn sử dụng.
-
-**Không xem CodeGuideline.md là tài liệu viết một lần rồi bỏ quên. Đây là tài liệu được cập nhật xuyên suốt quá trình phát triển SafeKid.**
-
----
-
-## 10. Checklist trước khi hoàn thành công việc
-
-Dùng `npm ci`, `npm run check` và `npm run build`. Chạy `npm run preview` cùng các bài kiểm tra Python Playwright trong `tests/` khi thay đổi điều hướng, layout hoặc motion. About dùng `components/about/TeamStory.tsx` cho phần giới thiệu đội ngũ.
-
-
-Trước khi commit hoặc bàn giao một thay đổi, hãy kiểm tra:
-
-- [ ] Code được đặt đúng thư mục.
-- [ ] Tên file, component và Hook đúng quy tắc.
-- [ ] Không tạo code trùng chức năng.
-- [ ] Không làm hỏng các route hiện có.
-- [ ] Không vô tình xóa Error Boundary.
-- [ ] Không ảnh hưởng đến responsive và trải nghiệm mobile.
-- [ ] Đã kiểm tra reduced-motion nếu có animation.
-- [ ] Đã cập nhật CodeGuideline.md nếu cấu trúc dự án thay đổi.
-- [ ] Đã chạy kiểm tra phù hợp trước khi bàn giao.
-
-**Nguyên tắc cuối cùng:**
-
-> Viết code để người khác có thể đọc, hiểu, tiếp tục phát triển và bảo trì — không chỉ để chương trình chạy được.
-
----
-
-*SafeKid — Developed by DigiBabi.*
-
-### Nền responsive và kiểm thử thiết bị
-
-Ngưỡng chiều rộng ở `src/lib/breakpoints.ts` dùng chung với Tailwind và media query của React.
-Giữ ngưỡng chiều cao tối thiểu cho cảnh ghim. Giao diện mặc định vẫn đọc theo luồng khi màn hình thấp.
-`--safe-top`, `--safe-right`, `--safe-bottom` và `--safe-left` là inset cho header, menu,
-dialog, loader và thanh giỏ hàng. Dùng `svh` cho khung đọc và `dvh` cho vùng cuộn
-nhạy với thanh địa chỉ, với khai báo `vh` dự phòng trước.
-
-CI browser thông thường kiểm tra luồng chính. `device-matrix.yml` lưu báo cáo theo engine,
-ảnh và số đo đối chứng trên cùng runner. Chạy `tests/device_regressions.py` khi sửa mục tiêu
-chạm, trường nhập hoặc đường tắt tới ô chat.
-
-### Motion Kit
-
-`src/components/motion/reactbits/` lưu các component React Bits đã điều chỉnh. Mỗi tệp
-ghi URL nguồn và dùng giấy phép ở `public/licenses/react-bits.txt`. `AnimatedContent`
-là wrapper vào cảnh. `ScrollFloat` và `ScrollReveal` giữ nguyên phần tử ngữ nghĩa, ưu tiên
-tiêu đề phụ và đoạn giới thiệu. `setPieces.ts` điều phối các lớp tăng cường. Lớp minh họa dài
-tuân thủ `prefers-reduced-motion`, Save-Data, vùng nhìn thấy và trạng thái tab.
-
-Cảnh Home `HeroSignal` là chunk lazy. Canvas giới hạn DPR, số hạt và thời gian hoạt
-động, giảm chất lượng sau chuỗi khung hình chậm, có kiểm tra pin nơi hỗ trợ. Orbit
-trong Zodiac dùng chính state của dial và rail. Trang có biểu tượng tín hiệu trong
-hero riêng. Contact và SOS dùng `SlideCommit` như phương án bổ sung cho thao tác chuẩn.
+- Đặt component theo tính năng, hook có tiền tố use, trang đăng ký trong router. Tái dùng logic hiện hữu và giữ tệp dễ đọc.
+- Khi thay đổi cấu trúc, cập nhật tài liệu này và README nếu luồng sử dụng thay đổi.
+- Giữ ranh giới demo, dữ liệu mẫu và phản hồi xác nhận rõ ràng.
+- Kiểm reduced motion, keyboard, touch, URL trực tiếp và Back khi đổi UI.
+- Supabase và analytics có tích hợp hiện hữu. Mọi thay đổi vào đó cần nằm trong phạm vi nhiệm vụ được giao.
+- Các báo cáo REVIEW, PROPOSAL và nhật ký giữ mốc lịch sử. Trạng thái mới nhất đọc tại PROGRESS và phần đầu FINAL_REPORT.

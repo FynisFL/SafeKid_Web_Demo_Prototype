@@ -6,7 +6,7 @@
   />
   <img
     src="src/assets/digibabi/logo-digibabi.webp"
-    alt="SafeKid Logo"
+    alt="Logo DigiBabi"
     height="110"
   />
 </p>
@@ -16,9 +16,9 @@
 <h3 align="center">The Space Between Them</h3>
 
 <p align="center">
-  A child-focused smartwatch concept by DigiBabi.
+  Ý tưởng đồng hồ thông minh dành cho trẻ em do DigiBabi phát triển.
   <br />
-  More room to grow. More ways to stay connected.
+  Thêm không gian trưởng thành, thêm cách giữ kết nối.
 </p>
 
 <p align="center">
@@ -34,7 +34,7 @@
   ·
   <a href="https://github.com/FynisFL/SafeKid_Web_Demo_Prototype">Repository</a>
   ·
-  <a href="./CodeGuideline.md">Code Guidelines</a>
+  <a href="./CodeGuideline.md">Hướng dẫn mã nguồn</a>
 </p>
 
 
@@ -44,7 +44,7 @@
 
 Dự án hướng đến việc tạo thêm không gian để trẻ tự do khám phá, đồng thời giúp phụ huynh an tâm hơn trong quá trình trưởng thành của con.
 
-[**Website**](https://digibabi.id.vn) 
+[**Website**](https://digibabi.id.vn)
 ·
 [**Repository**](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype)
 ·
@@ -65,7 +65,7 @@ SafeKid được xây dựng xoay quanh 6 nhóm tính năng thiết kế:
 - Habit & Reward — Hình thành thói quen và khen thưởng.
 - Battery — Định hướng tối ưu thời lượng sử dụng.
 
-<h2 align="center">Explore the SafeKid Collection</h2>
+<h2 align="center">Khám phá bộ sưu tập SafeKid</h2>
 
 <p align="center">
   <img src="src/assets/safekid/editions/rat.webp" width="24%" />
@@ -77,12 +77,48 @@ SafeKid được xây dựng xoay quanh 6 nhóm tính năng thiết kế:
 ### Trải nghiệm trên website
 
 - **Zodiac Collection:** Bộ sưu tập 12 phiên bản đồng hồ lấy cảm hứng từ 12 con giáp Việt Nam.
-- **Watch Passport:** Trải nghiệm tương tác giới thiệu sản phẩm.
+- **Watch Passport:** Hồ sơ thiết bị mẫu, hành trình vòng đời và sơ đồ Core/Skin/Skill.
 - **SOS Demo:** Mô phỏng thao tác nhấn giữ nút SOS.
-- **S.F AI:** Giao diện trợ lý hỗ trợ tìm hiểu thông tin về SafeKid.
+- **S.F AI:** Trợ lý theo kịch bản cục bộ và luồng chuyển tiếp hỗ trợ mô phỏng.
 - **A Little Detour:** Mini game Easter Egg ẩn trên website.
 
 > **Lưu ý:** SafeKid hiện là dự án concept và prototype. Các tính năng định vị, gọi điện, cảnh báo và kết nối thiết bị chưa hoạt động như dịch vụ thực tế. SOS chỉ là mô phỏng cục bộ, không gửi cảnh báo hay liên hệ dịch vụ khẩn cấp.
+
+## Mã nguồn và chức năng hiện hành
+
+Tài liệu được đối chiếu ngày 20/11/2026 với bản phát hành `f92098d`, hợp nhất từ PR #10. Giao diện website dùng tiếng Anh, tài liệu bảo trì dùng tiếng Việt. [Trạng thái phát hành](reports/PROGRESS.md).
+
+- Bộ sưu tập dùng chung `ZodiacStage` tại Home và Zodiac. Chọn phiên bản qua nút, dải mẫu hoặc Orbit Images, rồi mở Product. Quay lại bộ sưu tập khôi phục lựa chọn và vị trí cuộn.
+- Giá minh họa là 1.450.000 đồng mỗi đồng hồ, khai báo tại `src/components/shop/shoppingBag.ts`. Product → giỏ hàng → thanh toán là luồng xem trước. Giỏ lưu trong trình duyệt, bước xác nhận hiển thị thông báo chưa mở bán.
+- `/app` giới thiệu Parent App, có sân khấu tín hiệu, liên kết Web App và hộp tải APK Android. Mã nguồn Parent App thuộc [repo riêng](https://github.com/FynisFL/SafeKid-Parent-App-).
+- `/contact` mở bản nháp email. `/chat` và `/s-f-ai` dùng cùng trang Chat với kịch bản cục bộ. Watch Passport dùng dữ liệu mẫu, SOS mô phỏng thao tác nhấn giữ hoặc kéo xác nhận.
+- Chuyển động dùng Motion, CSS, SVG, Canvas 2D và các thành phần React Bits điều chỉnh. Cờ bật/tắt nằm ở `src/components/motion/setPieces.ts`. Canvas Hero tải sau cảnh đầu và có giới hạn chất lượng.
+
+## Chạy dự án
+
+Cài Node.js 22 như CI, rồi chạy các lệnh tại thư mục gốc.
+
+```bash
+npm ci
+npm run dev
+npm run check
+npm run build
+npm run preview
+```
+
+`npm run check` chạy ESLint và TypeScript. `npm run build` tạo `dist/`. Kiểm thử trình duyệt dùng preview production và các tệp trong `tests/`. Hướng dẫn cấu trúc, route, lệnh QA và triển khai nằm trong [CodeGuideline.md](CodeGuideline.md).
+
+## Tra cứu tài liệu
+
+| Tài liệu | Mục đích |
+|---|---|
+| [CodeGuideline.md](CodeGuideline.md) | Cấu trúc mã nguồn và hướng dẫn bảo trì hiện hành |
+| [PROGRESS.md](reports/PROGRESS.md) | Trạng thái bản phát hành |
+| [FINAL_REPORT.md](reports/FINAL_REPORT.md) | Kết quả nghiệm thu cùng số đo theo từng bản |
+| [QA_LOG.md](reports/QA_LOG.md) | Nhật ký lỗi, cách sửa và kiểm chứng |
+| [RESPONSIVE_AUDIT.md](reports/RESPONSIVE_AUDIT.md) | Ma trận màn hình và checklist máy thật |
+| [REACTBITS_SELECTION.md](reports/REACTBITS_SELECTION.md) | Thành phần chuyển động đã tích hợp |
+| [REVIEW.md](reports/REVIEW.md), [PROPOSAL.md](reports/PROPOSAL.md), [DECISION_LOG.md](reports/DECISION_LOG.md) | Cơ sở đánh giá, kế hoạch và quyết định qua các giai đoạn |
 
 ## 2. Công nghệ sử dụng
 
@@ -128,15 +164,15 @@ Các công cụ và trợ lý AI được sử dụng trong quá trình nghiên 
 
 SafeKid không chỉ hướng đến một thiết bị công nghệ, mà còn khám phá cách công nghệ có thể hỗ trợ sự độc lập của trẻ em và duy trì kết nối trong gia đình.
 
-**More room to grow. More ways to stay connected.**
+**Thêm không gian trưởng thành, thêm cách giữ kết nối.**
 
 ---
 
-**Developed by DigiBabi**  
-*A student startup project exploring design, technology, and family connection.*
+**Phát triển bởi DigiBabi**
+*Dự án khởi nghiệp sinh viên về thiết kế, công nghệ và kết nối gia đình.*
 
 ---
 
 📘 **Tài liệu kỹ thuật:** Xem [CodeGuideline.md](./CodeGuideline.md) để tìm hiểu cấu trúc source code, quy chuẩn lập trình và hướng dẫn phát triển dự án.
 
-**About Fynis/FynisFL:** [LinkBout/Fynis](https://www.linkbout.com/fynis) - thông tin liên hệ
+**Thông tin Fynis/FynisFL** [LinkBout/Fynis](https://www.linkbout.com/fynis) - thông tin liên hệ
