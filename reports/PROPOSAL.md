@@ -1,5 +1,7 @@
 # SafeKid · Đề xuất nâng cấp UI và motion
 
+> Cập nhật ngày 20/11/2026. Bản phát hành đã vào main tại f92098d qua PR #10. Phần dưới ghi dữ liệu và nhận định tại mốc lịch sử của từng mục. Trạng thái hiện hành nằm ở [PROGRESS.md](PROGRESS.md) và phần đầu [FINAL_REPORT.md](FINAL_REPORT.md).
+
 **19/11/2026 · Giai đoạn 2.** Đối chiếu [review](REVIEW.md) và [responsive audit](RESPONSIVE_AUDIT.md). Hướng thị giác là một tín hiệu turquoise có điểm đến trong từng cảnh. Hình đồng hồ WebP, tông xanh sương/navy, tỷ lệ chữ và lưới editorial của SafeKid làm nền. Tín hiệu trong khung hình đi từ đồng hồ tới một điểm quan trọng, rồi lắng để người xem đọc và thao tác.
 
 ## Thứ tự công việc

@@ -1,5 +1,7 @@
 # SafeKid · Nhật ký quyết định
 
+> Cập nhật ngày 20/11/2026. Bản phát hành đã vào main tại f92098d qua PR #10. Phần dưới ghi dữ liệu và nhận định tại mốc lịch sử của từng mục. Trạng thái hiện hành nằm ở [PROGRESS.md](PROGRESS.md) và phần đầu [FINAL_REPORT.md](FINAL_REPORT.md).
+
 | ID | Quyết định | Lý do | Cách đảo ngược hoặc kiểm chứng |
 |---|---|---|---|
 | D-01 | Lấy `89c2154` là base cho `codex/safekid-device-foundation`. | GitHub xác nhận đây là đầu PR #6. Commit `a266faa` địa phương có cùng cây source và khác SHA. | Giữ nguyên checkout cũ. Khi làm tiếp, xác minh lại PR #6 và cập nhật base nếu dự án có commit mới. |
@@ -10,3 +12,10 @@
 | D-06 | Dừng trước thay đổi source ứng dụng và trước mở các PR nháp. | Baseline Chromium/CPU 4× và WebKit chưa chạy được. Master Prompt yêu cầu cổng hiệu năng và cho dừng khi môi trường chặn. Một PR chỉ chứa báo cáo sẽ kích hoạt workflow chưa có baseline xác nhận. | Mở lại báo cáo, chạy baseline trên runner đủ browser/dependency, tiếp tục P-A rồi tạo stack theo đề xuất. |
 | D-07 | Dùng Playwright 1.62.0, axe-core 4.14.1 và Lighthouse 13.6.0 trong package QA riêng ở `tests/`. | Chạy matrix, quét a11y và Lighthouse trên runner. Gói QA không được import vào runtime. | Xóa package QA và job tương ứng nếu thay công cụ. |
 | D-08 | Tách job matrix theo engine và giữ kiểm tra đại diện trong browser review. | Lỗi tải/cài engine không dừng hai engine còn lại. Bản trước bị hủy tại bước cài cả ba engine trong một job. | Theo dõi thời gian từng job, chỉnh timeout từ dữ liệu runner. |
+
+## Quyết định có hiệu lực sau phát hành
+
+- D-02 và D-06 đã được thay thế bằng môi trường QA hoạt động, cài dependency và runner đủ ba browser. Giữ các mục cũ để giải thích lịch sử gỡ blocker.
+- D-05 đã hoàn tất bước triển khai. Có 7 thành phần mới trong motion/reactbits và 2 kỹ thuật đã tích hợp ở app-experience, xem bảng React Bits hiện hành.
+- Người dùng duyệt bản preview 9ad24e0. Đổi base PR #10 từ nhánh P-C sang main để hợp nhất toàn bộ chuỗi phụ thuộc trong một merge commit f92098d. Đây là mốc phát hành, các PR cũ không xác định trạng thái bản đang chạy.
+- Tài liệu kỹ thuật dùng tiếng Việt. Tên mã nguồn, lệnh, API và nhãn sản phẩm giữ nguyên để tra cứu chính xác.

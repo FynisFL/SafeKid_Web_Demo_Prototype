@@ -1,4 +1,6 @@
-# SafeKid · QA log baseline
+# SafeKid · Nhật ký kiểm thử
+
+> Cập nhật ngày 20/11/2026. Bản phát hành đã vào main tại f92098d qua PR #10. Phần dưới ghi dữ liệu và nhận định tại mốc lịch sử của từng mục. Trạng thái hiện hành nằm ở [PROGRESS.md](PROGRESS.md) và phần đầu [FINAL_REPORT.md](FINAL_REPORT.md).
 
 **19/11/2026 · Trước phát triển.** Đây là log kiểm thử cho `89c2154` và không phải kết quả của vòng QA sau triển khai.
 
@@ -64,3 +66,11 @@ WebKit hoàn tất đủ 450 ca viewport × route, detector báo 0 lỗi layout 
 - Ma trận của 49f2df0 qua Chromium, Firefox và job hiệu năng. Kiểm riêng khi bật motion tìm thấy tên nút Story và tương phản trong chuyển cảnh About. Đưa số nút lên đầu tên truy cập, giữ chữ ở độ đậm đầy đủ trong khi di chuyển, rồi audit lại Home, About và Chat với 0 vi phạm. Lượt Safari WebKit local 344×882 qua 25 URL và không tái hiện cảnh báo CTA /chat nằm dưới màn hình đầu. [Device Matrix của 49f2df0](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44541818746)
 - WebKit local tái hiện xung Watch ở Closing có đỉnh opacity dưới 0,4. Chuyển hai xung sang CSS scale và opacity, kéo dài vùng nhìn thấy, và giữ điểm kết thúc trong 1,15 giây. Ca lazy canvas dùng viewport đưa ảnh đồng hồ vào vùng nhìn thấy, chặn request chunk và kiểm CTA có thể dùng trước khi thả chunk.
 - Chờ duyệt trên iPhone Safari và Android Chrome trước khi merge. Cùng menu mobile, thử Zone → SOS, S-F AI → New, chỉnh bộ sưu tập → Product → Back, và mở trang chủ lần đầu qua mạng di động. Checkout vẫn là mô phỏng.
+
+## Nghiệm thu và phát hành ngày 20/11/2026
+
+Commit ứng viên 9ad24e0 đã qua cả 8 suite trên Chromium, Firefox và WebKit. Run ma trận 44545138560 có cả bốn job thành công, gồm ba engine và performance. Browser Review 44545138451 thành công. PR #10 được người dùng duyệt và merge vào main tại f92098d, cây mã nguồn khớp ứng viên đã duyệt. Run triển khai 44646141073 qua browser review và deploy GitHub Pages. Các lỗi Firefox/WebKit được ghi ở các mốc trước đã có kết quả chạy lại này.
+
+Axe mobile không có vi phạm trên phạm vi quét. Vẫn có cảnh báo detector về target nhỏ và nghi vấn clip, Lighthouse desktop accessibility 95–96. Các cảnh báo này tiếp tục được ghi nhận, không suy ra rằng tất cả yêu cầu accessibility trên máy thật đều đạt.
+
+[Ma trận nghiệm thu](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44545138560) · [Triển khai](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44646141073)

@@ -1,4 +1,6 @@
-# SafeKid · Review đầu PR #6
+# SafeKid · Đánh giá đầu PR #6
+
+> Cập nhật ngày 20/11/2026. Bản phát hành đã vào main tại f92098d qua PR #10. Phần dưới ghi dữ liệu và nhận định tại mốc lịch sử của từng mục. Trạng thái hiện hành nằm ở [PROGRESS.md](PROGRESS.md) và phần đầu [FINAL_REPORT.md](FINAL_REPORT.md).
 
 **19/11/2026.** Nguồn kiểm tra là `89c215430cfdd07bb603f2f4c2a7e1c9c50bd8bd`, đầu nhánh `codex/safekid-set-piece-scenes`. PR #6 đang mở dạng nháp, xếp trên PR #5. `main` ở `a9ff0723c4415f3fa8320da372b2d5760b50f220`. Workflow browser gần nhất cho `89c2154` có trạng thái `cancelled`. [PR #6](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/pull/6) · [GitHub Actions](https://github.com/FynisFL/SafeKid_Web_Demo_Prototype/actions/runs/44494827271)
 
