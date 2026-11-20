@@ -1,241 +1,142 @@
-import { useEffect, useRef, type PointerEvent, type ReactNode, type RefObject } from "react";
-import {
-  animate,
-  motion,
-  useInView,
-  useMotionTemplate,
-  useMotionValue,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from "motion/react";
+import { SET_PIECES } from "@/components/motion/setPieces";
+import { useEnhancedMotion } from "@/components/motion/useEnhancedMotion";
+import { ScrollFloat } from "@/components/motion/reactbits/ScrollFloat";
+import { ScrollReveal } from "@/components/motion/reactbits/ScrollReveal";
+import { useRef, type CSSProperties } from "react";
+import { ArrowRight, ArrowUpRight, Radio } from "lucide-react";
+import { motion, useInView, useReducedMotion } from "motion/react";
 import { Link } from "react-router-dom";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
-import { Magnetic } from "@/components/motion/Magnetic";
-import { useCanHover } from "@/hooks/useCanHover";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
+import dragonWatch from "@/assets/safekid/editions/dragon.webp";
+import { DISTANCE, DURATION, EASE } from "@/components/motion/tokens";
+import { useFirstScene } from "@/components/preloader/firstSceneContext";
 
-/* -------------------------------------------------------------------------- */
-/*  One timeline, one trigger.                                                */
-/*  `useRevealProgress` runs a single 0 → 1 value (2.4 s) when the copy       */
-/*  scrolls into view. Every element below reads a window of it, in order:    */
-/*  eyebrow → headline (by word, ≈0.1–1.2 s) → paragraph → CTAs → footnote.   */
-/*  The watch's depth drift is the only other motion, and it is scroll-linked. */
-/* -------------------------------------------------------------------------- */
+const shieldPoints = [[60, 6], [78, 13], [101, 23], [101, 43], [89, 72], [78, 87],
+  [60, 98], [42, 87], [31, 72], [19, 43], [19, 23], [42, 13]];
 
-const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
-const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
+const settle = { duration: DURATION.base, ease: EASE };
 
-function useSeg(p: MotionValue<number>, from: number, to: number) {
-  return useTransform(p, (v) => easeOut(clamp01((v - from) / (to - from))));
-}
+const closingPulse = (delay: number) =>
+  `sk-closing-pulse ${DURATION.base}s cubic-bezier(${EASE.join(",")}) ${delay}s both`;
 
-function useRevealProgress(ref: RefObject<Element | null>) {
-  const reduce = useReducedMotion();
-  const p = useMotionValue(reduce ? 1 : 0);
-  const inView = useInView(ref, { once: true, margin: "-10% 0px" });
+function ClosingSignal({ ready, reduce }: { ready: boolean; reduce: boolean }) {
+  const stage = useRef<HTMLDivElement>(null);
+  const inView = useInView(stage, { amount: 0.42 });
+  const motionAllowed = useEnhancedMotion();
+  const active = ready && !reduce && inView && motionAllowed;
 
-  useEffect(() => {
-    // Reduced motion, or no IntersectionObserver: show the finished state, never hide content.
-    if (reduce || typeof IntersectionObserver === "undefined") {
-      p.set(1);
-      return;
-    }
-    if (!inView) return;
-    const controls = animate(p, 1, { duration: 2.4, ease: "linear" });
-    return () => controls.stop();
-  }, [inView, reduce, p]);
-
-  return p;
-}
-
-/** Fades and lifts a block in once its window of the timeline opens. */
-function Step({
-  p,
-  from,
-  to,
-  lift = 12,
-  className,
-  children,
-}: {
-  p: MotionValue<number>;
-  from: number;
-  to: number;
-  lift?: number;
-  className?: string;
-  children: ReactNode;
-}) {
-  const t = useSeg(p, from, to);
-  const y = useTransform(t, (v) => lift * (1 - v));
   return (
-    <motion.div className={className} style={{ opacity: t, y }}>
-      {children}
+    <motion.div
+      ref={stage}
+      data-closing-stage
+      aria-hidden="true"
+      initial={false}
+      animate={active ? "arrive" : "rest"}
+      className="relative isolate aspect-[2/1] min-h-36 w-full overflow-hidden rounded-[22px] border border-white/10 bg-night md:aspect-[1.4/1] md:rounded-[28px]"
+    >
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_33%_44%,hsl(var(--primary)/0.26),transparent_62%)]" />
+      {SET_PIECES.closingShield && (
+        <motion.svg viewBox="0 0 120 104" className="pointer-events-none absolute left-[53%] top-1/2 h-full w-[48%] -translate-x-1/2 -translate-y-1/2"
+          variants={{ rest: { opacity: .34 }, arrive: { opacity: [.34, .94, .62], transition: { duration: 1.24, ease: EASE } } }}>
+          <motion.path d="M60 6L101 23v20c0 25-17 43-41 55-24-12-41-30-41-55V23Z"
+            fill="none" stroke="#52f4e0" strokeWidth="1.4"
+            variants={{ rest: { pathLength: 1 }, arrive: { pathLength: [.07, 1], transition: { duration: 1.18, ease: EASE } } }} />
+          {shieldPoints.map(([x, y], index) => (
+            <circle key={index} cx={x} cy={y} r="1.25" fill="#8ff9e8"
+              className={active ? "sk-shield-point sk-shield-point-active" : "sk-shield-point"}
+              style={{ "--dx": `${(x - 60) * .72}px`, "--dy": `${(y - 52) * .72}px`,
+                "--wait": `${index * .017}s` } as CSSProperties} />
+          ))}
+          <motion.path d="m46 51 10 10 19-23" fill="none" stroke="#52f4e0" strokeWidth="1.8" strokeLinecap="round"
+            variants={{ rest: { opacity: .42 }, arrive: { opacity: [.16, 1, .66], transition: { duration: 1.3, ease: EASE } } }} />
+        </motion.svg>
+      )}
+      <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(hsl(var(--primary)/0.65)_1px,transparent_1px)] [background-size:15px_15px]" />
+
+      <div className="absolute left-[33%] top-1/2 grid w-[42%] -translate-x-1/2 -translate-y-1/2 place-items-center">
+        <span className="absolute aspect-square w-full rounded-full border border-primary/20" />
+        <span data-closing-pulse="watch" className="absolute aspect-square w-full rounded-full border-2 border-primary opacity-0"
+          style={{ animation: active ? closingPulse(DURATION.feedback) : undefined }} />
+        <motion.img
+          src={dragonWatch}
+          alt=""
+          width={620}
+          height={620}
+          loading="lazy"
+          decoding="async"
+          variants={{
+            rest: { y: reduce ? 0 : DISTANCE.sm, rotate: -9 },
+            arrive: { y: 0, rotate: -6, transition: settle },
+          }}
+          className="relative w-full select-none drop-shadow-[0_12px_18px_rgba(0,0,0,0.38)]"
+        />
+      </div>
+
+      <div className="absolute left-[73%] top-1/2 grid aspect-square w-[32%] -translate-x-1/2 -translate-y-1/2 place-items-center">
+        <span className="absolute inset-0 rounded-full border border-primary/20" />
+        <span data-closing-pulse="app" className="absolute inset-0 rounded-full border-2 border-primary opacity-0"
+          style={{ animation: active ? closingPulse(DURATION.quick) : undefined }} />
+        <motion.div
+          variants={{
+            rest: { y: reduce ? 0 : DISTANCE.sm, rotate: 8 },
+            arrive: { y: 0, rotate: 5, transition: { ...settle, delay: DURATION.feedback } },
+          }}
+          className="relative grid aspect-[0.59] w-[53%] place-items-center rounded-[0.8rem] border border-white/35 bg-[#153744] p-1 shadow-[0_10px_20px_rgba(0,0,0,0.4)] md:rounded-[1.05rem] md:p-1.5"
+        >
+          <div className="flex size-full flex-col items-center justify-center gap-1.5 rounded-[0.56rem] bg-aqua-soft md:gap-2.5 md:rounded-[0.75rem]">
+            <Radio aria-hidden="true" className="size-[30%] text-aqua-ink" strokeWidth={1.5} />
+            <span className="h-px w-[52%] rounded-full bg-deep/25 md:h-0.5" />
+            <span className="h-px w-[34%] rounded-full bg-deep/25 md:h-0.5" />
+          </div>
+        </motion.div>
+      </div>
     </motion.div>
   );
 }
 
-function Word({
-  text,
-  p,
-  from,
-  to,
-  accent = false,
-}: {
-  text: string;
-  p: MotionValue<number>;
-  from: number;
-  to: number;
-  accent?: boolean;
-}) {
-  const t = useSeg(p, from, to);
-  const y = useTransform(t, (v) => `${(1 - v) * 115}%`);
-  return (
-    <span className="-my-[0.12em] inline-block overflow-hidden py-[0.12em] align-bottom">
-      <motion.span className={accent ? "inline-block text-primary" : "inline-block"} style={{ y }}>
-        {text}
-      </motion.span>
-    </span>
-  );
-}
-
 export function Closing() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const copyRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion() ?? false;
-  const p = useRevealProgress(copyRef);
-
-  // Depth: the watch drifts a little slower than the page. Moves a wrapper, never the filtered image.
-  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ["start end", "end start"] });
-  const watchY = useTransform(scrollYProgress, [0, 1], [-36, 36]);
-  // It also settles: a slight tilt that levels out as the panel passes the middle of the screen.
-  const watchRotate = useTransform(scrollYProgress, [0, 0.5, 1], [-6, 0, 4]);
-
-  // Light: on a fine pointer, a soft turquoise glow follows the cursor across the dark panel.
-  const canHover = useCanHover();
-  const spotX = useMotionValue(50);
-  const spotY = useMotionValue(50);
-  const sx = useSpring(spotX, { stiffness: 120, damping: 20 });
-  const sy = useSpring(spotY, { stiffness: 120, damping: 20 });
-  const spotOpacity = useSpring(0, { stiffness: 120, damping: 24 });
-  const spotlight = useMotionTemplate`radial-gradient(420px circle at ${sx}% ${sy}%, hsl(var(--primary) / 0.16), transparent 65%)`;
-  const light = canHover && !reduce;
-
-  function onPanelMove(event: PointerEvent<HTMLDivElement>) {
-    if (!light || event.pointerType === "touch") return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    spotX.set(((event.clientX - rect.left) / rect.width) * 100);
-    spotY.set(((event.clientY - rect.top) / rect.height) * 100);
-  }
-
-  // The panel's left rule draws once, top to bottom.
-  const rule = useSeg(p, 0.15, 0.95);
-  const ruleClip = useTransform(rule, (v) => `inset(0% 0% ${(1 - v) * 100}% 0%)`);
+  const { entrance } = useFirstScene();
+  const ready = entrance !== "waiting";
 
   return (
-    <section ref={sectionRef} className="bg-white pb-20 pt-4 sm:pb-24">
+    <section aria-labelledby="home-closing-heading" className="bg-white pb-14 sm:pb-20">
       <div className="shell">
-        <div
-          onPointerMove={onPanelMove}
-          onPointerEnter={() => light && spotOpacity.set(1)}
-          onPointerLeave={() => spotOpacity.set(0)}
-          className="relative overflow-hidden rounded-[32px] bg-night px-6 py-16 sm:px-10 sm:py-20 lg:rounded-[44px] lg:px-16 lg:py-24"
-        >
-          {light && (
-            <motion.div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0"
-              style={{ background: spotlight, opacity: spotOpacity }}
-            />
-          )}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-24 -top-24 h-[520px] w-[520px] rounded-full bg-primary/12 blur-[100px]"
-          />
-          <motion.div
-            aria-hidden="true"
-            className="pointer-events-none absolute left-[8%] top-1/2 hidden h-[300px] w-px -translate-y-1/2 bg-gradient-to-b from-transparent via-primary/45 to-transparent lg:block"
-            style={{ clipPath: ruleClip }}
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -right-10 bottom-0 hidden w-[42%] max-w-[440px] lg:block"
-          >
-            <motion.div className="relative" style={reduce ? undefined : { y: watchY, rotate: watchRotate }}>
-              <div className="absolute inset-[8%] rounded-full bg-primary/15 blur-[60px]" />
-              <img
-                src={heroWatch}
-                alt=""
-                className="relative h-full w-full object-contain drop-shadow-[0_50px_80px_rgba(0,0,0,0.45)]"
-                loading="lazy"
-              />
-            </motion.div>
+        <div className="rounded-[32px] border border-ink/10 bg-mist px-5 py-7 sm:px-8 sm:py-9 md:grid md:grid-cols-[minmax(0,1.12fr)_minmax(0,0.88fr)] md:items-center md:gap-7 lg:rounded-[40px] lg:px-12 lg:py-11 xl:gap-14">
+          <div className="min-w-0">
+            <span aria-hidden="true" className="eyebrow-line" />
+            <h2 id="home-closing-heading" className="display mt-4 text-[clamp(2rem,4.2vw,4.3rem)] leading-[1.02]">
+              Independence,{" "}
+              <span className="block text-aqua-ink"><ScrollFloat>with connection.</ScrollFloat></span>
+            </h2>
+            <ScrollReveal className="lede mt-4 max-w-[48ch]">
+              SafeKid imagines a little more confidence for children, and a little more reassurance
+              for the families cheering them on.
+            </ScrollReveal>
+
+            <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <Link
+                to="/zodiac"
+                className="group inline-flex min-h-12 items-center gap-3 rounded-full bg-ink px-4 py-2.5 text-[13px] font-medium text-white transition-colors hover:bg-night"
+              >
+                Meet the 12 editions
+                <ArrowRight className="size-4 shrink-0 text-primary motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:translate-x-1 motion-safe:group-focus-visible:translate-x-1" aria-hidden="true" />
+              </Link>
+              <Link
+                to="/app"
+                className="group inline-flex min-h-12 items-center gap-2 rounded-full px-2 py-2.5 text-[13px] font-semibold text-aqua-ink transition-colors hover:bg-white"
+              >
+                Try the Parent App
+                <ArrowUpRight className="size-4 shrink-0 motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:translate-x-0.5 motion-safe:group-focus-visible:-translate-y-0.5 motion-safe:group-focus-visible:translate-x-0.5" aria-hidden="true" />
+              </Link>
+            </div>
+
+            <p className="mt-3 text-xs leading-relaxed text-deep">
+              A concept by SafeKid, developed by DigiBabi. No live device or service.
+            </p>
           </div>
 
-          <div ref={copyRef} className="relative max-w-[720px]">
-            <Step p={p} from={0} to={0.12} lift={8}>
-              <p className="eyebrow eyebrow-inverse">
-                <span className="eyebrow-line" />
-                For all the little adventures ahead
-              </p>
-            </Step>
-
-            <h2 className="display display-lg mt-6 text-white">
-              <span className="sr-only">Independence, with connection.</span>
-              <span aria-hidden="true" className="block">
-                <span className="block">
-                  <Word text="Independence," p={p} from={0.04} to={0.3} />
-                </span>
-                <span className="block">
-                  <Word text="with" p={p} from={0.2} to={0.44} accent />{" "}
-                  <Word text="connection." p={p} from={0.28} to={0.52} accent />
-                </span>
-              </span>
-            </h2>
-
-            <Step p={p} from={0.5} to={0.68}>
-              <p className="mt-6 max-w-[44ch] text-[15px] leading-relaxed text-white/55">
-                SafeKid imagines a little more confidence for children, and a little more reassurance
-                for the families cheering them on.
-              </p>
-            </Step>
-
-            <Step p={p} from={0.66} to={0.86}>
-              <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-6">
-                <Magnetic>
-                  <Link
-                    to="/zodiac"
-                    className="group inline-flex h-[54px] items-center gap-3 rounded-full bg-white pl-6 pr-5 text-[14px] font-medium text-ink transition-all duration-300 hover:-translate-y-0.5 hover:bg-aqua-soft btn-motion btn-motion-light"
-                  >
-                    Meet the 12 editions
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-ink/5 transition-transform duration-300 group-hover:translate-x-0.5">
-                      <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
-                    </span>
-                  </Link>
-                </Magnetic>
-                <Link
-                  to="/contact"
-                  className="group press inline-flex items-center gap-2 text-[14px] font-medium text-white/75 transition-colors hover:text-white"
-                >
-                  Let's talk about SafeKid
-                  <ArrowUpRight
-                    className="h-4 w-4 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    aria-hidden="true"
-                  />
-                </Link>
-              </div>
-            </Step>
-
-            <Step p={p} from={0.82} to={1} lift={0}>
-              <div className="mt-12 flex flex-wrap items-center gap-x-5 gap-y-2 text-[10px] uppercase tracking-[0.18em] text-white/50">
-                <span>A concept by SafeKid</span>
-                <span className="h-3 w-px bg-white/15" />
-                <span>Developed by DigiBabi</span>
-                <span className="h-3 w-px bg-white/15" />
-                <span>No live device or service</span>
-              </div>
-            </Step>
+          <div className="mt-5 min-w-0 md:mt-0">
+            <ClosingSignal ready={ready} reduce={reduce} />
           </div>
         </div>
       </div>

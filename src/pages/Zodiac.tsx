@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useReducedMotion } from "motion/react";
-import { Link, NavLink } from "react-router-dom";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { formatVnd, WATCH_PRICE_VND } from "@/components/shop/shoppingBag";
 import { SiteLayout } from "@/components/site/SiteLayout";
-import { PageHero } from "@/components/site/PageHero";
 import { ZodiacStage } from "@/components/home/ZodiacStage";
 import { Reveal } from "@/components/site/Reveal";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -12,7 +11,7 @@ import { TiltCard } from "@/components/motion/TiltCard";
 import { Magnetic } from "@/components/motion/Magnetic";
 import { usePageTitle } from "@/hooks/usePageTitle";
 import { zodiacProducts } from "@/data/zodiac";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
+import { collectionVisit } from "@/components/site/collectionVisit";
 
 function CollectionRail({ stageOwnsTransition, onEditionClick }: { stageOwnsTransition: boolean; onEditionClick: () => void }) {
   const reduce = useReducedMotion();
@@ -70,7 +69,7 @@ function CollectionRail({ stageOwnsTransition, onEditionClick }: { stageOwnsTran
                       </span>
                       <span className="flex items-end justify-between gap-3 px-2 pb-1 pt-3.5">
                         <span>
-                          <span className="block text-[9px] uppercase tracking-[0.18em] text-primary">
+                          <span className="block text-[9px] uppercase tracking-[0.18em] text-aqua-ink">
                             {product.animal}
                           </span>
                           <span className="mt-1 block font-display text-[16px] font-medium tracking-[-0.02em] text-ink">
@@ -145,7 +144,25 @@ function Closing() {
 }
 
 export default function Zodiac() {
-  const [stageOwnsTransition, setStageOwnsTransition] = useState(false);
+  const { key, pathname } = useLocation();
+  const visit = collectionVisit(key, pathname);
+  const [stageOwnsTransition, setStageOwnsTransition] = useState(visit.stageOwnsTransition);
+
+  useLayoutEffect(() => {
+    function rememberScroll() {
+      if (window.history.state?.key === key || (key === "default" && !window.history.state?.key)) {
+        visit.scrollY = window.scrollY;
+      }
+    }
+    window.addEventListener("scroll", rememberScroll, { passive: true });
+    return () => window.removeEventListener("scroll", rememberScroll);
+  }, [key, visit]);
+
+  function chooseTransitionSource(stage: boolean) {
+    visit.scrollY = window.scrollY;
+    visit.stageOwnsTransition = stage;
+    setStageOwnsTransition(stage);
+  }
   usePageTitle(
     "Zodiac Collection | SafeKid",
     "Twelve SafeKid smartwatch concepts inspired by the Vietnamese Zodiac. Explore every edition."
@@ -153,52 +170,39 @@ export default function Zodiac() {
 
   return (
     <SiteLayout>
-      <PageHero
-        eyebrow="Inspired by the Vietnamese Zodiac"
-        title={
-          <>
-            Twelve little
-            <br />
-            <span className="text-primary">explorers.</span>
-          </>
-        }
-        intro="Meet the SafeKid collection: playful Zodiac-inspired designs imagined for the curious little people finding their way in the world."
-        actions={
-          <a
-            href="#collection"
-            className="group inline-flex h-12 items-center gap-2 rounded-full bg-ink px-6 text-[13.5px] font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-night btn-motion"
-          >
-            Explore all 12 editions
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </a>
-        }
-        meta={`${formatVnd(WATCH_PRICE_VND)} per watch · Not available to order yet`}
-        art={
-          <div className="relative mx-auto aspect-square w-full max-w-[440px]">
-            <div aria-hidden="true" className="stage-glow absolute inset-[4%] rounded-full" />
-            <div aria-hidden="true" className="absolute inset-[12%] rounded-full border border-primary/20" />
-            <div
-              aria-hidden="true"
-              className="absolute inset-[20%] rounded-full border border-dashed border-primary/25 animate-sk-spin"
-            />
-            <img
-              src={heroWatch}
-              alt="SafeKid Mouse edition smartwatch concept"
-              className="absolute inset-0 h-full w-full object-contain drop-shadow-[0_40px_70px_rgba(16,42,56,0.16)]"
-            />
-            <span className="absolute left-0 top-6 rounded-full border border-white/80 bg-white/80 px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.18em] text-deep/60 backdrop-blur">
-              12 editions
-            </span>
-            <span className="absolute bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/80 bg-white/80 px-3 py-1.5 text-[9px] font-medium uppercase tracking-[0.18em] text-deep/60 backdrop-blur">
-              Vietnamese Zodiac
-            </span>
+      <section aria-labelledby="zodiac-title" className="bg-mist pb-6 pt-[100px] sm:pb-8 lg:pt-[124px]">
+        <div className="shell">
+          <div className="grid items-end gap-4 border-b border-deep/15 pb-5 sm:gap-6 sm:pb-7 md:grid-cols-[minmax(0,1fr)_minmax(0,0.78fr)] md:gap-10 lg:gap-16">
+            <div className="min-w-0">
+              <p className="eyebrow text-aqua-ink">The Vietnamese Zodiac</p>
+              <h1 id="zodiac-title" className="display mt-3 text-[clamp(2.4rem,6vw,5.6rem)] leading-[1.02]">
+                Twelve little <span className="text-aqua-ink">explorers.</span>
+              </h1>
+            </div>
+            <div className="min-w-0">
+              <p className="max-w-[42ch] text-[15px] leading-relaxed text-deep">
+                Discover a SafeKid watch design for each character in the Vietnamese Zodiac.
+              </p>
+              <Link to="#collection" className="mt-1 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-aqua-ink underline-offset-4 hover:underline">
+                Explore all 12 editions
+                <ArrowDown className="size-4 shrink-0" aria-hidden="true" />
+              </Link>
+              <p className="text-xs leading-relaxed text-deep">
+                {formatVnd(WATCH_PRICE_VND)} per watch · Not available to order yet
+              </p>
+            </div>
           </div>
-        }
-      />
+        </div>
+      </section>
 
-      <div id="collection" />
-      <ZodiacStage variant="page" ownsEditionTransition={stageOwnsTransition} onEditionClick={() => setStageOwnsTransition(true)} />
-      <CollectionRail stageOwnsTransition={stageOwnsTransition} onEditionClick={() => setStageOwnsTransition(false)} />
+      <ZodiacStage
+        variant="page"
+        initialIndex={visit.index}
+        onSelectionChange={(index) => { visit.index = index; }}
+        ownsEditionTransition={stageOwnsTransition}
+        onEditionClick={() => chooseTransitionSource(true)}
+      />
+      <CollectionRail stageOwnsTransition={stageOwnsTransition} onEditionClick={() => chooseTransitionSource(false)} />
       <Closing />
     </SiteLayout>
   );

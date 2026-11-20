@@ -1,0 +1,39 @@
+name: SafeKid browser checks
+
+on:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+permissions:
+  contents: read
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build
+      - run: python -m pip install playwright==1.62.0
+      - run: python -m playwright install --with-deps chromium
+      - name: Test production preview
+        run: |
+          npm run preview -- --host 127.0.0.1 > /tmp/safekid-preview.log 2>&1 &
+          curl -fsS --retry 20 --retry-connrefused --retry-delay 1 http://127.0.0.1:4173/ > /dev/null
+          SAFEKID_SUITE=interactions SAFEKID_SIZE=1 python tests/motion_smoke.py
+          python tests/responsive_review.py
+          python tests/collection_navigation.py
+          python tests/connected_scenes.py
+          python tests/first_scene.py
+          python tests/reading_layout.py
+          python tests/device_regressions.py

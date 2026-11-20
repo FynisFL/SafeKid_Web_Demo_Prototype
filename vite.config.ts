@@ -12,6 +12,13 @@ const pageEntries: PluginOption = {
     if (!dir || index?.type !== "asset") return;
 
     const html = typeof index.source === "string" ? index.source : new TextDecoder().decode(index.source);
+    // Retry can revalidate a failed lazy route by its deployed, hashed URL.
+    const routeChunks = Object.fromEntries(Object.values(bundle).flatMap((entry) =>
+      entry.type === "chunk" && entry.isDynamicEntry && /\/src\/pages\/(Product|Zodiac)\.tsx$/.test(entry.facadeModuleId ?? "")
+        ? [[entry.name, entry.fileName]]
+        : []
+    ));
+    await writeFile(path.join(dir, "route-chunks.json"), JSON.stringify(routeChunks));
     await writeFile(path.join(dir, "404.html"), html.replace("<head>", '<head><meta name="robots" content="noindex" />'));
 
     const editionImages = await readdir(path.join(__dirname, "src/assets/safekid/editions"));

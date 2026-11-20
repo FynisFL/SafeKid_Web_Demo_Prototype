@@ -19,6 +19,21 @@ import { DURATION, EASE, SCROLL_SPRING } from "@/components/motion/tokens";
 const PILLARS = ["Core + Skin + Skill", "Trade-in", "Refurbishment", "Watch Passport"];
 const LIVES = LIFE_STAGES.slice(0, 3);
 
+function LifeSummary({ stage }: { stage: (typeof LIFE_STAGES)[number] }) {
+  const wipeCount = wipeEventsAt(stage.id).length;
+  return (
+    <>
+      <p className="text-[10px] uppercase tracking-[0.2em] text-deep">{stage.eyebrow}</p>
+      <p className="mt-1 font-display text-[1.5rem] font-medium leading-tight tracking-[-0.04em] text-ink">
+        {stage.title}
+      </p>
+      <p className="mt-2 text-[13px] text-deep/85">
+        {wipeCount} Certified Data Wipe record{wipeCount === 1 ? "" : "s"} · {stage.status.split(" · ")[1]}
+      </p>
+    </>
+  );
+}
+
 /**
  * Homepage teaser. One scroll-linked idea: as the section passes, the sample
  * passport moves from Life 1 to Life 3. The dedicated page holds the full demo.
@@ -27,6 +42,7 @@ export function WatchPassportSection() {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const [active, setActive] = useState(reduce ? 2 : 0);
+  const activeLife = useRef(active);
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 75%", "end 55%"] });
   const smooth = useSpring(scrollYProgress, SCROLL_SPRING);
@@ -37,18 +53,20 @@ export function WatchPassportSection() {
 
   useMotionValueEvent(scrollYProgress, "change", (v) => {
     if (reduce) return;
-    setActive(v < 0.4 ? 0 : v < 0.8 ? 1 : 2);
+    const next = v < 0.4 ? 0 : v < 0.8 ? 1 : 2;
+    if (next === activeLife.current) return;
+    activeLife.current = next;
+    setActive(next);
   });
 
   const shown = reduce ? LIVES.length - 1 : active;
   const stage = LIVES[shown];
-  const wipeCount = wipeEventsAt(stage.id).length;
 
   return (
     <section ref={ref} className="relative overflow-hidden bg-mist py-20 sm:py-28 lg:py-32">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -right-32 top-0 h-[520px] w-[520px] rounded-full bg-white/80 blur-[100px]"
+        className="pointer-events-none absolute -right-32 top-0 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle,hsl(0_0%_100%/0.88),transparent_72%)]"
       />
       <div className="shell relative grid items-center gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
         <div>
@@ -101,7 +119,7 @@ export function WatchPassportSection() {
           >
             <div className="overflow-hidden rounded-[28px] border border-border/80 bg-white shadow-[0_40px_90px_-60px_rgba(16,42,56,0.55)] lg:rounded-[36px]">
               <div className="flex items-center justify-between gap-3 border-b border-border/80 px-6 py-4">
-                <p className="flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-deep/70">
+                <p className="flex items-center gap-2 text-[10.5px] font-semibold uppercase tracking-[0.22em] text-deep">
                   <Fingerprint className="h-4 w-4 text-primary" aria-hidden="true" />
                   Watch Passport
                 </p>
@@ -110,7 +128,7 @@ export function WatchPassportSection() {
                 </span>
               </div>
               <div className="px-6 pb-7 pt-6">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-deep/55">Device ID · sample</p>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-deep">Device ID · sample</p>
                 <p className="mt-1 font-mono text-[1.25rem] tracking-[0.06em] text-ink">{SAMPLE_DEVICE_ID}</p>
 
                 <div className="mt-7" aria-hidden="true">
@@ -133,28 +151,30 @@ export function WatchPassportSection() {
                   </div>
                 </div>
 
-                <div className="mt-7 min-h-[92px]" aria-live="polite">
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.div
-                      key={stage.id}
-                      initial={reduce ? false : { opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={reduce ? undefined : { opacity: 0, y: -6 }}
-                      transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
-                    >
-                      <p className="text-[10px] uppercase tracking-[0.2em] text-deep/55">{stage.eyebrow}</p>
-                      <p className="mt-1 font-display text-[1.5rem] font-medium leading-tight tracking-[-0.04em] text-ink">
-                        {stage.title}
-                      </p>
-                      <p className="mt-2 text-[13px] text-deep/65">
-                        {wipeCount} Certified Data Wipe record{wipeCount === 1 ? "" : "s"} · {stage.status.split(" · ")[1]}
-                      </p>
-                    </motion.div>
-                  </AnimatePresence>
+                <div className="mt-7 grid min-h-[92px]">
+                  {/* Keep the tallest chapter in flow at the actual width and text size. */}
+                  {LIVES.map(life => (
+                    <div key={life.id} aria-hidden="true" className="invisible col-start-1 row-start-1 select-none">
+                      <LifeSummary stage={life} />
+                    </div>
+                  ))}
+                  <div className="col-start-1 row-start-1" aria-live="polite">
+                    <AnimatePresence mode="wait" initial={false}>
+                      <motion.div
+                        key={stage.id}
+                        initial={reduce ? false : { opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={reduce ? undefined : { opacity: 0, y: -6 }}
+                        transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
+                      >
+                        <LifeSummary stage={stage} />
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
                 </div>
               </div>
             </div>
-            <p className="mt-4 text-center text-[11px] text-deep/55">
+            <p className="mt-4 text-center text-[11px] text-deep">
               Sample information. Not a real connected device.
             </p>
           </motion.div>

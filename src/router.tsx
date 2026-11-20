@@ -12,6 +12,8 @@ const Chat = lazy(() => import("./pages/Chat"));
 const Sos = lazy(() => import("./pages/Sos"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
+// Route configuration intentionally owns this compatibility redirect.
+// eslint-disable-next-line react-refresh/only-export-components
 function PassportRedirect() {
   const { search, hash } = useLocation();
   return <Navigate to={{ pathname: "/watch-passport", search, hash }} replace />;
@@ -20,10 +22,10 @@ function PassportRedirect() {
 export const routers = [
   { path: "/", name: "home", element: <Home /> },
   { path: "/app", name: "app", element: <AppExperience /> },
-  { path: "/zodiac", name: "zodiac", lazy: async () => ({ Component: (await import("./pages/Zodiac")).default }) },
+  { path: "/zodiac", name: "zodiac", handle: { retryChunk: "Zodiac" }, lazy: async () => ({ Component: (await import("./pages/Zodiac")).default }) },
   { path: "/watchpassport", name: "watch-passport-legacy", element: <PassportRedirect /> },
   { path: "/watch-passport", name: "watch-passport", element: <WatchPassport /> },
-  { path: "/product/:id", name: "product", lazy: async () => ({ Component: (await import("./pages/Product")).default }) },
+  { path: "/product/:id", name: "product", handle: { retryChunk: "Product" }, lazy: async () => ({ Component: (await import("./pages/Product")).default }) },
   { path: "/cart", name: "cart", element: <ShoppingBag /> },
   { path: "/checkout", name: "checkout", element: <ShoppingBag checkout /> },
   { path: "/about", name: "about", element: <About /> },

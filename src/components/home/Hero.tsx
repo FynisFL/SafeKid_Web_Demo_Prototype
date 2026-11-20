@@ -1,21 +1,30 @@
-import { useRef, type PointerEvent } from "react";
+import { CountUp } from "@/components/motion/reactbits/CountUp";
+import { ErrorBoundary } from "react-error-boundary";
+import { SET_PIECES } from "@/components/motion/setPieces";
+import { useEnhancedMotion } from "@/components/motion/useEnhancedMotion";
+import { lazy, Suspense, useEffect, useRef, useState, type PointerEvent } from "react";
 import { Link } from "react-router-dom";
 import {
   motion,
   useMotionValue,
   useReducedMotion,
   useScroll,
+  useInView,
   useSpring,
   useTransform,
 } from "motion/react";
 import { ArrowDown, ArrowUpRight, MoveDown } from "lucide-react";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
-import { EASE } from "@/components/motion/tokens";
+import heroWatch from "@/assets/safekid/editions/rat.webp";
+import { useFirstScene } from "@/components/preloader/firstSceneContext";
+import { DURATION, EASE } from "@/components/motion/tokens";
 
 const ease = EASE;
+const HeroSignal = lazy(() => import("./HeroSignal"));
 
 function OrbitTicks() {
   const reduce = useReducedMotion();
+  const { entrance } = useFirstScene();
+  const animate = entrance === "play" && !reduce;
 
   return (
     <svg
@@ -32,8 +41,8 @@ function OrbitTicks() {
         strokeWidth="0.6"
         opacity="0.45"
         initial={reduce ? false : { pathLength: 0 }}
-        animate={{ pathLength: 1 }}
-        transition={{ duration: 1.8, delay: 0.35, ease }}
+        animate={{ pathLength: entrance === "waiting" ? 0 : 1 }}
+        transition={{ duration: animate ? 1.8 : 0, delay: animate ? 0.35 : 0, ease }}
       />
       <motion.circle
         cx="200"
@@ -45,8 +54,8 @@ function OrbitTicks() {
         strokeDasharray="1 13"
         opacity="0.9"
         initial={reduce ? false : { opacity: 0 }}
-        animate={{ opacity: 0.9 }}
-        transition={{ duration: 1.2, delay: 0.9 }}
+        animate={{ opacity: entrance === "waiting" ? 0 : 0.9 }}
+        transition={{ duration: animate ? DURATION.slow : 0, delay: animate ? 0.9 : 0 }}
       />
       {Array.from({ length: 12 }).map((_, index) => {
         const angle = (index * 360) / 12;
@@ -61,8 +70,8 @@ function OrbitTicks() {
             strokeWidth={index % 3 === 0 ? 1.4 : 0.8}
             transform={`rotate(${angle} 200 200)`}
             initial={reduce ? false : { opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.8 + index * 0.06 }}
+            animate={{ opacity: entrance === "waiting" ? 0 : 1 }}
+            transition={{ duration: animate ? 0.5 : 0, delay: animate ? 0.8 + index * 0.06 : 0 }}
           />
         );
       })}
@@ -73,18 +82,32 @@ function OrbitTicks() {
 export function Hero() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const artRef = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
+  const { entrance } = useFirstScene();
+  const systemReduce = useReducedMotion();
+  const reduce = systemReduce || entrance === "static";
+  const waiting = entrance === "waiting";
+
+  useEffect(() => {
+    if (!waiting) performance.mark("safekid-hero-enter");
+  }, [waiting]);
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const artY = useTransform(scrollYProgress, [0, 1], [0, -64]);
-  const artScale = useTransform(scrollYProgress, [0, 1], [1, 0.94]);
+  const visible = useInView(sectionRef);
+  const artVisible = useInView(artRef);
+  const enhanced = useEnhancedMotion();
+  const [signalReady, setSignalReady] = useState(false);
+  useEffect(() => {
+    if (waiting || reduce || !enhanced || !artVisible || !SET_PIECES.heroSignal) return;
+    const timer = window.setTimeout(() => setSignalReady(true), 420);
+    return () => window.clearTimeout(timer);
+  }, [enhanced, reduce, artVisible, waiting]);
   const copyY = useTransform(scrollYProgress, [0, 1], [0, 40]);
   // Starts late on purpose: the CTAs sit about 60-70% down the hero and must stay readable
   // (>= ~0.7 opacity) for as long as they are on screen. See HE-1.
-  const copyOpacity = useTransform(scrollYProgress, [0.6, 1], [1, 0.25]);
+  const copyOpacity = useTransform(scrollYProgress, [0.75, 1], [1, 0.82]);
   // 36 degrees in total while the hero scrolls away.
   const ticksRotate = useTransform(scrollYProgress, [0, 1], [0, 36]);
 
@@ -114,11 +137,12 @@ export function Hero() {
     pointerY.set(0);
   }
 
+
   const motionProps = reduce
     ? {}
     : {
         initial: "hidden" as const,
-        animate: "show" as const,
+        animate: waiting ? "hidden" as const : "show" as const,
       };
 
   const container = {
@@ -139,7 +163,7 @@ export function Hero() {
   return (
     <section
       ref={sectionRef}
-      className="relative overflow-hidden bg-white pb-10 pt-[92px] lg:pb-14 lg:pt-[104px]"
+      className="relative isolate overflow-hidden bg-white pb-12 pt-[92px] lg:pb-20 lg:pt-[104px]"
       aria-label="SafeKid introduction"
     >
       <div
@@ -152,21 +176,14 @@ export function Hero() {
       />
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-mist/60"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[29%] bg-gradient-to-b from-transparent via-mist/70 to-[#dcefee]"
       />
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-y-0 left-[7%] hidden w-px bg-ink/[0.05] lg:block"
       />
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-y-0 left-[7%] hidden w-px origin-top bg-primary/35 lg:block"
-        initial={reduce ? false : { scaleY: 0 }}
-        animate={{ scaleY: 1 }}
-        transition={{ duration: 1.8, delay: 0.5, ease }}
-      />
 
-      <div className="shell relative grid items-center gap-12 pb-8 pt-6 lg:grid-cols-[1.02fr_0.98fr] lg:gap-4 lg:pb-12">
+      <div className="shell relative grid items-center gap-5 pb-8 pt-2 sm:gap-12 sm:pt-6 lg:grid-cols-[1.02fr_0.98fr] lg:gap-4 lg:pb-12">
         <motion.div
           style={reduce ? undefined : { y: copyY, opacity: copyOpacity }}
           {...motionProps}
@@ -178,7 +195,7 @@ export function Hero() {
             A little more room to grow
           </motion.p>
 
-          <h1 className="display display-xl mt-6 text-ink">
+          <h1 className="display display-xl mt-4 sm:mt-6 text-ink">
             <span className="block overflow-hidden pb-[0.04em]">
               <motion.span variants={reduce ? undefined : line} className="block">
                 Let them
@@ -186,14 +203,14 @@ export function Hero() {
             </span>
             <span className="block overflow-hidden pb-[0.04em]">
               <motion.span variants={reduce ? undefined : line} className="block">
-                explore <span className="text-primary">the world.</span>
+                explore <span className="text-aqua-ink">the world.</span>
               </motion.span>
             </span>
           </h1>
 
           <motion.p
             variants={reduce ? undefined : soft}
-            className="lede mt-7 max-w-[46ch] text-[16px] sm:text-[17px]"
+            className="lede mt-4 max-w-[46ch] text-[15px] leading-relaxed sm:mt-7 sm:text-[17px]"
           >
             A little independence for them. A little more reassurance for you. SafeKid is a product
             concept built around the space between both.
@@ -201,7 +218,7 @@ export function Hero() {
 
           <motion.div
             variants={reduce ? undefined : soft}
-            className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-7"
+            className="mt-5 flex flex-wrap items-center gap-3 sm:mt-9 sm:flex-row sm:items-center sm:gap-7"
           >
             <a
               href="#story"
@@ -214,7 +231,7 @@ export function Hero() {
             </a>
             <Link
               to="/zodiac"
-              className="group inline-flex items-center gap-2 text-[14px] font-medium text-ink"
+              className="group inline-flex min-h-11 items-center gap-2 text-[14px] font-medium text-ink"
             >
               Meet the 12 Zodiac editions
               <ArrowUpRight
@@ -226,7 +243,7 @@ export function Hero() {
 
           <motion.div
             variants={reduce ? undefined : soft}
-            className="mt-11 flex items-center gap-4 text-[11px] text-deep/50"
+            className="mt-5 flex flex-wrap items-center gap-2 text-[11px] text-deep/85 sm:mt-11 sm:gap-4"
           >
             <span className="inline-flex items-center gap-2">
               <span className="relative flex h-2 w-2">
@@ -238,26 +255,29 @@ export function Hero() {
             <span className="h-3 w-px bg-ink/10" />
             <span>No device connected</span>
             <span className="h-3 w-px bg-ink/10" />
-            <span>12 editions</span>
+            <span><CountUp value={12} /> editions</span>
           </motion.div>
         </motion.div>
 
-        <motion.div
-          style={reduce ? undefined : { y: artY, scale: artScale }}
-          className="relative z-0 flex w-full justify-center lg:justify-end"
-        >
+        <div className="relative z-0 flex w-full justify-center lg:justify-end">
           <motion.div
-            initial={reduce ? undefined : { opacity: 0, scale: 0.94, y: 30 }}
-            animate={reduce ? undefined : { opacity: 1, scale: 1, y: 0 }}
-            transition={{ duration: 1.4, ease, delay: 0.12 }}
+            initial={reduce ? false : { opacity: 0 }}
+            animate={{ opacity: waiting && !reduce ? 0 : 1 }}
+            transition={{ duration: reduce || waiting ? 0 : DURATION.slow, ease, delay: reduce || waiting ? 0 : 0.12 }}
             className="flex w-full justify-center lg:justify-end"
+            style={{ willChange: waiting && !reduce ? "opacity" : undefined }}
           >
           <div
             ref={artRef}
             onPointerMove={handlePointerMove}
             onPointerLeave={resetTilt}
-            className="perspective-1200 relative aspect-square w-full max-w-[520px] lg:max-w-[580px]"
+            className="perspective-1200 relative aspect-square w-full max-w-[320px] sm:max-w-[520px] lg:max-w-[580px]"
           >
+            {signalReady && enhanced && artVisible && !reduce && (
+              <ErrorBoundary fallback={null}>
+                <Suspense fallback={null}><HeroSignal /></Suspense>
+              </ErrorBoundary>
+            )}
             <motion.div
               aria-hidden="true"
               className="stage-glow absolute inset-[2%] rounded-full"
@@ -286,14 +306,21 @@ export function Hero() {
               <img
                 src={heroWatch}
                 alt="SafeKid smartwatch concept, Mouse edition, from the Vietnamese Zodiac collection"
-                width={1300}
-                height={1300}
+                width={620}
+                height={620}
                 fetchPriority="high"
                 className="h-[92%] w-[92%] select-none object-contain drop-shadow-[0_40px_60px_rgba(16,42,56,0.16)]"
                 draggable="false"
               />
             </motion.div>
 
+            {!reduce && !waiting && visible && (
+              <motion.div aria-hidden="true"
+                className="pointer-events-none absolute inset-[8%] rounded-full border border-primary/60"
+                initial={{ scale: .85, opacity: 0 }} animate={{ scale: [0.85, 1.04, 1.09], opacity: [0, 0.62, 0] }}
+                transition={{ duration: DURATION.slow, delay: .22, ease }}
+              />
+            )}
             <motion.div
               className="pointer-events-none absolute inset-0"
               style={reduce ? undefined : { x: chipX, y: chipY }}
@@ -328,11 +355,11 @@ export function Hero() {
             </p>
           </div>
           </motion.div>
-        </motion.div>
+        </div>
       </div>
 
       <div className="shell relative flex items-center justify-between border-t border-ink/[0.07] pt-5">
-        <a href="#story" className="group inline-flex items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-deep/55">
+        <a href="#story" className="group inline-flex min-h-11 items-center gap-3 text-[11px] uppercase tracking-[0.18em] text-deep/55">
           <span className="flex h-8 w-8 items-center justify-center rounded-full border border-ink/15 transition-colors group-hover:border-primary group-hover:text-primary">
             <MoveDown className="h-3.5 w-3.5" aria-hidden="true" />
           </span>
@@ -341,7 +368,6 @@ export function Hero() {
         <p className="hidden text-[10px] uppercase tracking-[0.2em] text-deep/50 sm:block">
           The space between them
         </p>
-        <p className="text-[10px] uppercase tracking-[0.2em] text-deep/50">01 / 06</p>
       </div>
     </section>
   );

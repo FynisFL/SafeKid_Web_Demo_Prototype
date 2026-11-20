@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { motion, useReducedMotion } from "motion/react";
 
+import { useFirstScene } from "@/components/preloader/firstSceneContext";
 import { DURATION, EASE } from "@/components/motion/tokens";
 
 type PageHeroProps = {
@@ -14,7 +15,9 @@ type PageHeroProps = {
 };
 
 export function PageHero({ eyebrow, title, intro, actions, art, meta, compact }: PageHeroProps) {
-  const reduce = useReducedMotion();
+  const { entrance } = useFirstScene();
+  const reduce = useReducedMotion() || entrance === "static";
+  const waiting = entrance === "waiting" && !reduce;
 
   return (
     <section className="relative overflow-hidden bg-mist pb-14 pt-[112px] sm:pb-16 lg:pb-20 lg:pt-[132px]">
@@ -42,23 +45,23 @@ export function PageHero({ eyebrow, title, intro, actions, art, meta, compact }:
             <motion.span
               className="block pb-[0.08em]"
               initial={reduce ? false : { opacity: 0.45, y: 16, clipPath: "inset(0 0 100% 0)" }}
-              animate={{ opacity: 1, y: 0, clipPath: "inset(-10% -5% -12% -5%)" }}
+              animate={waiting ? { opacity: 0.45, y: 16, clipPath: "inset(0 0 100% 0)" } : { opacity: 1, y: 0, clipPath: "inset(-10% -5% -12% -5%)" }}
               transition={{ duration: reduce ? 0 : DURATION.base, ease: EASE }}
             >
               {title}
             </motion.span>
           </h1>
           <motion.p
-            className="lede mt-6 max-w-[46ch]"
-            initial={reduce ? false : { opacity: 0.65, y: 8, filter: "blur(3px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            className="lede mt-6 max-w-[46ch] text-deep"
+            initial={reduce ? false : { y: 8 }}
+            animate={{ y: waiting ? 8 : 0 }}
             transition={{ duration: reduce ? 0 : 0.55, delay: reduce ? 0 : 0.09, ease: EASE }}
           >
             {intro}
           </motion.p>
           {actions && <div className="mt-8 flex flex-wrap items-center gap-5">{actions}</div>}
           {meta && (
-            <p className="mt-8 text-[10px] uppercase tracking-[0.2em] text-deep/55">{meta}</p>
+            <p className="mt-8 text-[10px] uppercase tracking-[0.2em] text-deep/85">{meta}</p>
           )}
         </div>
 

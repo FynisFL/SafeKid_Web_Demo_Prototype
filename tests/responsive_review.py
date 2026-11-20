@@ -2,9 +2,11 @@
 import os
 from playwright.sync_api import expect, sync_playwright
 
+engine = os.getenv("SAFEKID_BROWSER", "chromium")
+
 base = os.getenv("SAFEKID_BASE_URL", "http://localhost:4173").rstrip("/")
 with sync_playwright() as driver:
-    browser = driver.chromium.launch(executable_path=os.getenv("SAFEKID_CHROMIUM"))
+    browser = getattr(driver, engine).launch(executable_path=os.getenv(f"SAFEKID_{engine.upper()}"))
     for width, height in [(320, 640), (390, 844), (768, 1024), (844, 390), (1024, 768), (1440, 900)]:
         page = browser.new_page(viewport={"width": width, "height": height})
         page.route("https://fonts.googleapis.com/**", lambda route: route.fulfill(body="", content_type="text/css"))
@@ -12,13 +14,14 @@ with sync_playwright() as driver:
         def visit(path):
             page.goto(base + path, wait_until="domcontentloaded")
             expect(page.locator("h1").first).to_be_visible()
+            expect(page.get_by_test_id("first-scene")).to_have_count(0, timeout=9000)
 
         for path in ["/about/", "/contact/"]:
             visit(path)
             assert page.evaluate("document.documentElement.scrollWidth === innerWidth"), (path, width)
 
         visit("/sos/")
-        hold = page.get_by_role("button", name="Press and hold to preview the SOS demonstration")
+        hold = page.get_by_role("button", name="Press and hold SOS to preview the demonstration")
         hold.press("Enter")
         expect(page.get_by_role("button", name="Reset demo")).to_be_visible()
         assert hold.evaluate("""el => document.querySelector('[role=status]').parentElement
@@ -42,6 +45,24 @@ with sync_playwright() as driver:
             expect(dialog).to_have_count(0)
             page.wait_for_function("getComputedStyle(document.body).overflowY !== 'hidden'")
             page.set_viewport_size({"width": width, "height": height})
+
+        if width < 640:
+            for path in ["/", "/zodiac/"]:
+                visit(path)
+                collection = page.locator('[aria-labelledby="collection-heading"]')
+                watch = collection.get_by_role("img", name="SafeKid smartwatch concept in the Mouse edition")
+                collection.scroll_into_view_if_needed()
+                # The outer section clips overflow, so the document width can look correct
+                # even when the whole stage has been pushed off screen by the edition rail.
+                rail = collection.get_by_role("list", name="Zodiac editions")
+                next_edition = collection.get_by_role("button", name="Next edition")
+                for element in (watch, next_edition, rail):
+                    box = element.bounding_box()
+                    assert box and box["x"] >= 0 and box["x"] + box["width"] <= width + 1, (path, width, box)
+                assert watch.evaluate("el => el.decode().then(() => el.naturalWidth > 0)")
+                assert rail.evaluate("el => el.scrollWidth > el.clientWidth")
+                next_edition.click()
+                expect(collection.get_by_role("link", name="Explore this edition")).to_have_attribute("href", "/product/buffalo")
 
         visit("/app/")
         stage = page.locator(".sk-stage__viewport")

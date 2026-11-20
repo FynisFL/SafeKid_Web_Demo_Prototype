@@ -1,3 +1,6 @@
+import { AnimatedContent } from "@/components/motion/reactbits/AnimatedContent";
+import { SceneSignature } from "@/components/motion/SceneSignature";
+import { MEDIA } from "@/lib/breakpoints";
 import { ArrowLeft, ArrowUpRight, Download, Globe2, Smartphone } from "lucide-react";
 import { motion, useInView, useReducedMotion, useScroll, useTransform } from "motion/react";
 import { useEffect, useRef, useState } from "react";
@@ -7,6 +10,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { AndroidDownload } from "@/components/app-experience/AndroidDownload";
 import { SignalStage } from "@/components/app-experience/SignalStage";
 import { scenes, signalArrival } from "@/components/app-experience/scenes";
+import { useFirstScene } from "@/components/preloader/firstSceneContext";
 import { DURATION, EASE } from "@/components/motion/tokens";
 import { BrandMark } from "@/components/site/BrandMark";
 import { Button } from "@/components/ui/button";
@@ -46,10 +50,11 @@ export default function AppExperience() {
   const [downloadOpen, setDownloadOpen] = useState(false);
   const downloadTrigger = useRef<HTMLButtonElement>(null);
   const { scrollYProgress } = useScroll({ target: hero, offset: ["start start", "end start"] });
-  const wide = useMediaQuery("(min-width: 961px)");
+  const wide = useMediaQuery(MEDIA.parentAppStage);
   const stageRef = useRef<HTMLDivElement>(null);
   const stageVisible = useInView(stageRef, { once: true, amount: 0.2 });
-  const playing = stageVisible || interaction.replay > 0;
+  const { entrance } = useFirstScene();
+  const playing = (entrance === "play" && stageVisible) || interaction.replay > 0;
   const stageY = useTransform(() => scrollYProgress.get() * (wide ? 34 : 8));
   const stageScale = useTransform(() => 1 + scrollYProgress.get() * (wide ? 0.035 : 0.012));
 
@@ -83,9 +88,10 @@ export default function AppExperience() {
         <Link className="sk-app__tap sk-app__back" to="/"><ArrowLeft size={16} aria-hidden="true" /> Back to site</Link>
       </motion.header>
 
-      <main>
+      <AnimatedContent as="main" trigger="mount" duration={0.46}>
         <section className="sk-app__hero sk-app__shell" ref={hero}>
           <div className="sk-app__intro">
+            <SceneSignature scene="app" className="sk-app-signature mb-2" />
             <motion.p className="sk-app__kicker"
               initial={reduce ? false : { opacity: 0, x: -26 }}
               animate={{ opacity: 1, x: 0 }}
@@ -200,7 +206,7 @@ export default function AppExperience() {
           </div>
           <p className="sk-app__footnote">SafeKid Parent App is in testing. Its location view shows the device running the app. The Web App and Android app store data separately.</p>
         </section>
-      </main>
+      </AnimatedContent>
       <AndroidDownload open={downloadOpen} onOpenChange={setDownloadOpen} trigger={downloadTrigger} />
     </div>
   );

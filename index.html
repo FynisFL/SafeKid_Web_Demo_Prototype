@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <link href="%BASE_URL%favicon.ico" rel="icon shortcut">
   <link href="%BASE_URL%favicon.ico" rel="apple-touch-icon">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#F3FAFA" />
   <title>SafeKid — The space between them</title>
   <meta name="description"
@@ -16,7 +16,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-    rel="stylesheet">
+    id="safekid-webfonts" rel="stylesheet" media="print"
+    onload="if (!this.dataset.fallback) this.media='all'"
+    onerror="this.dataset.fallback='true';this.media='not all'">
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
@@ -43,6 +45,14 @@
 
 <body>
   <div id="root"></div>
+  <noscript>
+    <main style="max-width: 42rem; margin: 4rem auto; padding: 1.5rem; color: #102a38; font-family: system-ui, sans-serif">
+      <h1>SafeKid — The space between them</h1>
+      <p>Explore a smartwatch concept for children and a Parent App for families. Watch orders are not open yet.</p>
+      <p>Enable JavaScript to explore the interactive website.</p>
+      <a href="https://fynisfl.github.io/SafeKid-Parent-App-/">Open the Parent App</a>
+    </main>
+  </noscript>
   <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
   <script type="module" src="/src/main.tsx"></script>
 </body>

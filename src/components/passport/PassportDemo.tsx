@@ -45,7 +45,7 @@ export function PassportDemo({ className }: { className?: string }) {
     <div className={cn("grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,0.62fr)_minmax(0,1.38fr)] lg:gap-10", className)}>
       {/* Stage selector */}
       <div className="min-w-0">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-deep/65">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-deep">
           Choose a chapter
         </p>
         <div
@@ -105,7 +105,7 @@ export function PassportDemo({ className }: { className?: string }) {
         />
         <div className="relative border-b border-border/80 bg-mist px-5 py-5 sm:px-8">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-deep/70">
+            <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.22em] text-deep">
               <Fingerprint className="h-4 w-4 text-primary" aria-hidden="true" />
               Watch Passport
             </p>
@@ -115,7 +115,7 @@ export function PassportDemo({ className }: { className?: string }) {
           </div>
           <div className="mt-5 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-deep/55">Device ID · sample</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-deep">Device ID · sample</p>
               <p className="mt-1 font-mono text-[clamp(1.1rem,2.4vw,1.55rem)] tracking-[0.06em] text-ink">
                 {SAMPLE_DEVICE_ID}
               </p>
@@ -154,7 +154,7 @@ export function PassportDemo({ className }: { className?: string }) {
                 }}
                 className={cn(
                   "relative isolate min-h-11 rounded-full px-3 text-[12.5px] transition duration-300 motion-safe:active:scale-[0.97] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary sm:px-4",
-                  view === item.id ? "text-ink" : "text-deep/65 hover:text-ink"
+                  view === item.id ? "text-ink" : "text-deep hover:text-ink"
                 )}
               >
                 {view === item.id && (
@@ -180,7 +180,7 @@ export function PassportDemo({ className }: { className?: string }) {
                 <dl className="grid gap-px overflow-hidden rounded-2xl border border-border/80 bg-border/80 sm:grid-cols-2">
                   {stage.condition.map((row) => (
                     <div key={row.label} className="bg-white px-4 py-3.5">
-                      <dt className="text-[10px] uppercase tracking-[0.18em] text-deep/55">{row.label}</dt>
+                      <dt className="text-[10px] uppercase tracking-[0.18em] text-deep">{row.label}</dt>
                       <dd className="mt-1 text-[14px] text-ink">{row.value}</dd>
                     </div>
                   ))}
@@ -189,14 +189,14 @@ export function PassportDemo({ className }: { className?: string }) {
                   <div className="flex items-start gap-3 rounded-2xl bg-mist px-4 py-3.5">
                     <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                     <div>
-                      <p className="text-[10px] uppercase tracking-[0.18em] text-deep/55">Warranty eligibility</p>
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-deep">Warranty eligibility</p>
                       <p className="mt-1 text-[14px] text-ink">{stage.warranty}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 rounded-2xl bg-mist px-4 py-3.5">
                     <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
                     <div>
-                      <p className="text-[10px] uppercase tracking-[0.18em] text-deep/55">Lifecycle status</p>
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-deep">Lifecycle status</p>
                       <p className="mt-1 text-[14px] text-ink">{stage.status.split(" · ")[1]}</p>
                     </div>
                   </div>
@@ -263,7 +263,7 @@ export function PassportDemo({ className }: { className?: string }) {
           </motion.div>
         </div>
 
-        <p className="relative border-t border-border/80 bg-mist/70 px-5 py-3.5 text-[11px] leading-relaxed text-deep/60 sm:px-8">
+        <p className="relative border-t border-border/80 bg-mist/70 px-5 py-3.5 text-[11px] leading-relaxed text-deep sm:px-8">
           Sample information only. This is not a real connected device or an operational certification
           system, and warranty terms are not defined in this concept.
         </p>

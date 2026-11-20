@@ -53,7 +53,7 @@ export function AddToBag({ editionId, image }: { editionId: string; image: strin
   return (
     <div className="mt-7">
       <p className="font-display text-3xl font-semibold tracking-tight text-ink tabular-nums">{formatVnd(WATCH_PRICE_VND)}</p>
-      <p className="mt-2 text-sm text-deep/70">Per watch · Not available to order yet</p>
+      <p className="mt-2 text-sm text-deep">Per watch · Not available to order yet</p>
       <div className="mt-5 flex flex-wrap items-center gap-2.5">
         <Button type="button" variant="outline" className="shop-flow-btn" disabled={full} onClick={handleAdd}>
           <AnimatePresence initial={false} mode="wait">

@@ -19,8 +19,8 @@ export default function Home() {
   return (
     <SiteLayout>
       <Hero />
-      <Thesis />
       <StorySequence />
+      <Thesis />
       <ProductChapters />
       <ParentAppSection />
       <WatchPassportSection />

@@ -118,7 +118,7 @@ export function CircularJourney() {
                     </span>
                     <span>
                       <span className="block text-[15px] font-medium text-ink">{step.title}</span>
-                      <span className="mt-0.5 block text-[13.5px] leading-relaxed text-deep/65">
+                      <span className="mt-0.5 block text-[13.5px] leading-relaxed text-deep">
                         {step.body}
                       </span>
                     </span>

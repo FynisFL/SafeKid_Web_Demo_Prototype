@@ -85,7 +85,7 @@ export default function Support() {
           <>
             Clear answers
             <br />
-            for <span className="text-primary">SafeKid.</span>
+            for <span className="text-aqua-ink">SafeKid.</span>
           </>
         }
         intro="Find help with the store preview and Parent App, browse the collection, or get in touch with the team."
@@ -112,7 +112,7 @@ export default function Support() {
                 <HelpCircle className="h-14 w-14" aria-hidden="true" strokeWidth={1.3} />
               </span>
             </div>
-            <span className="absolute bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/80 bg-white/80 px-3 py-1.5 text-[9px] uppercase tracking-[0.18em] text-deep/55 backdrop-blur">
+            <span className="absolute bottom-6 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/80 bg-white/80 px-3 py-1.5 text-[9px] uppercase tracking-[0.18em] text-deep/85 backdrop-blur">
               One family, one question at a time
             </span>
           </div>
@@ -130,7 +130,7 @@ export default function Support() {
               <h2 className="display display-lg mt-6 max-w-[18ch]">
                 Start with what
                 <br />
-                you're <span className="text-primary">looking for.</span>
+                you're <span className="text-aqua-ink">looking for.</span>
               </h2>
             </div>
             <p className="max-w-[32ch] text-[13.5px] leading-relaxed text-muted-foreground lg:pb-2">
@@ -143,7 +143,7 @@ export default function Support() {
               const content = (
                 <>
                   <span className="flex items-center justify-between">
-                    <span className="text-[9.5px] uppercase tracking-[0.2em] text-primary">
+                    <span className="text-[9.5px] uppercase tracking-[0.2em] text-aqua-ink">
                       {topic.number}
                     </span>
                     <ArrowUpRight
@@ -197,7 +197,7 @@ export default function Support() {
             <h2 className="display display-lg mt-6">
               Frequently
               <br />
-              asked <span className="text-primary">questions.</span>
+              asked <span className="text-aqua-ink">questions.</span>
             </h2>
             <p className="mt-5 max-w-[36ch] text-[13.5px] leading-relaxed text-muted-foreground">
               Find the current watch price, learn how preview checkout works, and get started with
@@ -205,7 +205,7 @@ export default function Support() {
             </p>
             <Link
               to="/contact"
-              className="group mt-6 inline-flex items-center gap-2 text-[13px] font-medium text-ink"
+              className="group mt-6 inline-flex min-h-11 items-center gap-2 text-[13px] font-medium text-ink"
             >
               Still have a question?
               <ArrowUpRight
@@ -220,7 +220,7 @@ export default function Support() {
               <AccordionItem key={faq.question} value={`faq-${index}`} className="border-ink/10">
                 <AccordionTrigger className="group gap-4 py-5 text-left hover:no-underline [&>svg]:hidden">
                   <span className="flex items-baseline gap-4">
-                    <span className="text-[9.5px] tabular-nums tracking-[0.16em] text-deep/50">
+                    <span className="text-[9.5px] tabular-nums tracking-[0.16em] text-deep/85">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <span className="font-display text-[16.5px] font-medium tracking-[-0.02em] text-ink sm:text-[18px]">
@@ -229,7 +229,7 @@ export default function Support() {
                   </span>
                   <span
                     aria-hidden="true"
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ink/12 text-deep/50 transition-all duration-300 motion-safe:group-data-[state=open]:rotate-180 group-data-[state=open]:border-primary/40 group-data-[state=open]:text-primary"
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-ink/12 text-deep/85 transition-all duration-300 motion-safe:group-data-[state=open]:rotate-180 group-data-[state=open]:border-primary/40 group-data-[state=open]:text-primary"
                   >
                     <ChevronDown className="h-4 w-4" />
                   </span>
@@ -274,7 +274,7 @@ export default function Support() {
               <Reveal key={id} variant="soft">
                 <article id={id} className="h-full scroll-mt-28 rounded-[26px] border border-border bg-mist/50 p-6">
                   <h3 className="font-display text-xl font-medium tracking-tight text-ink">{title}</h3>
-                  <p className="mt-3 text-sm leading-relaxed text-deep/75">{body}</p>
+                  <p className="mt-3 text-sm leading-relaxed text-deep">{body}</p>
                   {id === "payments" && <Link className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4" to="/checkout">Explore checkout</Link>}
                   {id === "privacy" && <Link className="mt-4 inline-flex min-h-11 items-center text-sm font-medium text-ink underline underline-offset-4" to="/app">Explore the Parent App</Link>}
                 </article>
@@ -290,7 +290,7 @@ export default function Support() {
             <div className="flex items-start gap-4">
               <span className="mt-0.5 flex h-2 w-2 shrink-0 rounded-full bg-primary" aria-hidden="true" />
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-deep/60">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-deep">
                   Before launch
                 </p>
                 <p className="mt-2 max-w-[62ch] text-[13px] leading-relaxed text-muted-foreground">

@@ -1,10 +1,11 @@
+import { useEnhancedMotion } from "@/components/motion/useEnhancedMotion";
 import { BellRing, Check, RotateCcw, ShieldCheck, Signal, Zap } from "lucide-react";
 import { motion, useAnimate } from "motion/react";
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import type { CSSProperties, PointerEvent } from "react";
 
-import watch from "@/assets/safekid/hero-watch.webp";
-import { EASE } from "@/components/motion/tokens";
+import watch from "@/assets/safekid/editions/rat.webp";
+import { DURATION, EASE } from "@/components/motion/tokens";
 
 import { signalArrival, signalStart, travelDuration, type Scene } from "./scenes";
 import { useClickSpark } from "./useClickSpark";
@@ -14,7 +15,7 @@ const stageSize = { width: 720, height: 480 };
 const emitter = { x: 294, y: 220 };
 const receiver = { x: 438, y: 220 };
 const trigger = { x: 360, y: 307 };
-const signalPath = `M ${emitter.x} ${emitter.y} H ${receiver.x}`;
+const signalPath = `M ${emitter.x} ${emitter.y} C 326 220 318 188 354 188 S 382 244 409 239 S 425 220 ${receiver.x} ${receiver.y}`;
 
 const impactParticles = Array.from({ length: 8 }, (_, index) => {
   const angle = index * (Math.PI / 4);
@@ -147,7 +148,9 @@ export function SignalStage({
   const signalDelay = signalStart(intro);
   const arrival = signalArrival(intro);
   const [rig, animateRig] = useAnimate<HTMLDivElement>();
-  const { canvasRef, spark } = useClickSpark(reduce, scene.accent);
+  const enhanced = useEnhancedMotion();
+  const { canvasRef, spark } = useClickSpark(reduce || !enhanced, scene.accent);
+  const swipe = useRef<{ id: number; x: number; y: number } | null>(null);
 
   useEffect(() => {
     const element = rig.current;
@@ -182,6 +185,25 @@ export function SignalStage({
     delete event.currentTarget.dataset.spotlight;
   }
 
+  function startSwipe(event: PointerEvent<HTMLDivElement>) {
+    if (!event.isPrimary || event.button !== 0 || (event.target as Element).closest("button")) return;
+    swipe.current = { id: event.pointerId, x: event.clientX, y: event.clientY };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function endSwipe(event: PointerEvent<HTMLDivElement>) {
+    const start = swipe.current;
+    if (start?.id !== event.pointerId) return;
+    swipe.current = null;
+    const x = event.clientX - start.x;
+    const y = event.clientY - start.y;
+    if (Math.abs(x) > 56 && Math.abs(x) > Math.abs(y) * 1.5) onStep(x < 0 ? 1 : -1);
+  }
+
+  function cancelSwipe(event: PointerEvent<HTMLDivElement>) {
+    if (swipe.current?.id === event.pointerId) swipe.current = null;
+  }
+
   return (
     <figure className="sk-stage" style={{ "--scene-color": scene.accent } as CSSProperties} aria-label="SafeKid connection demo">
       <div className="sk-stage__top">
@@ -192,20 +214,26 @@ export function SignalStage({
       </div>
       <motion.div className="sk-stage__viewport" data-scene={scene.id}
         style={{ touchAction: "pan-y pinch-zoom" }}
-        onPanEnd={(event, { offset }) => {
-          if ((event.target as Element | null)?.closest?.("button")) return;
-          if (Math.abs(offset.x) > 56 && Math.abs(offset.x) > Math.abs(offset.y) * 1.5) onStep(offset.x < 0 ? 1 : -1);
-        }}
         onPointerMove={(event) => { if (!reduce && event.pointerType === "mouse") aimSpotlight(event); }}
-        onPointerDown={(event) => { if (!reduce && event.isPrimary) aimSpotlight(event); }}
-        onPointerUp={(event) => { if (event.pointerType !== "mouse") resetSpotlight(event); }}
+        onPointerDown={(event) => {
+          startSwipe(event);
+          if (!reduce && event.isPrimary) aimSpotlight(event);
+        }}
+        onPointerUp={(event) => {
+          endSwipe(event);
+          if (event.pointerType !== "mouse") resetSpotlight(event);
+        }}
         onPointerLeave={resetSpotlight}
-        onPointerCancel={resetSpotlight}
+        onLostPointerCapture={cancelSwipe}
+        onPointerCancel={(event) => {
+          cancelSwipe(event);
+          resetSpotlight(event);
+        }}
         onClick={spark}>
         <div className="sk-stage__art">
           <div ref={rig} className="sk-stage__rig">
             <Fragment key={replay}>
-              <div className="sk-stage__devices" aria-hidden="true">
+              <div className="sk-stage__devices">
                 <div className="sk-stage__watch">
                   <motion.img src={watch} width={620} height={620} loading={loading}
                     fetchPriority={loading === "eager" ? "high" : undefined} alt="" draggable={false}
@@ -215,7 +243,7 @@ export function SignalStage({
                     animate={reduce ? undefined : intro
                       ? { opacity: 1, x: "0%", y: "0%", scale: 1, rotate: 0 }
                       : { scale: [1, 1.08, 1], rotate: [0, -4, 0] }}
-                    transition={{ duration: intro ? 1.44 : 0.76, ease: EASE }} />
+                    transition={{ duration: intro ? DURATION.slow : DURATION.base, ease: EASE }} />
                 </div>
                 <div className="sk-stage__phone">
                   <motion.div className="sk-stage__phone-shell"
@@ -225,13 +253,20 @@ export function SignalStage({
                     animate={reduce ? undefined : intro
                       ? { opacity: 1, x: "0%", y: "0%", scale: 1 }
                       : { scale: [1, 1.045, 1], y: [0, -3, 0] }}
-                    transition={{ duration: intro ? 1.48 : 0.9, delay: intro ? 0.16 : arrival - 0.18, ease: EASE }}>
+                    transition={{ duration: intro ? DURATION.slow : DURATION.base, delay: intro ? 0.16 : arrival - 0.18, ease: EASE }}>
                     <DemoScreen scene={scene} arrival={arrival} reduce={reduce} />
                   </motion.div>
                 </div>
               </div>
               <svg className="sk-stage__signal" viewBox={`0 0 ${stageSize.width} ${stageSize.height}`} aria-hidden="true" preserveAspectRatio="none" fill="none">
                 <path d={signalPath} stroke={scene.accent} strokeOpacity=".58" strokeWidth="2" strokeDasharray="2 6" strokeLinecap="round" />
+                <path d={`M${stageSize.width * .12} ${stageSize.height * .76}Q${stageSize.width * .5} ${stageSize.height * .53} ${stageSize.width * .88} ${stageSize.height * .73}`}
+                  fill="none" stroke={scene.accent} strokeOpacity=".26" strokeDasharray="3 9" />
+                {!reduce && enhanced && [0, 1].map(index => (
+                  <motion.circle key={index} cx={receiver.x} cy={receiver.y} fill="none" stroke={scene.accent} strokeWidth="1.5"
+                    initial={{ r: 8, opacity: 0 }} animate={{ r: [8, 15, 44], opacity: [0, .7, 0] }}
+                    transition={{ duration: DURATION.base, delay: arrival + index * DURATION.feedback, ease: EASE }} />
+                ))}
                 <circle cx={emitter.x} cy={emitter.y} r="3" fill={scene.accent} />
                 <circle cx={receiver.x} cy={receiver.y} r="5" fill="white" stroke={scene.accent} strokeWidth="2" />
                 {!reduce && <SignalBurst scene={scene} delay={signalDelay} />}
@@ -251,7 +286,7 @@ export function SignalStage({
             </motion.button>
           </div>
         </div>
-        {!reduce && <canvas ref={canvasRef} className="sk-stage__sparks" aria-hidden="true" />}
+        {!reduce && enhanced && <canvas ref={canvasRef} className="sk-stage__sparks" aria-hidden="true" />}
       </motion.div>
       <figcaption className="sk-stage__caption">
         <span aria-hidden="true">SafeKid Watch</span>

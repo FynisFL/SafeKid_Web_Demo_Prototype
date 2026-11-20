@@ -16,20 +16,36 @@ export function useClickSpark(disabled: boolean, color: string) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bursts = useRef<Burst[]>([]);
   const frame = useRef(0);
+  const visible = useRef(true);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    return () => {
+    if (!canvas || disabled) return;
+    function clear() {
       window.cancelAnimationFrame(frame.current);
       frame.current = 0;
       bursts.current = [];
-      canvas?.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height);
+      if (canvas) canvas.getContext("2d")?.clearRect(0, 0, canvas.width, canvas.height);
+    }
+    function onVisibility() {
+      if (document.hidden) clear();
+    }
+    const observer = new IntersectionObserver(([entry]) => {
+      visible.current = entry.isIntersecting;
+      if (!entry.isIntersecting) clear();
+    });
+    observer.observe(canvas);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      clear();
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [disabled]);
 
   function spark(event: MouseEvent<HTMLDivElement>) {
     const canvas = canvasRef.current;
-    if (disabled || !canvas || event.button !== 0) return;
+    if (disabled || !visible.current || document.hidden || !canvas || event.button !== 0) return;
 
     const bounds = canvas.getBoundingClientRect();
     if (!bounds.width || !bounds.height) return;

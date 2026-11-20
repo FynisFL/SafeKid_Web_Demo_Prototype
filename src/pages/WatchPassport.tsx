@@ -1,65 +1,19 @@
-import { useRef } from "react";
+import { ScrollFloat } from "@/components/motion/reactbits/ScrollFloat";
+import { ScrollReveal } from "@/components/motion/reactbits/ScrollReveal";
 import { Link } from "react-router-dom";
-import { ArrowRight, ChevronDown, Fingerprint } from "lucide-react";
-import { motion, useReducedMotion, useTransform } from "motion/react";
+import { ArrowRight, ChevronDown } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { PageHero } from "@/components/site/PageHero";
 import { Reveal } from "@/components/site/Reveal";
 import { Magnetic } from "@/components/motion/Magnetic";
-import { TiltCard } from "@/components/motion/TiltCard";
-import { DURATION, EASE } from "@/components/motion/tokens";
+import { CoreLayers } from "@/components/passport/CoreLayers";
 import { PassportDemo } from "@/components/passport/PassportDemo";
 import { LivesSection } from "@/components/passport/LivesSection";
 import { CircularJourney } from "@/components/passport/CircularJourney";
 import { PrivacyTrust } from "@/components/passport/PrivacyTrust";
-import { useSectionProgress } from "@/components/passport/useSectionProgress";
 import { usePageTitle } from "@/hooks/usePageTitle";
-import { DEMO_LABEL, SAMPLE_DEVICE_ID } from "@/data/watchPassport";
-import heroWatch from "@/assets/safekid/hero-watch.webp";
+import { DEMO_LABEL } from "@/data/watchPassport";
 
-function PassportHeroArt() {
-  const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
-  const progress = useSectionProgress(ref, ["start 95%", "end 20%"]);
-  const watchY = useTransform(progress, [0, 1], [10, -14]);
-
-  return (
-    <div ref={ref} className="relative mx-auto aspect-square w-full max-w-[min(420px,75svh)]">
-      <div aria-hidden="true" className="stage-glow absolute inset-[2%] rounded-full" />
-      <motion.div
-        aria-hidden="true"
-        className="absolute inset-[12%] rounded-full border border-primary/25"
-        initial={reduce ? false : { opacity: 0, scale: 0.82 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true, amount: 0.35 }}
-        transition={{ duration: reduce ? 0 : DURATION.slow, ease: EASE }}
-      />
-      <motion.div
-        className="absolute inset-0 flex items-center justify-center"
-        style={reduce ? undefined : { y: watchY }}
-      >
-        <img
-          src={heroWatch}
-          alt="The SafeKid Core"
-          width={620}
-          height={620}
-          className="w-[58%] object-contain drop-shadow-[0_40px_60px_rgba(16,42,56,0.3)]"
-        />
-      </motion.div>
-      <Reveal variant="soft" className="absolute inset-x-[7%] bottom-[4%]">
-        <TiltCard className="rounded-2xl" max={5} spotlight={false}>
-          <div className="rounded-2xl border border-white/80 bg-white/90 px-4 py-3 backdrop-blur">
-            <p className="flex items-center gap-2 text-[9px] font-semibold uppercase tracking-[0.2em] text-deep/65">
-              <Fingerprint className="h-3.5 w-3.5 shrink-0 text-primary" aria-hidden="true" />
-              Device ID · sample
-            </p>
-            <p className="mt-1 break-words font-mono text-[13px] tracking-[0.06em] text-ink">{SAMPLE_DEVICE_ID}</p>
-          </div>
-        </TiltCard>
-      </Reveal>
-    </div>
-  );
-}
 
 export default function WatchPassport() {
   usePageTitle(
@@ -75,7 +29,7 @@ export default function WatchPassport() {
           <>
             Every Core
             <br />
-            has a <span className="text-primary">story.</span>
+            has a <span className="text-aqua-ink">story.</span>
           </>
         }
         intro="Watch Passport is SafeKid's Digital Life Passport concept: a lifecycle record for each physical Core, so a device can have a meaningful life beyond its first user."
@@ -89,7 +43,7 @@ export default function WatchPassport() {
           </a>
         }
         meta={`${DEMO_LABEL} · No live device or certification system`}
-        art={<PassportHeroArt />}
+        art={<CoreLayers />}
       />
 
       <section id="passport" className="scroll-mt-24 bg-white py-20 sm:py-28">
@@ -100,12 +54,12 @@ export default function WatchPassport() {
               Digital passport
             </p>
             <h2 className="display display-lg mt-6 max-w-[16ch]">
-              One record. <span className="text-primary">Every chapter.</span>
+              One record. <ScrollFloat className="text-aqua-ink">Every chapter.</ScrollFloat>
             </h2>
-            <p className="lede mt-6 max-w-[54ch]">
+            <ScrollReveal className="lede mt-6 max-w-[54ch]">
               Pick a chapter to see how a sample passport changes: Device ID, condition, service history,
               warranty eligibility and lifecycle status.
-            </p>
+            </ScrollReveal>
           </Reveal>
           <Reveal delay={0.06} className="mt-12">
             <PassportDemo />
@@ -153,7 +107,7 @@ export default function WatchPassport() {
                   </Magnetic>
                   <Link
                     to="/contact"
-                    className="press text-[14px] font-medium text-white/75 transition-colors hover:text-white"
+                    className="inline-flex min-h-11 items-center press text-[14px] font-medium text-white/75 transition-colors hover:text-white"
                   >
                     Let's talk about SafeKid
                   </Link>

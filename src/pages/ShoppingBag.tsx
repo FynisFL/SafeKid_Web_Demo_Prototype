@@ -24,10 +24,10 @@ const previewFees = [
 function PurchaseSteps({ checkout }: { checkout: boolean }) {
   return (
     <nav aria-label="Shopping steps" className="mb-6">
-      <ol className="flex flex-wrap items-center gap-2 text-xs font-medium text-deep/75">
+      <ol className="flex flex-wrap items-center gap-2 text-xs font-medium text-deep">
         <li>
           {checkout ? (
-            <Link to="/cart" className="inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 hover:bg-white hover:text-ink">
+            <Link to="/cart" className="inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 hover:bg-white hover:text-ink">
               <BagIcon size={15} aria-hidden="true" /> Bag
             </Link>
           ) : (
@@ -40,7 +40,7 @@ function PurchaseSteps({ checkout }: { checkout: boolean }) {
         <li>
           <span
             aria-current={checkout ? "step" : undefined}
-            className={`inline-flex min-h-9 items-center gap-1.5 rounded-full px-3 ${checkout ? "bg-ink text-white" : ""}`}
+            className={`inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 ${checkout ? "bg-ink text-white" : ""}`}
           >
             <CreditCard size={15} aria-hidden="true" /> Checkout
           </span>
@@ -86,7 +86,7 @@ function BagItems({ checkout }: { checkout: boolean }) {
                       {formatVnd(quantity * WATCH_PRICE_VND)}
                     </motion.p>
                   </div>
-                  <p className="mt-1 text-xs text-deep/75">{quantity} × {formatVnd(WATCH_PRICE_VND)}</p>
+                  <p className="mt-1 text-xs text-deep">{quantity} × {formatVnd(WATCH_PRICE_VND)}</p>
                   {!checkout && (
                     <div className="mt-3 flex flex-wrap items-center gap-2">
                       <div className="inline-flex items-center rounded-full border border-border">
@@ -227,18 +227,18 @@ export default function ShoppingBag({ checkout = false }: { checkout?: boolean }
           </motion.section>
         </AnimatePresence>
       </div>
-      {count > 0 && <div className="h-[calc(5rem+env(safe-area-inset-bottom))] lg:hidden" aria-hidden="true" />}
+      {count > 0 && <div className="h-[calc(5rem+var(--safe-bottom))] lg:hidden" aria-hidden="true" />}
       {count > 0 && createPortal(
         <motion.aside
           aria-label="Quick bag total"
-          className="fixed inset-x-0 bottom-0 z-[60] border-t border-border bg-white px-5 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 shadow-[0_-6px_24px_#172b350d] lg:hidden"
+          className="fixed inset-x-0 bottom-0 z-[60] border-t border-border bg-white pl-[max(1.25rem,var(--safe-left))] pr-[max(1.25rem,var(--safe-right))] pb-[calc(0.75rem+var(--safe-bottom))] pt-3 shadow-[0_-6px_24px_#172b350d] lg:hidden"
           initial={reduce ? false : { y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: reduce ? 0 : DURATION.quick, ease: EASE }}
         >
           <div className="mx-auto flex max-w-[60rem] items-center justify-between gap-3">
             <div className="min-w-0">
-              <p className="text-[11px] text-deep/75">Preview total · {count} {count === 1 ? "watch" : "watches"}</p>
+              <p className="text-[11px] text-deep">Preview total · {count} {count === 1 ? "watch" : "watches"}</p>
               <p className="text-sm font-semibold tabular-nums text-ink">{formatVnd(total)}</p>
             </div>
             <Button asChild variant="outline" className="shop-flow-btn shrink-0">

@@ -59,14 +59,14 @@ export function SiteFooter() {
                 aria-hidden="true"
               />
             </a>
-            <p className="text-[11px] text-white/55">A product concept by DigiBabi.</p>
+            <p className="text-[11px] text-white/75">A product concept by DigiBabi.</p>
           </div>
         </div>
 
         <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.25fr_0.8fr_0.9fr_1fr]">
           <div>
             <BrandMark tone="light" compact onSecretUnlock={() => setLittleDetourOpen(true)} />
-            <p className="mt-5 max-w-[26ch] text-sm leading-relaxed text-white/55">
+            <p className="mt-5 max-w-[26ch] text-sm leading-relaxed text-white/75">
               Explore twelve Vietnamese Zodiac watch designs, preview your shopping bag, and try
               the SafeKid Parent App.
             </p>
@@ -76,7 +76,7 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="SafeKid on Facebook"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="flex size-11 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <Facebook className="h-[15px] w-[15px]" aria-hidden="true" />
               </a>
@@ -85,15 +85,15 @@ export function SiteFooter() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="View the SafeKid open-source repository on GitHub"
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="flex size-11 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-primary/50 hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <Github className="h-[15px] w-[15px]" aria-hidden="true" />
               </a>
               <div className="ml-1 flex flex-col gap-1 text-[10px] leading-tight text-white/45">
-                <a href="https://facebook.com/DigiBabi" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">
+                <a href="https://facebook.com/DigiBabi" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-white/80 transition-colors hover:text-primary">
                   Follow SafeKid on Facebook
                 </a>
-                <a href="https://github.com/FynisFL/SafeKid_Web_Demo_Prototype" target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-primary">
+                <a href="https://github.com/FynisFL/SafeKid_Web_Demo_Prototype" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center text-white/80 transition-colors hover:text-primary">
                   Explore the open-source code
                 </a>
               </div>
@@ -101,15 +101,15 @@ export function SiteFooter() {
           </div>
 
           <nav aria-label="Explore">
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50">
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/70">
               Explore
             </h3>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-5 space-y-0">
               {explore.map((item) => (
                 <li key={item.label}>
                   <Link
                     to={item.to}
-                    className="text-sm text-white/70 transition-colors hover:text-primary"
+                    className="inline-flex min-h-11 min-w-11 items-center text-sm text-white/70 transition-colors hover:text-primary"
                   >
                     {item.label}
                   </Link>
@@ -119,15 +119,15 @@ export function SiteFooter() {
           </nav>
 
           <nav aria-label="Support">
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50">
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/70">
               Support
             </h3>
-            <ul className="mt-5 space-y-3">
+            <ul className="mt-5 space-y-0">
               {support.map((item) => (
                 <li key={item.label}>
                   <Link
                     to={item.to}
-                    className="text-sm text-white/70 transition-colors hover:text-primary"
+                    className="inline-flex min-h-11 min-w-11 items-center text-sm text-white/70 transition-colors hover:text-primary"
                   >
                     {item.label}
                   </Link>
@@ -137,14 +137,14 @@ export function SiteFooter() {
           </nav>
 
           <div>
-            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/50">
+            <h3 className="text-[10px] font-semibold uppercase tracking-[0.24em] text-white/70">
               Get in touch
             </h3>
-            <ul className="mt-5 space-y-3 text-sm text-white/70">
+            <ul className="mt-5 space-y-0 text-sm text-white/70">
               <li>
                 <a
                   href="mailto:safekid.digibabi@gmail.com"
-                  className="inline-flex items-center gap-2.5 transition-colors hover:text-primary"
+                  className="inline-flex min-h-11 items-center gap-2.5 transition-colors hover:text-primary"
                 >
                   <Mail className="h-4 w-4 text-primary/80" aria-hidden="true" />
                   safekid.digibabi@gmail.com
@@ -153,7 +153,7 @@ export function SiteFooter() {
               <li>
                 <a
                   href="tel:+84377430400"
-                  className="inline-flex items-center gap-2.5 transition-colors hover:text-primary"
+                  className="inline-flex min-h-11 items-center gap-2.5 transition-colors hover:text-primary"
                 >
                   <Phone className="h-4 w-4 text-primary/80" aria-hidden="true" />
                   0377 430 400
@@ -164,13 +164,13 @@ export function SiteFooter() {
                 Ho Chi Minh City, Vietnam
               </li>
             </ul>
-            <p className="mt-6 max-w-[30ch] text-[11px] leading-relaxed text-white/50">
+            <p className="mt-6 max-w-[30ch] text-[11px] leading-relaxed text-white/70">
               Try the store preview and Parent App. Watch orders and payments will open at launch.
             </p>
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-white/10 py-6 text-[11px] text-white/55 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 border-t border-white/10 pt-6 pb-[calc(1.5rem+var(--safe-bottom))] text-[11px] text-white/75 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} SafeKid · Store preview & Parent App testing</p>
           <p>
             Developed by <span className="text-white/65">DigiBabi</span>
@@ -178,12 +178,13 @@ export function SiteFooter() {
         </div>
       </div>
 
-      <div
+      <svg
         aria-hidden="true"
-        className="pointer-events-none select-none overflow-hidden px-4 pb-2 text-center font-display text-[19vw] font-semibold leading-[0.75] tracking-[-0.05em] text-white/[0.045]"
+        viewBox="0 0 1000 148"
+        className="pointer-events-none block w-full select-none px-4 pb-2 font-display font-semibold"
       >
-        SafeKid
-      </div>
+        <text x="500" y="140" textAnchor="middle" fontSize="190" className="fill-white/[0.045] tracking-[-0.05em]">SafeKid</text>
+      </svg>
       {isLittleDetourOpen && (
         <Suspense fallback={<div style={{ position: "fixed", inset: 0, zIndex: 10000, display: "grid", placeItems: "center", background: "#17363d", color: "#f8f2df", fontFamily: "Plus Jakarta Sans, Inter, sans-serif", fontSize: 12, letterSpacing: "0.12em" }}>Opening a little detour…</div>}>
           <LittleDetourGame onClose={closeLittleDetour} />

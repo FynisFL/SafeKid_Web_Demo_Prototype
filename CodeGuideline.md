@@ -18,8 +18,11 @@ project-root/
 │   ├── assets/                 # Hình ảnh, logo và tài nguyên
 │   ├── components/             # Các thành phần giao diện dùng lại
 │   │   ├── ui/                 # Button, Dialog, Card,...
+│   │   ├── about/              # TeamStory dùng tại About
+│   │   ├── app-experience/     # Parent App demo và tải Android
 │   │   ├── home/               # Component riêng của Homepage
 │   │   ├── motion/             # Hiệu ứng và animation
+│   │   ├── preloader/          # Chuẩn bị tài nguyên cho cảnh đầu
 │   │   ├── passport/           # Thành phần Watch Passport
 │   │   ├── site/               # Header, Footer, Layout,...
 │   │   ├── easter-egg/         # Mini game ẩn
@@ -277,6 +280,10 @@ Tiền tố này được nền tảng Enter sử dụng để nhận diện l�
 
 Nếu chỉ muốn cô lập lỗi trong một khu vực giao diện, có thể sử dụng `ErrorBoundary` từ `react-error-boundary` cùng `FallbackComponent={ErrorFallback}`.
 
+Ở bản production, nút thử lại của Zodiac và Product đọc `route-chunks.json` để xác thực lại
+tệp route trước khi tải lại tài liệu. Vite sinh bảng tên tệp từ cùng build. Hai lần fetch này
+chỉ chạy sau khi người dùng bấm thử lại và cùng dùng một timeout 4 giây.
+
 ---
 
 ## 8. Các module đặc thù của SafeKid
@@ -318,6 +325,9 @@ src/
 
 ### 8.2. Motion System
 
+Home dùng thanh tiến độ ở header để định hướng vị trí trên trang. Desktop đủ cao dùng stage sticky, tablet dùng các panel theo luồng đọc, mobile dùng carousel. Watch Passport có sơ đồ tương tác `components/passport/CoreLayers.tsx` dùng dữ liệu minh họa. Zodiac dùng cùng ảnh edition cho các lớp chính và phụ.
+
+
 SafeKid sử dụng bộ quy chuẩn chuyển động chung để các hiệu ứng trên website có cảm giác đồng nhất.
 
 File quan trọng:
@@ -329,7 +339,7 @@ src/components/motion/tokens.ts
 File này quản lý:
 
 - `EASE`: Đường cong chuyển động.
-- `DURATION`: Thời lượng animation.
+- `DURATION`: Phản hồi thao tác, đổi nội dung, vào cảnh và cảnh mở đầu.
 - `DISTANCE`: Khoảng cách di chuyển của phần tử.
 - `SCROLL_SPRING`: Thông số làm mượt chuyển động theo cuộn trang.
 
@@ -344,6 +354,16 @@ Các thành phần như Reveal, Stagger, Hero và Watch Passport sử dụng nh�
 - Kiểm tra lại scroll, touch và keyboard sau khi thay đổi hiệu ứng.
 
 ---
+
+### 8.3. Tải cảnh đầu
+
+`FirstSceneGate` bao quanh bộ định tuyến trong Error Boundary. `src/data/firstScene.ts` chọn ảnh theo đường dẫn đi vào. Một phần trăm thể hiện số việc đã sẵn sàng, gồm mã khởi chạy, trang, font hoặc font dự phòng, ảnh cần dùng và khung hình đầu. Khi ảnh lỗi, quá thời hạn hoặc người dùng chọn Skip, cảnh mở đầu hiển thị đơn giản. Các route khác và ảnh ở phần dưới sử dụng cơ chế tải trễ. Overlay chỉ hiện nếu chuẩn bị mất hơn 350ms. CSS font ghi nhận lỗi ngay từ HTML để React không đợi lại sự kiện đã xảy ra. Font có ngân sách chờ riêng 160ms, sau đó giữ font dự phòng trong lượt mở. Khi hoàn tất không giữ màn 100% thêm theo timer.
+
+### 8.4. Đoạn kết Home và trang Zodiac
+
+Đoạn kết Home trình bày trực tiếp tiêu đề, mô tả và hai CTA trong HTML. Phần nhấn của tiêu đề dịch nhẹ lần đầu xuất hiện. Nhịp tín hiệu giữa đồng hồ và hình minh họa điện thoại chạy trong khung riêng khi vào viewport, rồi dừng. Reduced motion giữ cảnh tĩnh. Thanh tiến độ trang nằm riêng ở header.
+
+Trang Zodiac dùng phần giới thiệu ngắn rồi vào ngay `ZodiacStage`. Anchor `#collection` trỏ tới vùng chọn edition. Giữ cột mobile của stage theo chiều rộng vùng chứa để dải edition cuộn bên trong mà ảnh và nút đổi mẫu vẫn nằm trong viewport. Cả Home và trang Zodiac dùng chung sân khấu.
 
 ## 9. Quy định cập nhật tài liệu
 
@@ -368,6 +388,9 @@ Tài liệu cần phản ánh đúng cấu trúc thực tế của repository, k
 
 ## 10. Checklist trước khi hoàn thành công việc
 
+Dùng `npm ci`, `npm run check` và `npm run build`. Chạy `npm run preview` cùng các bài kiểm tra Python Playwright trong `tests/` khi thay đổi điều hướng, layout hoặc motion. About dùng `components/about/TeamStory.tsx` cho phần giới thiệu đội ngũ.
+
+
 Trước khi commit hoặc bàn giao một thay đổi, hãy kiểm tra:
 
 - [ ] Code được đặt đúng thư mục.
@@ -387,3 +410,28 @@ Trước khi commit hoặc bàn giao một thay đổi, hãy kiểm tra:
 ---
 
 *SafeKid — Developed by DigiBabi.*
+
+### Nền responsive và kiểm thử thiết bị
+
+Ngưỡng chiều rộng ở `src/lib/breakpoints.ts` dùng chung với Tailwind và media query của React.
+Giữ ngưỡng chiều cao tối thiểu cho cảnh ghim. Giao diện mặc định vẫn đọc theo luồng khi màn hình thấp.
+`--safe-top`, `--safe-right`, `--safe-bottom` và `--safe-left` là inset cho header, menu,
+dialog, loader và thanh giỏ hàng. Dùng `svh` cho khung đọc và `dvh` cho vùng cuộn
+nhạy với thanh địa chỉ, với khai báo `vh` dự phòng trước.
+
+CI browser thông thường kiểm tra luồng chính. `device-matrix.yml` lưu báo cáo theo engine,
+ảnh và số đo đối chứng trên cùng runner. Chạy `tests/device_regressions.py` khi sửa mục tiêu
+chạm, trường nhập hoặc đường tắt tới ô chat.
+
+### Motion Kit
+
+`src/components/motion/reactbits/` lưu các component React Bits đã điều chỉnh. Mỗi tệp
+ghi URL nguồn và dùng giấy phép ở `public/licenses/react-bits.txt`. `AnimatedContent`
+là wrapper vào cảnh. `ScrollFloat` và `ScrollReveal` giữ nguyên phần tử ngữ nghĩa, ưu tiên
+tiêu đề phụ và đoạn giới thiệu. `setPieces.ts` điều phối các lớp tăng cường. Lớp minh họa dài
+tuân thủ `prefers-reduced-motion`, Save-Data, vùng nhìn thấy và trạng thái tab.
+
+Cảnh Home `HeroSignal` là chunk lazy. Canvas giới hạn DPR, số hạt và thời gian hoạt
+động, giảm chất lượng sau chuỗi khung hình chậm, có kiểm tra pin nơi hỗ trợ. Orbit
+trong Zodiac dùng chính state của dial và rail. Trang có biểu tượng tín hiệu trong
+hero riêng. Contact và SOS dùng `SlideCommit` như phương án bổ sung cho thao tác chuẩn.

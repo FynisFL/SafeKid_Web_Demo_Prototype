@@ -10,7 +10,7 @@ export function SOSIntroduction() {
         <div className="relative isolate overflow-hidden rounded-[32px] border border-ink/10 bg-mist px-6 py-12 sm:px-10 sm:py-14 lg:rounded-[40px] lg:px-14">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute -right-24 -top-28 h-[420px] w-[420px] rounded-full bg-primary/[0.09] blur-[100px]"
+            className="pointer-events-none absolute -right-24 -top-28 h-[420px] w-[420px] rounded-full bg-[radial-gradient(circle,hsl(var(--primary)/0.12),transparent_72%)]"
           />
           <div className="relative grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-12">
             <Reveal>
@@ -35,7 +35,7 @@ export function SOSIntroduction() {
                   Explore SOS Demo
                   <ArrowUpRight className="h-4 w-4 text-primary transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" aria-hidden="true" />
                 </Link>
-                <p className="max-w-[40ch] text-[10.5px] leading-relaxed text-deep/55">
+                <p className="max-w-[40ch] text-[10.5px] leading-relaxed text-deep">
                   {sosDisclosure}
                 </p>
               </div>
@@ -50,7 +50,7 @@ export function SOSIntroduction() {
                   <ShieldAlert className="h-9 w-9 text-primary" strokeWidth={1.5} aria-hidden="true" />
                   <span className="text-[10px] font-semibold tracking-[0.2em]">SOS</span>
                 </div>
-                <span className="absolute bottom-[7%] rounded-full border border-white/80 bg-white/80 px-3 py-1.5 text-[8px] font-semibold uppercase tracking-[0.18em] text-deep/55 backdrop-blur">
+                <span className="absolute bottom-[7%] rounded-full border border-white/80 bg-white/80 px-3 py-1.5 text-[8px] font-semibold uppercase tracking-[0.18em] text-deep backdrop-blur">
                   Local simulation
                 </span>
               </div>

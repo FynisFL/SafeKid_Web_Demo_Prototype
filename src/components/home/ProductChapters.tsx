@@ -289,13 +289,13 @@ function ChapterRow({ chapter }: { chapter: (typeof CHAPTERS)[number] }) {
       className="group relative grid gap-6 border-t border-ink/10 py-9 sm:grid-cols-[64px_1fr_auto] sm:items-center sm:gap-8 lg:py-11"
     >
       <div className="flex items-center gap-3 sm:block">
-        <span className="font-display text-[13px] font-semibold tabular-nums tracking-[0.1em] text-primary">
+        <span className="font-display text-[13px] font-semibold tabular-nums tracking-[0.1em] text-aqua-ink">
           {chapter.number}
         </span>
       </div>
 
       <div className="max-w-[46ch]">
-        <p className="mb-2 text-[9px] uppercase tracking-[0.22em] text-deep/55">{chapter.kicker}</p>
+        <p className="mb-2 text-[9px] uppercase tracking-[0.22em] text-deep">{chapter.kicker}</p>
         <h3 className="font-display text-[clamp(1.35rem,2.2vw,1.9rem)] font-medium leading-tight tracking-[-0.035em] text-ink">
           {chapter.title}
         </h3>
@@ -445,12 +445,12 @@ export function ProductChapters() {
         </div>
 
         <div className="mt-8 flex flex-col items-start justify-between gap-4 border-t border-ink/10 pt-6 sm:flex-row sm:items-center">
-          <p className="max-w-[54ch] text-[11px] leading-relaxed text-deep/60">
+          <p className="max-w-[54ch] text-[11px] leading-relaxed text-deep">
             The illustrations preview planned watch features. Try the Parent App test build to explore its current experience.
           </p>
           <Link
             to="/about"
-            className="group inline-flex items-center gap-2 text-[13px] font-medium text-ink"
+            className="group inline-flex min-h-11 items-center gap-2 text-[13px] font-medium text-ink"
           >
             Read the idea behind SafeKid
             <ArrowUpRight

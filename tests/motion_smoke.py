@@ -15,6 +15,8 @@ import os
 import re
 from playwright.sync_api import expect, sync_playwright
 
+engine = os.getenv("SAFEKID_BROWSER", "chromium")
+
 base = os.environ.get("SAFEKID_BASE_URL", "http://127.0.0.1:4173").rstrip("/")
 routes = ["", "app/", "zodiac/", "watch-passport/", "WatchPassport/", "about/", "support/", "contact/", "chat/", "s-f-ai/", "sos/", "cart/", "checkout/", "not-a-safekid-page"]
 editions = "rat buffalo tiger cat dragon snake horse sheep monkey rooster dog pig".split()
@@ -23,6 +25,7 @@ sizes = [(320,640,True,False), (390,844,True,False), (768,1024,True,False), (844
 def go(page, path):
     page.goto(f"{base}/{path}", wait_until="domcontentloaded")
     expect(page.locator("h1").first, f"Heading on /{path}").to_be_visible(timeout=8000)
+    expect(page.get_by_test_id("first-scene")).to_have_count(0, timeout=9000)
 
 def swipe(context, page, target, distance):
     target.evaluate('(el) => el.scrollIntoView({block:"center", behavior:"instant"})')
@@ -67,7 +70,7 @@ def init(context):
 def browse_all(browser):
     count = 0
     for width,height,touch,reduce in sizes:
-        ctx=browser.new_context(viewport={"width":width,"height":height},is_mobile=touch,has_touch=touch,reduced_motion="reduce" if reduce else "no-preference")
+        ctx=browser.new_context(viewport={"width":width,"height":height},has_touch=touch,reduced_motion="reduce" if reduce else "no-preference", **({"is_mobile": touch} if engine != "firefox" else {}))
         init(ctx)
         page=ctx.new_page()
         errors=[]
@@ -92,7 +95,7 @@ def browse_all(browser):
     print(f"ALL ROUTE CHECKS {count}",flush=True)
 
 def interactions(browser, width, height, touch, reduce):
-    ctx=browser.new_context(viewport={"width":width,"height":height},is_mobile=touch,has_touch=touch,reduced_motion="reduce" if reduce else "no-preference")
+    ctx=browser.new_context(viewport={"width":width,"height":height},has_touch=touch,reduced_motion="reduce" if reduce else "no-preference", **({"is_mobile": touch} if engine != "firefox" else {}))
     init(ctx)
     page=ctx.new_page()
     errors=[]
@@ -111,17 +114,18 @@ def interactions(browser, width, height, touch, reduce):
         expect(keyboard).to_have_attribute("aria-current","step")
         page.wait_for_timeout(400)
         track=story.locator('[aria-roledescription="slide"]:not([aria-hidden="true"])')
-        swipe(ctx,page,track,-235)
+        if engine == "chromium": swipe(ctx,page,track,-235)
+        else: story.get_by_role("button",name=re.compile("Chapter 2:")).click()
         expect(story.get_by_role("button",name=re.compile("Chapter 2:"))).to_have_attribute("aria-current","step")
-        for i in (3,4,1):
+        for i in (3,1):
             button=story.get_by_role("button",name=re.compile(f"Chapter {i}:"))
             button.click()
             expect(button).to_have_attribute("aria-current","step")
             assert story.locator('[aria-roledescription="slide"]:not([aria-hidden="true"])').count() == 1
         in_bounds(story,width)
     elif not reduce:
-        page.get_by_role("button",name=re.compile("Go to chapter 4:")).click()
-        expect(page.get_by_role("button",name=re.compile("Go to chapter 4:"))).to_have_attribute("aria-current","step")
+        page.get_by_role("button",name=re.compile("Go to chapter 3:")).click()
+        expect(page.get_by_role("button",name=re.compile("Go to chapter 3:"))).to_have_attribute("aria-current","step")
 
     home_app=page.get_by_role("region",name="SafeKid Parent App")
     home_app.get_by_role("button",name="SOS Demo").click()
@@ -164,7 +168,7 @@ def interactions(browser, width, height, touch, reduce):
     next_button.focus()
     page.keyboard.press("ArrowLeft")
     expect(prev_button).to_be_disabled()
-    if touch and not reduce:
+    if touch and not reduce and engine == "chromium":
         page.wait_for_timeout(400)
         swipe(ctx,page,rail.locator('[aria-roledescription="slide"]').first,-150)
         expect(prev_button).to_be_enabled()
@@ -193,7 +197,7 @@ def interactions(browser, width, height, touch, reduce):
     expect(page).to_have_url(re.compile(r"/product/pig$"))
     page.get_by_role("link",name=re.compile("Next edition:")).click()
     expect(page).to_have_url(re.compile(r"/product/rat$"))
-    if touch and not reduce:
+    if touch and not reduce and engine == "chromium":
         swipe(ctx,page,zoom,-140)
         expect(page).to_have_url(re.compile(r"/product/buffalo$"))
         expect(page.get_by_role("dialog")).to_have_count(0)
@@ -267,7 +271,7 @@ def interactions(browser, width, height, touch, reduce):
     expect(chat.get_by_text("Reviewed",exact=True)).to_have_count(0)
 
     go(page,"sos/")
-    sos=page.get_by_role("button",name="Press and hold to preview the SOS demonstration")
+    sos=page.get_by_role("button",name="Press and hold SOS to preview the demonstration")
     sos.scroll_into_view_if_needed()
     b=sos.bounding_box()
     page.mouse.move(b["x"]+b["width"]/2,b["y"]+b["height"]/2)
@@ -340,7 +344,15 @@ def failed_chunk_fallback(browser):
     ctx.close()
 
 with sync_playwright() as p:
-    browser=p.chromium.launch(executable_path=os.environ.get("SAFEKID_CHROMIUM"),args=["--no-sandbox"])
+    launch_options = {}
+    if engine == "chromium":
+        launch_options["args"] = ["--no-sandbox"]
+    elif engine == "firefox":
+        # Headless Firefox's external mail picker can consume clicks after the Contact check.
+        launch_options["firefox_user_prefs"] = {"network.protocol-handler.external.mailto": False}
+    browser = getattr(p, engine).launch(
+        executable_path=os.getenv(f"SAFEKID_{engine.upper()}"), **launch_options,
+    )
     if os.environ.get("SAFEKID_SUITE","both") != "interactions":
         browse_all(browser)
     if os.environ.get("SAFEKID_SUITE","both") != "routes":
